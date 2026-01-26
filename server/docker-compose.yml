@@ -1,0 +1,21 @@
+# version: "3.9"
+# services:
+#   backend:
+#     build: .
+#     ports:
+#       - "3000:3000"
+#     env_file:
+#       - ./.env
+#   redis:
+#     image: redis:7-alpine
+#     ports:
+#       - "6379:6379"
+#   mongo:
+#     image: mongo:7.0
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongo-data:/data/db
+
+# volumes:
+#   mongo-data:
