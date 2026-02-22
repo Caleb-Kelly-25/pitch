@@ -14,7 +14,7 @@ export default function Signup() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-
+    // Call the signup API and save the token, then navigate to the game page
     try {
       const { token } = await signup(username, password);
       saveToken(token);
@@ -23,18 +23,18 @@ export default function Signup() {
       setError(err.message);
     }
   }
-
+  // Form to input username and password and submit to create an account
   return (
     <div>
       <h1>Sign Up</h1>
-
+      
       <form onSubmit={handleSubmit}>
         <input
           placeholder="Username"
           value={username}
           onChange={e => setUsername(e.target.value)}
         />
-
+        
         <input
           type="password"
           placeholder="Password"
@@ -44,7 +44,7 @@ export default function Signup() {
 
         <button type="submit">Create Account</button>
       </form>
-
+      
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
