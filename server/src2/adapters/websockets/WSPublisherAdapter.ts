@@ -4,7 +4,7 @@ import GameState from "../../entities/GameState.ts";
 
 export default class WSPublisherAdapter implements GamePublisherPort {
   private wss: Server;
-
+  
   constructor (wss: Server) {
     this.wss = wss;
   }
@@ -15,7 +15,7 @@ export default class WSPublisherAdapter implements GamePublisherPort {
         payload: gameState
       }));
   }
-
+  
   publishGameStateToRoom(gameId: string, gameState: GameState) {
     this.wss.to(`game:${gameId}`).emit(JSON.stringify({
         type: "gameStateUpdate",
