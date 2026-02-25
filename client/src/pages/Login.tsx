@@ -1,20 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
 import { useAuth } from "../auth/useAuth";
 import cardsLogo from "../assets/5_card_logo.png";
+import { Home } from "lucide-react";
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
     display: "flex",
     flexDirection: "column",
-    minHeight: "100vh",
+    height: "100vh",
+    width: "100vw",
+    margin: 0,
+    padding: 0,
     fontFamily: "'Georgia', serif",
     backgroundColor: "#f0ebe5",
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    overflow: "hidden",
   },
   topBar: {
     backgroundColor: "#c9c0b8",
-    padding: "10px 16px",
+    padding: "18px 24px",
     display: "flex",
     alignItems: "center",
   },
@@ -30,35 +38,38 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: "48px 80px",
-    gap: "40px",
+    padding: "clamp(24px, 4vh, 48px) clamp(32px, 5vw, 80px)",
+    gap: "clamp(20px, 3vw, 40px)",
     backgroundImage:
       "radial-gradient(ellipse at 30% 50%, rgba(120,40,40,0.6) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(50,10,10,0.4) 0%, transparent 50%)",
+    overflow: "hidden",
   },
   leftSection: {
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-start",
-    gap: "32px",
+    alignItems: "center",
+    gap: "20px",
+    marginLeft: "-100px",
   },
   title: {
-    fontSize: "clamp(72px, 10vw, 120px)",
+    fontSize: "clamp(100px, 8vw, 200px)",
     fontFamily: "'Palatino Linotype', 'Palatino', 'Book Antiqua', serif",
     color: "#f5ede0",
-    margin: 0,
+    margin: 50,
     letterSpacing: "-2px",
     textShadow: "3px 4px 8px rgba(0,0,0,0.5)",
     lineHeight: 1,
   },
   cardsImage: {
-    width: "300px",
+    width: "clamp(180px, 28vw, 320px)",
     height: "auto",
     objectFit: "contain" as const,
   },
   rightSection: {
-    width: "340px",
+    width: "clamp(320px, 50vw, 440px)",
     flexShrink: 0,
+    marginRight: "100px",
   },
   loginBox: {
     backgroundColor: "rgba(170, 130, 120, 0.45)",
@@ -141,6 +152,22 @@ export default function Login() {
   const { login: saveToken } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const prev = {
+      margin: document.body.style.margin,
+      padding: document.body.style.padding,
+      overflow: document.body.style.overflow,
+    };
+    document.body.style.margin = "0";
+    document.body.style.padding = "0";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.margin = prev.margin;
+      document.body.style.padding = prev.padding;
+      document.body.style.overflow = prev.overflow;
+    };
+  }, []);
+
   async function handleSubmit() {
     setError(null);
     try {
@@ -156,9 +183,12 @@ export default function Login() {
     <div style={styles.wrapper}>
       {/* Top nav bar */}
       <div style={styles.topBar}>
-        <span style={styles.homeIcon} onClick={() => navigate("/")}>
-          🏠
-        </span>
+        <Home
+          size={45}
+          color="#3d2b24"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/")}
+        />
       </div>
 
       {/* Main content */}
