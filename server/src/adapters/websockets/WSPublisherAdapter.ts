@@ -1,6 +1,6 @@
-import GamePublisherPort from "../../ports/IGamePublisherPort.ts";
+import GamePublisherPort from "../../ports/IGamePublisherPort";
 import {Server} from "socket.io";
-import GameState from "../../domain/entities/GameState.ts";
+import GameState from "../../domain/entities/GameState";
 
 export default class WSPublisherAdapter implements GamePublisherPort {
   private wss: Server;

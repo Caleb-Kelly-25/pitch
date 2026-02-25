@@ -11,5 +11,5 @@
 
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts", "src/types/**/*.d.ts"]
+  "include": ["src/**/*.ts", "src/types/**/*.d.ts", "src/types/socket"]
 }
