@@ -69,7 +69,6 @@ const styles: Record<string, React.CSSProperties> = {
   },
 }
 
-
 async function handleSubmit() {
     //Validate Game Code and Join Game
   }
