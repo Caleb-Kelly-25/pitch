@@ -54,13 +54,18 @@ const styles: Record<string, React.CSSProperties> = {
     textShadow: "3px 4px 8px rgba(0,0,0,0.5)",
     lineHeight: 1,
   },
+  cardsImage: {
+    width: "clamp(280px, 40vw, 500px)",
+    height: "auto",
+    objectFit: "contain" as const,
+  },
   leftSection: {
     flex: 1,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     gap: "20px",
-    marginLeft: "-100px",
+    marginLeft: "-140px",
   },
   rightSection: {
     width: "clamp(300px, 50vw, 400px)",

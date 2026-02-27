@@ -22,7 +22,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   topBar: {
     backgroundColor: "#c9c0b8",
-    padding: "18px 24px",
+    padding: "18px 16px",
     display: "flex",
     alignItems: "center",
   },
@@ -56,14 +56,14 @@ const styles: Record<string, React.CSSProperties> = {
     lineHeight: 1,
   },
   cardsImage: {
-    width: "clamp(180px, 28vw, 320px)",
+    width: "clamp(280px, 40vw, 500px)",
     height: "auto",
     objectFit: "contain" as const,
   },
   rightSection: {
     width: "clamp(320px, 50vw, 440px)",
     flexShrink: 0,
-    marginRight: "100px",
+    marginRight: "150px",
   },
   loginBox: {
     backgroundColor: "rgba(170, 130, 120, 0.45)",
