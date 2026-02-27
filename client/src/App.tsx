@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Game from "./pages/Game";
+import Host from "./pages/Host";
+import JoinPrivate from "./pages/JoinPrivate";
+import JoinPublic from "./pages/JoinPublic";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -17,9 +20,11 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/host" element={<Game />} />
-        <Route path="/join-public" element={<Game />} />
-        <Route path="/join-private" element={<Game />} />
+        <Route path="/host" element={<Host />} />
+        <Route path="/join-public" element={<JoinPublic />} />
+        <Route path="/join-private" element={<JoinPrivate />} />
+        //Delete the line below and uncomment the ProtectedRoute version
+        <Route path = "/game" element={<Game />} />
         {/* <Route
           path="/game"
           element={
