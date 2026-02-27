@@ -17,14 +17,18 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route
+        <Route path="/host" element={<Game />} />
+        <Route path="/join-public" element={<Game />} />
+        <Route path="/join-private" element={<Game />} />
+        {/* <Route
           path="/game"
           element={
             <ProtectedRoute>
               <Game />
             </ProtectedRoute>
           }
-        />
+        /> */}
+
       </Routes>
     </BrowserRouter>
     </>

@@ -3,6 +3,7 @@ import { useAuth } from "../auth/useAuth";
 import { connectSocket } from "../socket/socket";
 import { useNavigate } from "react-router";
 import cardsLogo from "../assets/5_card_logo.png";
+import { Home } from "lucide-react";
 
 
 const styles: Record<string, React.CSSProperties> = {
@@ -127,9 +128,13 @@ export default function Game() {
     <div style={styles.wrapper}>
          {/* Top Nav Bar */}
       <div style={styles.topBar}>
-        <span style={styles.homeIcon} onClick={() => navigate("/")}>
-          🏠
-        </span>
+        <Home
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => navigate("/")}
+        />
+    
       </div>
           {/* Main Content */}
       <div style={(styles.main)}>
