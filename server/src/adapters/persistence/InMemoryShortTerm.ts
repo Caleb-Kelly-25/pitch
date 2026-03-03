@@ -2,6 +2,8 @@ import GameState from "../../domain/entities/GameState";
 import { User } from "../../domain/entities/User";
 import IShortTermStoragePort from "../../ports/IShortTermStoragePort";
 
+
+// In-memory implementation of the short-term storage port for testing and development purposes
 export default class InMemoryShortTermStorageAdapter implements IShortTermStoragePort {
 
     private gameStates: Map<string, GameState> = new Map<string, GameState>();
@@ -20,6 +22,5 @@ export default class InMemoryShortTermStorageAdapter implements IShortTermStorag
         this.gameStates.delete(id);
         return Promise.resolve();
     }
-    
     
 }

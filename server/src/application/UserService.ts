@@ -6,15 +6,15 @@ export default class UserService {
         this.userRepository = userRepository;
     }
 
-    getUserById(id: string) {
+    async getUserById(id: string): Promise<User | null> {
         return this.userRepository.findById(id);
     }
 
-    createUser(user: User) {
+    async createUser(user: User): Promise<User | null> {
         return this.userRepository.create(user);
     }
 
-    getAllUsers() {
+    async getAllUsers(): Promise<User[]> {
         return this.userRepository.findAll();
     }
 }
