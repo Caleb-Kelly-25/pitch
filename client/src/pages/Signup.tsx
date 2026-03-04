@@ -166,7 +166,7 @@ export default function Signup() {
     try {
       const { token } = await signup(username, password);
       saveToken(token);
-      navigate("/game");
+      navigate("/LandingPage");
     } catch (err: any) {
       setError(err.message);
     }

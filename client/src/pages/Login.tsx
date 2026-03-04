@@ -173,7 +173,7 @@ export default function Login() {
     try {
       const token = (await login(username, password)).accessToken;
       saveToken(token);
-      navigate("/game");
+      navigate("/LandingPage");
     } catch (err: any) {
       setError(err.message);
     }

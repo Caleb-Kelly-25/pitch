@@ -5,7 +5,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Game from "./pages/Game";
+import LandingPage from "./pages/LandingPage";
 import Host from "./pages/Host";
 import JoinPrivate from "./pages/JoinPrivate";
 import JoinPublic from "./pages/JoinPublic";
@@ -24,20 +24,18 @@ function App() {
         <Route path="/join-public" element={<JoinPublic />} />
         <Route path="/join-private" element={<JoinPrivate />} />
         //Delete the line below and uncomment the ProtectedRoute version
-        <Route path = "/game" element={<Game />} />
+        <Route path = "/LandingPage" element={<LandingPage/>} />
         {/* <Route
-          path="/game"
+          path="/LandingPage"
           element={
             <ProtectedRoute>
-              <Game />
+              <LandingPage />
             </ProtectedRoute>
           }
         /> */}
-
       </Routes>
     </BrowserRouter>
     </>
   )
 }
-
 export default App
