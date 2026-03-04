@@ -180,7 +180,7 @@ export default function Signup() {
           size={45}
           color="#3d2b24"
           style={{ cursor: "pointer" }}
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/LandingPage")}
         />
       </div>
 
