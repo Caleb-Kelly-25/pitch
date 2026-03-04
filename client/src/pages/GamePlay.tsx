@@ -57,7 +57,6 @@ export default function GamePlay() {
         <h1>Game Play</h1>
         <p>Welcome to the game!</p>
       </div>
-      <div><BackOfCard /></div>
     </div>
   );
 }
