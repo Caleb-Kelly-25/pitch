@@ -44,7 +44,15 @@ const styles: Record<string, React.CSSProperties> = {
       "radial-gradient(ellipse at 30% 50%, rgba(120,40,40,0.6) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(50,10,10,0.4) 0%, transparent 50%)",
     overflow: "hidden",
   },
+  cardImage: {
+    border: "3px solid #3d2b24", // Border color and thickness
+          borderRadius: "15px",        // Rounded corners
+          padding: "0px",              // Optional padding inside border
+          width: "200px",              // Fixed width
+          height: "300px",             // Fixed height
+          objectFit: "cover"           // Keep aspect ratio
 }
+};
 
 function wantToLeave(){
     const confirmLeave = window.confirm("Are you sure you want to leave the game? Your progress will be lost.");
@@ -86,8 +94,9 @@ export default function GamePlay() {
          />
       </div>
       <div style={styles.main}>
-        <h1>Game Play</h1>
-        <p>Welcome to the game!</p>
+        {/* Game Play Content will go here */}
+        {/* <img src={car} alt="This is a car image" /> {/* Use the image  */}     
+        <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
       </div>
     </div>
   );
