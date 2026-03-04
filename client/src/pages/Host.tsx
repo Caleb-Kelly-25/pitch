@@ -1,5 +1,7 @@
 import { ArrowLeft } from "lucide-react"
-
+import { Settings } from "lucide-react";
+import { Info } from "lucide-react";
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -57,8 +59,29 @@ export default function Host() {
                     size={45}
                     color="#3d2b24"
                     style={{cursor: "pointer"}}
-                    onClick={() => window.history.back()}
+                    onClick={() => window.history.back()}  
                 />
+                 {/* Will be used to show stats Page*/}
+                <ChartNoAxesColumnIncreasing
+                  size={45}
+                  color="#3d2b24"
+                  style={{cursor: "pointer"}}
+                  onClick={() => window.history.back()}
+                 />
+                   {/* Will be used to show info Page (Tutorial) */}
+                <Info
+                  size={45}
+                  color="#3d2b24"
+                  style={{cursor: "pointer"}}
+                  onClick={() => window.history.back()}
+                />
+                  {/* Will be used to show settings Page*/}
+                <Settings
+                  size={45}
+                  color="#3d2b24"
+                  style={{cursor: "pointer"}}
+                  onClick={() => window.history.back()}
+                />      
             </div>
             {/* Main Content */}
                 <div style={(styles.main)}>

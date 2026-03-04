@@ -4,7 +4,6 @@ import { connectSocket } from "../socket/socket";
 import { useNavigate } from "react-router";
 import cardsLogo from "../assets/5_card_logo.png";
 // import { Home } from "lucide-react";
-import { ArrowLeft } from "lucide-react";
 import { Settings } from "lucide-react";
 import { Info } from "lucide-react";
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
