@@ -94,8 +94,6 @@ export default function GamePlay() {
          />
       </div>
       <div style={styles.main}>
-        {/* Game Play Content will go here */}
-        {/* <img src={car} alt="This is a car image" /> {/* Use the image  */}     
         <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
       </div>
     </div>
