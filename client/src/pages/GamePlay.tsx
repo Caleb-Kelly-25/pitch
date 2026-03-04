@@ -1,4 +1,6 @@
 import { Home } from "lucide-react"
+import { X } from "lucide-react"
+
 import BackOfCard from "../assets/BackOfCard.png";
 
 const styles: Record<string, React.CSSProperties> = {
@@ -42,15 +44,22 @@ const styles: Record<string, React.CSSProperties> = {
   },
 }
 
+function wantToLeave(){
+    const confirmLeave = window.confirm("Are you sure you want to leave the game? Your progress will be lost.");
+    if (confirmLeave) {
+      window.history.back();
+    }
+}
+
 export default function GamePlay() {
   return (
     <div style={styles.wrapper}>
       <div style={styles.topBar}>
-        <Home
+        <X
           size={45}
           color="#3d2b24"
           style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
+          onClick={wantToLeave}
         />
       </div>
       <div style={styles.main}>

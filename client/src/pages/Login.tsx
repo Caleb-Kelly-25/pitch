@@ -183,12 +183,6 @@ export default function Login() {
     <div style={styles.wrapper}>
       {/* Top nav bar */}
       <div style={styles.topBar}>
-        <Home
-          size={45}
-          color="#3d2b24"
-          style={{ cursor: "pointer" }}
-          onClick={() => navigate("/LandingPage")}
-        />
       </div>
 
       {/* Main content */}

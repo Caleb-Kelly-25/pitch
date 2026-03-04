@@ -1,4 +1,5 @@
-import { Home } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
+
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -52,7 +53,7 @@ export default function Host() {
         <div style={styles.wrapper}>
             {/* Top Nav Bar */}
             <div style={styles.topBar}>
-                <Home
+                <ArrowLeft
                     size={45}
                     color="#3d2b24"
                     style={{cursor: "pointer"}}

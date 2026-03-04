@@ -133,13 +133,6 @@ export default function Game() {
     <div style={styles.wrapper}>
          {/* Top Nav Bar */}
       <div style={styles.topBar}>
-        <Home
-          size={45}
-          color="#3d2b24"
-          style={{cursor: "pointer"}}
-          onClick={() => navigate("/LandingPage")}
-        />
-    
       </div>
           {/* Main Content */}
       <div style={(styles.main)}>
