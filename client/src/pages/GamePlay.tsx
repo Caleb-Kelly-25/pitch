@@ -1,6 +1,5 @@
-import { Home } from "lucide-react"
+// import { Home } from "lucide-react"
 import { X } from "lucide-react"
-
 import BackOfCard from "../assets/BackOfCard.png";
 
 const styles: Record<string, React.CSSProperties> = {

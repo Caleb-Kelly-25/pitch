@@ -3,7 +3,11 @@ import { useAuth } from "../auth/useAuth";
 import { connectSocket } from "../socket/socket";
 import { useNavigate } from "react-router";
 import cardsLogo from "../assets/5_card_logo.png";
-import { Home } from "lucide-react";
+// import { Home } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { Settings } from "lucide-react";
+import { Info } from "lucide-react";
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
 
 
 const styles: Record<string, React.CSSProperties> = {
@@ -98,7 +102,6 @@ const styles: Record<string, React.CSSProperties> = {
   }
 };
 
-
 export default function Game() {
   const { token } = useAuth();
   const [textMsg, setTextMsg] = useState("Waiting...");
@@ -126,13 +129,31 @@ export default function Game() {
     };
   }, [token]);
 
-  // return<><h1>Pitch Game</h1><p>{"Create buttons to host, join public, or join private games"}</p></>;
-  //code below is for testing frontend visuals, will be implemented once considered safe to do so. 
-
   return (
     <div style={styles.wrapper}>
          {/* Top Nav Bar */}
       <div style={styles.topBar}>
+        {/* Will be used to show stats Page*/}
+         <ChartNoAxesColumnIncreasing
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+         />
+         {/* Will be used to show info Page (Tutorial) */}
+        <Info
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+         />
+         {/* Will be used to show settings Page*/}
+         <Settings
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+         />
       </div>
           {/* Main Content */}
       <div style={(styles.main)}>

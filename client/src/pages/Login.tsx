@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
 import { useAuth } from "../auth/useAuth";
 import cardsLogo from "../assets/5_card_logo.png";
-import { Home } from "lucide-react";
+// import { Home } from "lucide-react";
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
