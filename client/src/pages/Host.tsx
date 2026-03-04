@@ -48,14 +48,6 @@ function getGameCode(){
 
 export default function Host() {
 
-    // return (
-    //     <div>
-    //         <h1>Host Game</h1>
-    //         <p>{"Create form to host game, including options for public vs private)"}</p>
-    //         <p>Game Code: {getGameCode()}</p>
-    //     </div>
-    // );
-
     return(
         <div style={styles.wrapper}>
             {/* Top Nav Bar */}
@@ -70,8 +62,10 @@ export default function Host() {
             {/* Main Content */}
                 <div style={(styles.main)}>
                         <h1>Host Game</h1>
+                        <h2>Game Code: {getGameCode()}</h2>
+                        <h3>Waiting for players...</h3>
+                        {/* <h3>Waiting for {getNeededPlayers()} players</h3> */}
                 </div>
         </div>
     );
-
 }
