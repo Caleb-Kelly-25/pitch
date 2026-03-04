@@ -1,4 +1,5 @@
 import { Home } from "lucide-react"
+import BackOfCard from "../assets/BackOfCard.png";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -56,6 +57,7 @@ export default function GamePlay() {
         <h1>Game Play</h1>
         <p>Welcome to the game!</p>
       </div>
+      <div><BackOfCard /></div>
     </div>
   );
 }
