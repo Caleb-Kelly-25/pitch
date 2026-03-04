@@ -1,5 +1,8 @@
 // import { Home } from "lucide-react"
 import { X } from "lucide-react"
+import { Settings } from "lucide-react";
+import { Info } from "lucide-react";
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
 import BackOfCard from "../assets/BackOfCard.png";
 
 const styles: Record<string, React.CSSProperties> = {
@@ -60,6 +63,27 @@ export default function GamePlay() {
           style={{cursor: "pointer"}}
           onClick={wantToLeave}
         />
+        {/* Will be used to show stats Page*/}
+         <ChartNoAxesColumnIncreasing
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+         />
+         {/* Will be used to show info Page (Tutorial) */}
+        <Info
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+         />
+         {/* Will be used to show settings Page*/}
+         <Settings
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+         />
       </div>
       <div style={styles.main}>
         <h1>Game Play</h1>
