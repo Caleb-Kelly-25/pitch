@@ -1,36 +1,60 @@
 import "dotenv/config";
-import http from "http";
-import { Server } from "socket.io";
-import app from "./app";
-import mongoose from "mongoose";
-import { createAdapter } from "@socket.io/redis-adapter";
+import express from "express"
+import http from "http"
+import cors from "cors"
+import { Server } from "socket.io"
 import { bootstrap, pubClient, subClient } from "./bootstrap";
-import { registerSocketHandlers } from "./sockets/register";
-import { registerSockets } from "./sockets";
+import createRouter from "./adapters/rest/CreateRouter";
+import WSPublisherAdapter from "./adapters/websockets/WSPublisherAdapter";
+import InMemoryShortTermStorageAdapter from "./adapters/persistence/InMemoryShortTerm";
+import InMemoryLongTermStorageAdapter from "./adapters/persistence/InMemoryLongTerm";
+import JwtAuthAdapter from "./adapters/auth/JwtAuthAdapter";
+import WebSocketController from "./adapters/websockets/WebSocketController";
+import UserController from "./adapters/rest/UserController";
+import UserService from "./application/UserService";
+
+
+const PORT_NUM = process.env.PORT || 3000;
 
 async function startServer() {
-    await bootstrap();
+// Connect to MongoDB and Redis
+await bootstrap();
 
-    const server = http.createServer(app);
+// Create REST api server
+const expressApp = express();
+expressApp.use(express.json());
+expressApp.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN,
+    credentials: true,
+  })
+);
 
-    const io = new Server(server, {
+const httpServer = http.createServer(expressApp);
+
+// Create WebSocket server
+const wss = new Server(httpServer, {
     cors: {
         origin: process.env.CLIENT_ORIGIN,
         methods: ["GET", "POST"],
     },
-    });
+});
 
-    console.log("Setting up Redis adapter for Socket.io...");
-    io.adapter(createAdapter(pubClient, subClient));
+// Adapters
+const wsPublisher = new WSPublisherAdapter(wss);
+const shortStorage = new InMemoryShortTermStorageAdapter();
+const longStorage = new InMemoryLongTermStorageAdapter();
+const authAdapter = new JwtAuthAdapter();
 
-    console.log("Registering sockets...");
-    registerSockets(io);
+const wsController = new WebSocketController(wss, authAdapter);
+const userController = new UserController(new UserService(longStorage));
+expressApp.use(createRouter(userController));
 
-    const PORT = process.env.PORT || 3000;
 
-    server.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-    });
+// Start Listening
+httpServer.listen(PORT_NUM, () => {
+    console.log(`Server listening on port ${PORT_NUM}`);
+});
 }
 
 startServer().catch((err) => {
