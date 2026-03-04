@@ -46,12 +46,12 @@ const styles: Record<string, React.CSSProperties> = {
   },
   cardImage: {
     border: "3px solid #3d2b24", // Border color and thickness
-          borderRadius: "15px",        // Rounded corners
-          padding: "0px",              // Optional padding inside border
-          width: "200px",              // Fixed width
-          height: "300px",             // Fixed height
-          objectFit: "cover"           // Keep aspect ratio
-}
+    borderRadius: "15px",        // Rounded corners
+    padding: "0px",              // Optional padding inside border
+    width: "200px",              // Fixed width
+    height: "300px",             // Fixed height
+    objectFit: "cover"           // Keep aspect ratio
+  }
 };
 
 function wantToLeave(){
