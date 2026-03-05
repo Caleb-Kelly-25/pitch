@@ -1,6 +1,8 @@
 import { User } from "../../domain/entities/User";
 import ILongTermStoragePort from "../../ports/ILongTermStoragePort";
 
+// In-memory implementation of the long-term storage adapter
+// This is the mock implementation for testing purposes.
 export default class InMemoryLongTermStorageAdapter implements ILongTermStoragePort {
     private users: Map<string, User> = new Map<string, User>();
     
