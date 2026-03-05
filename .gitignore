@@ -1,0 +1,4 @@
+# Node modules and packages shouldn't appear here anyway
+package-lock.json
+package.json
+node_modules

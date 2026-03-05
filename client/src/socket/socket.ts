@@ -6,7 +6,9 @@ export function connectSocket(token: string) {
 console.log("Connecting socket with token: ", token);
 
   socket = io("http://localhost:3000", {
-    auth: { token }
+    auth: { token },
+    reconnection: true,
+    reconnectionAttempts: 5,
   });
 
   return socket;
