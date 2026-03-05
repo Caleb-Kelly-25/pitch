@@ -8,6 +8,7 @@ import createRouter from "./adapters/rest/CreateRouter";
 import WSPublisherAdapter from "./adapters/websockets/WSPublisherAdapter";
 import InMemoryShortTermStorageAdapter from "./adapters/persistence/InMemoryShortTerm";
 import InMemoryLongTermStorageAdapter from "./adapters/persistence/InMemoryLongTerm";
+import { MongoLongTermAdapter } from "./adapters/persistence/MongoLongTermAdapter";
 import JwtAuthAdapter from "./adapters/auth/JwtAuthAdapter";
 import WebSocketController from "./adapters/websockets/WebSocketController";
 import UserController from "./adapters/rest/UserController";
@@ -43,7 +44,7 @@ const wss = new Server(httpServer, {
 // Adapters
 const wsPublisher = new WSPublisherAdapter(wss);
 const shortStorage = new InMemoryShortTermStorageAdapter();
-const longStorage = new InMemoryLongTermStorageAdapter();
+const longStorage = new MongoLongTermAdapter() // InMemoryLongTermStorageAdapter();
 const authAdapter = new JwtAuthAdapter();
 
 const wsController = new WebSocketController(wss, authAdapter);
