@@ -7,7 +7,7 @@ const initialState: GameState = {
     id: null,
     players: [],
     hand: [],
-    currentPlayer: null
+    currentPlayer: null,
 }
 
 export const gameSlice = createSlice({

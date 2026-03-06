@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react"
 import { Settings } from "lucide-react";
 import { Info } from "lucide-react";
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
+import { useGame } from "../features/game/useGame";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -50,6 +51,11 @@ function getGameCode(){
 }
 
 export default function Host() {
+
+  
+  const game = useGame().game;
+  console.log("Current game state: ", game);
+
 
     return(
         <div style={styles.wrapper}>
