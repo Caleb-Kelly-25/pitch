@@ -52,8 +52,8 @@ function getGameCode(){
 
 export default function Host() {
 
-  
-  const game = useGame().game;
+
+  const game = useGame();
   console.log("Current game state: ", game);
 
 
