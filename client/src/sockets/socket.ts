@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
+import { registerGameSocketHandlers } from "../features/game/registerGameSocketHandlers";
 
-let socket: Socket | null = null;
+export let socket: Socket | null = null;
 
 export function connectSocket(token: string) {
 console.log("Connecting socket with token: ", token);
@@ -11,10 +12,7 @@ console.log("Connecting socket with token: ", token);
     reconnectionAttempts: 5,
   });
 
-  return socket;
-}
+  registerGameSocketHandlers(socket);
 
-export function getSocket() {
-  if (!socket) throw new Error("Socket not connected");
   return socket;
 }

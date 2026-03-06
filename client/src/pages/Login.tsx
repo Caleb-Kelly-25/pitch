@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../api/auth";
-import { useAuth } from "../auth/useAuth";
+
 import cardsLogo from "../assets/5_card_logo.png";
+import { useAuth } from "../features/auth/useAuth";
 // import { Home } from "lucide-react";
 
 const styles: Record<string, React.CSSProperties> = {
@@ -149,7 +149,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const { login: saveToken } = useAuth();
+  const { login: submitLogin } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -171,8 +171,7 @@ export default function Login() {
   async function handleSubmit() {
     setError(null);
     try {
-      const token = (await login(username, password)).accessToken;
-      saveToken(token);
+      await submitLogin(username, password);
       navigate("/LandingPage");
     } catch (err: any) {
       setError(err.message);

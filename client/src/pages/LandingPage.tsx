@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../auth/useAuth";
-import { connectSocket } from "../socket/socket";
+import { useAuth } from "../features/auth/useAuth";
+import { connectSocket } from "../sockets/socket";
 import { useNavigate } from "react-router";
 import cardsLogo from "../assets/5_card_logo.png";
 // import { Home } from "lucide-react";
@@ -104,6 +104,7 @@ const styles: Record<string, React.CSSProperties> = {
 export default function Game() {
   const { token } = useAuth();
   const [textMsg, setTextMsg] = useState("Waiting...");
+  textMsg;
 
   const navigate = useNavigate();
 

@@ -2,15 +2,15 @@ import { GameId } from "../../types/id-declarations";
 
 export class User {
     public id: string;
-    public name: string;
+    public username: string;
     public email: string;
     public photoUrl: string;
     public gameId: GameId | null;
     
 
-    constructor(id: string, name: string, email: string, photoUrl: string, gameId: GameId | null) {
+    constructor(id: string, username: string, email: string, photoUrl: string, gameId: GameId | null) {
         this.id = id;
-        this.name = name;
+        this.username = username;
         this.email = email;
         this.photoUrl = photoUrl;
         this.gameId = gameId;

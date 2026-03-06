@@ -47,8 +47,8 @@ const longStorage = new InMemoryLongTermStorageAdapter();
 const authAdapter = new JwtAuthAdapter();
 
 const wsController = new WebSocketController(wss, authAdapter);
-const userController = new UserController(new UserService(longStorage));
-expressApp.use(createRouter(userController));
+const userController = new UserController(new UserService(longStorage), authAdapter);
+expressApp.use("/api", createRouter(userController));
 
 
 // Start Listening

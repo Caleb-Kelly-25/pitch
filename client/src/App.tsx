@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
@@ -10,10 +7,9 @@ import Host from "./pages/Host";
 import JoinPrivate from "./pages/JoinPrivate";
 import JoinPublic from "./pages/JoinPublic";
 import GamePlay from "./pages/GamePlay";
-import ProtectedRoute from "./components/ProtectedRoute";
+//import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
