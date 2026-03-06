@@ -110,23 +110,7 @@ export default function Game() {
 
   useEffect(() => {
     if (!token) return;
-
-    setTextMsg(JSON.stringify(token));
-
-    const socket = connectSocket(token);
-
-    socket.on("Message", (msg: string) => {
-        setTextMsg(msg);
-    })
-
-    socket.on("connect", () => {
-      console.log("Connected to game server");
-      socket.emit("joinGame", "default-game");
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+    connectSocket(token);
   }, [token]);
 
   return (
