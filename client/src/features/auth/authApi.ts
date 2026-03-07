@@ -6,6 +6,7 @@ export async function signup(username: string, password: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password })
   });
+  console.log("Signup response:", await res.clone().json());
 
   if (!res.ok) throw new Error("Signup failed");
   return res.json();

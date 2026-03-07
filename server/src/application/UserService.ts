@@ -1,8 +1,9 @@
 import { User } from "../domain/entities/User";
+import IUserRepository from "../domain/repositories/IUserRepository";
 
 export default class UserService {
-    private userRepository: any;
-    constructor (userRepository: any) {
+    private userRepository: IUserRepository;
+    constructor (userRepository: IUserRepository) {
         this.userRepository = userRepository;
     }
 
@@ -11,10 +12,15 @@ export default class UserService {
     }
 
     async createUser(user: User): Promise<User | null> {
-        return this.userRepository.create(user);
+        await this.userRepository.createUser(user);
+        return this.userRepository.findByUsername(user.username);
+    }
+
+    async getUserByUsername(username: string): Promise<User | null> {
+        return this.userRepository.findByUsername(username);
     }
 
     async getAllUsers(): Promise<User[]> {
-        return this.userRepository.findAll();
+        return this.userRepository.getAllUsers();
     }
 }
