@@ -1,5 +1,6 @@
 import BackOfCard from "../assets/BackOfCard.png";
 import Card from "../components/Card";
+import HandOfCards from "../components/HandOfCards";
 import TopBar from "../components/TopBar";
 
 const styles: Record<string, React.CSSProperties> = {
@@ -44,12 +45,10 @@ export default function GamePlay() {
     <div style={styles.wrapper}>
       <TopBar varient="withBackBtn"></TopBar>
       <div style={styles.main}>
-        {/* Game Play Content will go here */}
-        {/* <img src={car} alt="This is a car image" /> {/* Use the image  */}     
-        <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
-        <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
-        <Card suit="HEARTS" value={1} /> {/* Example of using the Card component */}
-        <Card value = {11}  /> {/* Example of a black joker */}
+        <HandOfCards cards={[
+          { suit: "HEARTS", value: 1 },
+          { suit: "SPADES", value: 13 },]} /> 
+        
       </div>
     </div>
   );
