@@ -1,19 +1,12 @@
 import React from "react";
 import { Heart, Diamond, Club, Spade } from "lucide-react";
+import JokerImage from "../assets/Firestone_Headshot.png";
 
-type Suit = "hearts" | "diamonds" | "clubs" | "spades";
-
-type Value =
-  | "A"
-  | "2" | "3" | "4" | "5" | "6" | "7"
-  | "8" | "9" | "10"
-  | "J" | "Q" | "K";
+type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
 
 interface CardProps {
   suit?: Suit;
-  value?: Value;
-  isJoker?: boolean;
-  jokerColor?: "red" | "black";
+  value?: number; // 1=A, 2-10, 11=Joker, 12=J, 13=Q, 14=K
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -21,19 +14,24 @@ const suitData: Record<
   Suit,
   { Icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; color: string }
 > = {
-  hearts: { Icon: Heart, color: "red" },
-  diamonds: { Icon: Diamond, color: "red" },
-  clubs: { Icon: Club, color: "black" },
-  spades: { Icon: Spade, color: "black" },
+  HEARTS: { Icon: Heart, color: "red" },
+  DIAMONDS: { Icon: Diamond, color: "red" },
+  CLUBS: { Icon: Club, color: "black" },
+  SPADES: { Icon: Spade, color: "black" },
 };
 
-export default function Card({
-  suit,
-  value,
-  isJoker = false,
-  jokerColor = "black",
-  onClick,
-}: CardProps) {
+function resolveCard(value: number): { display: string; isJoker: boolean } {
+  switch (value) {
+    case 1:  return { display: "A",    isJoker: false };
+    case 11: return { display: "",     isJoker: true  };
+    case 12: return { display: "J",    isJoker: false };
+    case 13: return { display: "Q",    isJoker: false };
+    case 14: return { display: "K",    isJoker: false };
+    default: return { display: String(value), isJoker: false };
+  }
+}
+
+export default function Card({ suit, value, onClick }: CardProps) {
   const baseStyle: React.CSSProperties = {
     width: "120px",
     height: "170px",
@@ -50,36 +48,38 @@ export default function Card({
     position: "relative",
   };
 
+  if (value === undefined) return null;
+
+  const { display, isJoker } = resolveCard(value);
+
   if (isJoker) {
     return (
-      <button
-        style={{ ...baseStyle, color: jokerColor }}
-        onClick={onClick}
-      >
-        <div>JOKER</div>
-        <div style={{ fontSize: "40px", textAlign: "center" }}>🃏</div>
-        <div style={{ transform: "rotate(180deg)" }}>JOKER</div>
+      <button style={{ ...baseStyle, color: "purple" }} onClick={onClick}>
+        <div style={{ display: "flex", flexDirection: "column", alignSelf: "flex-start" }}>
+          <div style={{ fontSize: "16px", lineHeight: 1 }}>Joker</div>
+        </div>
+        <img src={JokerImage} alt="Joker" style={{ width: "100%", height: "70px", objectFit: "cover", borderRadius: "6px" }} />
+        <div style={{ display: "flex", flexDirection: "column", transform: "rotate(180deg)", alignSelf: "flex-end" }}>
+          <div style={{ fontSize: "16px", lineHeight: 1 }}>Joker</div>
+        </div>
       </button>
     );
   }
 
-  if (!suit || !value) return null;
+  if (!suit) return null;
 
   const { Icon, color } = suitData[suit];
 
-    return (
-        <button style={{ ...baseStyle, color }} onClick={onClick}>
-        {/* Top-left */}
-        <div style={{ display: "flex", flexDirection: "column", alignSelf: "flex-start" }}>
-        <div style={{ fontSize: "16px", lineHeight: 1 }}>{value}</div>
-        <Icon size={26} />
-        </div>
-
-        {/* Bottom-right */}
-        <div style={{ display: "flex", flexDirection: "column", transform: "rotate(180deg)", alignSelf: "flex-end" }}>
-            <div style={{ fontSize: "16px", lineHeight: 1 }}>{value}</div>
-            <Icon size={26} />
-        </div>
-        </button>
-    );
+  return (
+    <button style={{ ...baseStyle, color }} onClick={onClick}>
+      <div style={{ display: "flex", flexDirection: "column", alignSelf: "flex-start" }}>
+        <div style={{ fontSize: "16px", lineHeight: 1 }}>{display}</div>
+        <Icon size={24} />
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", transform: "rotate(180deg)", alignSelf: "flex-end" }}>
+        <div style={{ fontSize: "16px", lineHeight: 1 }}>{display}</div>
+        <Icon size={24} />
+      </div>
+    </button>
+  );
 }

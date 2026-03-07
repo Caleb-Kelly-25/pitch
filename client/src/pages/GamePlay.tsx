@@ -96,7 +96,8 @@ export default function GamePlay() {
       </div>
       <div style={styles.main}>
         <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
-        <Card suit="hearts" value="A" /> {/* Example of using the Card component */}
+        <Card suit="HEARTS" value={1} /> {/* Example of using the Card component */}
+        <Card value = {11}  /> {/* Example of a black joker */}
       </div>
     </div>
   );
