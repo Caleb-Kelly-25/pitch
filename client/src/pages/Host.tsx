@@ -16,18 +16,6 @@ const styles: Record<string, React.CSSProperties> = {
     left: 0,
     overflow: "hidden",
   },
-  topBar: {
-    backgroundColor: "#c9c0b8",
-    padding: "18px 16px", 
-    display: "flex",
-    alignItems: "center",
-  },
-  homeIcon: {
-    fontSize: "22px",
-    color: "#3d2b24",
-    cursor: "pointer",
-    lineHeight: 1,
-  },
    main: {
     flex: 1,
     backgroundColor: "#7d2a2a",

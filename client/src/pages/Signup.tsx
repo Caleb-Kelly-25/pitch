@@ -20,12 +20,6 @@ const styles: Record<string, React.CSSProperties> = {
     left: 0,
     overflow: "hidden",
   },
-  topBar: {
-    backgroundColor: "#c9c0b8",
-    padding: "18px 16px",
-    display: "flex",
-    alignItems: "center",
-  },
   main: {
     flex: 1,
     backgroundColor: "#7d2a2a",
