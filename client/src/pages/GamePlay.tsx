@@ -2,6 +2,7 @@ import Card from "../components/Card";
 import HandOfCards from "../components/HandOfCards";
 import Table from "../components/Table";
 import TopBar from "../components/TopBar";
+import BackOfCard from "../assets/BackOfCard.png";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -37,51 +38,84 @@ const styles: Record<string, React.CSSProperties> = {
     width: "200px",              // Fixed width
     height: "300px",             // Fixed height
     objectFit: "cover"           // Keep aspect ratio
-  }
+  },
+      table: {
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "transparent",
+        overflow: "hidden",
+},
+playerTop: {
+    position: "absolute",
+    top: "10%",
+    left: "50%",
+    transform: "translateX(-50%)",
+},
+playerBottom: {
+    position: "absolute",
+    bottom: "10%",
+    left: "50%",
+    transform: "translateX(-50%)",
+},
+playerLeft: {
+    position: "absolute",
+    top: "50%",
+    left: "10%",
+    transform: "translateY(-50%)",
+},
+playerRight: {
+    position: "absolute",
+    top: "50%",
+    right: "10%",
+    transform: "translateY(-50%)",
+}
 };
 
 export default function GamePlay() {
   return (
     <div style={styles.wrapper}>
       <TopBar varient="withBackBtn"></TopBar>
-      <div style={styles.main}>
-        {/* Game Play Content will go here */}
-        {/* <img src={car} alt="This is a car image" /> {/* Use the image  */}     
-        <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
-        <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
-        <Card suit="HEARTS" value={1} /> {/* Example of using the Card component */}
-        <Card value = {11}  /> {/* Example of a black joker */}
-        
-        \ {/* <HandOfCards cards={[
-          { suit: "HEARTS", value: 1 },
-          { suit: "SPADES", value: 13 },]} /> 
-        <HandOfCards count={6} /> */}
-        <Table>
 
-          <div className="player-top">
-            <HandOfCards count={5} />
+       
+        <div style = {styles.table}>
+            <div style = {styles.playerTop}>
+              <HandOfCards cards={[
+                { suit: "HEARTS", value: 1 },
+            { suit: "SPADES", value: 13 },
+            { suit: "DIAMONDS", value: 10 },
+            { suit: "CLUBS", value: 7 },
+            { suit: "HEARTS", value: 13 }]} />
+           </div>
+
+            <div style = {styles.playerLeft}>
+              <HandOfCards cards={[
+                { suit: "HEARTS", value: 1 },
+            { suit: "SPADES", value: 13 },
+            { suit: "DIAMONDS", value: 10 },
+            { suit: "CLUBS", value: 7 },
+            { suit: "HEARTS", value: 13 }]} />
+           </div>
+
+            <div style = {styles.playerRight}>
+              <HandOfCards cards={[
+                { suit: "HEARTS", value: 1 },
+            { suit: "SPADES", value: 13 },
+            { suit: "DIAMONDS", value: 10 },
+            { suit: "CLUBS", value: 7 },
+            { suit: "HEARTS", value: 13 }]} />
+            </div>
+
+            <div style = {styles.playerBottom}>
+              <HandOfCards cards={[
+            { suit: "HEARTS", value: 1 },
+            { suit: "SPADES", value: 13 },
+            { suit: "DIAMONDS", value: 10 },
+            { suit: "CLUBS", value: 7 },
+            { suit: "HEARTS", value: 13 }]} />
+            </div>
           </div>
+        </div>
 
-          <div className="player-left">
-            <HandOfCards count={5} />
-          </div>
-
-          <div className="player-right">
-            <HandOfCards count={5} />
-          </div>
-
-          <div className="player-bottom">
-            <HandOfCards cards={[
-          { suit: "HEARTS", value: 1 },
-          { suit: "SPADES", value: 13 },
-          { suit: "DIAMONDS", value: 10 },
-          { suit: "CLUBS", value: 7 },
-          { suit: "HEARTS", value: 13 }]} />
-          </div>
-
-</Table>
-        
-      </div>
-    </div>
   );
 }
