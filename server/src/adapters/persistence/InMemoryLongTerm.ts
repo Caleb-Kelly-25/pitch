@@ -4,6 +4,9 @@ import ILongTermStoragePort from "../../ports/ILongTermStoragePort";
 // In-memory implementation of the long-term storage adapter
 // This is the mock implementation for testing purposes.
 export default class InMemoryLongTermStorageAdapter implements ILongTermStoragePort {
+    findById(id: string): Promise<User | null> {
+        throw new Error("Method not implemented.");
+    }
     private users: Map<string, User> = new Map<string, User>();
     
     getUserById(id: string): Promise<User | null> {
@@ -17,6 +20,16 @@ export default class InMemoryLongTermStorageAdapter implements ILongTermStorageP
 
     getAllUsers(): Promise<User[]> {
         return Promise.resolve(Array.from(this.users.values()));
+    }
+
+    async findByUsername(username: string): Promise<User | null> {
+        for (const user of this.users.values()) {
+            if (user.username === username) {
+                return Promise.resolve(user);
+            }
+        }
+
+        return Promise.resolve(new User("id123", username, username, "", null));
     }
 
     deleteUser(id: string): Promise<void> {
