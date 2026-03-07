@@ -19,17 +19,17 @@ export class ViewUpdate {
     //Who has played which cards (maybe just show the cards that have been played in the view and not in the hand)
     SeatsAndTheirPlayedCards: { seat: number, cards: string[] }[];
 
-    constructor(seatOneNumberCards: number, seatTwoNumberCards: number, seatThreeNumberCards: number, seatFourNumberCards: number, seatOfPlayer: number, whoseTurn: number, winningBid: number, pointsUsHas: number, pointsThemHas: number, seatsAndTheirBids: { seat: number, bid: number }[], seatsAndTheirPlayedCards: { seat: number, cards: string[] }[]) {
-        this.SeatOneNumberCards = seatOneNumberCards;
-        this.SeatTwoNumberCards = seatTwoNumberCards;
-        this.SeatThreeNumberCards = seatThreeNumberCards;
-        this.SeatFourNumberCards = seatFourNumberCards;
-        this.SeatOfPlayer = seatOfPlayer;
-        this.WhoseTurn = whoseTurn;
-        this.WinningBid = winningBid;
-        this.PointsUsHas = pointsUsHas;
-        this.PointsThemHas = pointsThemHas;
-        this.SeatsAndTheirBids = seatsAndTheirBids;
-        this.SeatsAndTheirPlayedCards = seatsAndTheirPlayedCards;
+    constructor(SeatOfPlayer: number, SeatOneNumberCards: number, SeatTwoNumberCards: number, SeatThreeNumberCards: number, SeatFourNumberCards: number, WhoseTurn: number, WinningBid: number, PointsUsHas: number, PointsThemHas: number, SeatsAndTheirBids: { seat: number, bid: number }[], SeatsAndTheirPlayedCards: { seat: number, cards: string[] }[]) {
+        this.SeatOfPlayer = SeatOfPlayer;
+        this.SeatOneNumberCards = SeatOneNumberCards;
+        this.SeatTwoNumberCards = SeatTwoNumberCards;
+        this.SeatThreeNumberCards = SeatThreeNumberCards;
+        this.SeatFourNumberCards = SeatFourNumberCards;
+        this.WhoseTurn = WhoseTurn;
+        this.WinningBid = WinningBid;
+        this.PointsUsHas = PointsUsHas;
+        this.PointsThemHas = PointsThemHas;
+        this.SeatsAndTheirBids = SeatsAndTheirBids;
+        this.SeatsAndTheirPlayedCards = SeatsAndTheirPlayedCards;
     }
 }

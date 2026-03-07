@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../auth/useAuth";
-import { connectSocket } from "../socket/socket";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router-dom";
+import useNavigate from "../socket/socket.ts";
 import cardsLogo from "../assets/5_card_logo.png";
 // import { Home } from "lucide-react";
 import { Settings } from "lucide-react";
@@ -101,32 +99,32 @@ const styles: Record<string, React.CSSProperties> = {
   }
 };
 
-export default function Game() {
-  const { token } = useAuth();
-  const [textMsg, setTextMsg] = useState("Waiting...");
+export default function LandingPage() {
+  // const { token } = useAuth();
+  // const [textMsg, setTextMsg] = useState("Waiting...");
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!token) return;
+  // useEffect(() => {
+  //   if (!token) return;
 
-    setTextMsg(JSON.stringify(token));
+  //   setTextMsg(JSON.stringify(token));
 
-    const socket = connectSocket(token);
+  //   const socket = connectSocket(token);
 
-    socket.on("Message", (msg: string) => {
-        setTextMsg(msg);
-    })
+  //   socket.on("Message", (msg: string) => {
+  //       setTextMsg(msg);
+  //   })
 
-    socket.on("connect", () => {
-      console.log("Connected to game server");
-      socket.emit("joinGame", "default-game");
-    });
+  //   socket.on("connect", () => {
+  //     console.log("Connected to game server");
+  //     socket.emit("joinGame", "default-game");
+  //   });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [token]);
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, [token]);
 
   return (
     <div style={styles.wrapper}>
@@ -170,7 +168,7 @@ export default function Game() {
            <div style={styles.rightSection}>
             <div style={styles.optionBlock}>
               <h1 style={styles.optionTitle}>Host</h1>
-              <button style={styles.button} onClick={() => navigate("/host")}>
+              <button style={styles.button} onClick={() => sockets.navigate("/host")}>
                 Create Game
               </button>
             </div>
