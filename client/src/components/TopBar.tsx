@@ -87,6 +87,7 @@ function withBackBtnTopBar() {
          />
       </div>);
 }
+
 export default function TopBar({varient}: {varient: "empty" | "withBackBtn" | "withoutBackBtn" }){ 
    
     if (varient === "empty") return emptyTopBar();

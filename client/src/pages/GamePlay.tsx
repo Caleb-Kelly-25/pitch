@@ -1,6 +1,7 @@
 import BackOfCard from "../assets/BackOfCard.png";
 import Card from "../components/Card";
 import HandOfCards from "../components/HandOfCards";
+import Table from "../components/Table";
 import TopBar from "../components/TopBar";
 
 const styles: Record<string, React.CSSProperties> = {
@@ -12,7 +13,7 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
     padding: 0,
     fontFamily: "'Georgia', serif",
-    backgroundColor: "#f0ebe5",
+    backgroundColor: "#7d2a2a",
     position: "fixed" as const,
     top: 0,
     left: 0,
@@ -45,9 +46,34 @@ export default function GamePlay() {
     <div style={styles.wrapper}>
       <TopBar varient="withBackBtn"></TopBar>
       <div style={styles.main}>
-        <HandOfCards cards={[
+        {/* <HandOfCards cards={[
           { suit: "HEARTS", value: 1 },
           { suit: "SPADES", value: 13 },]} /> 
+        <HandOfCards count={6} /> */}
+        <Table>
+
+          <div className="player-top">
+            <HandOfCards count={5} />
+          </div>
+
+          <div className="player-left">
+            <HandOfCards count={5} />
+          </div>
+
+          <div className="player-right">
+            <HandOfCards count={5} />
+          </div>
+
+          <div className="player-bottom">
+            <HandOfCards cards={[
+          { suit: "HEARTS", value: 1 },
+          { suit: "SPADES", value: 13 },
+          { suit: "DIAMONDS", value: 10 },
+          { suit: "CLUBS", value: 7 },
+          { suit: "HEARTS", value: 13 }]} />
+          </div>
+
+</Table>
         
       </div>
     </div>
