@@ -3,6 +3,7 @@ import HandOfCards from "../components/HandOfCards";
 import Table from "../components/Table";
 import TopBar from "../components/TopBar";
 import BackOfCard from "../assets/BackOfCard.png";
+import PlayerSeat from "../components/PlayerSeat";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -78,44 +79,49 @@ export default function GamePlay() {
       <TopBar varient="withBackBtn"></TopBar>
 
        
-        <div style = {styles.table}>
-            <div style = {styles.playerTop}>
-              <HandOfCards cards={[
-                { suit: "HEARTS", value: 1 },
-            { suit: "SPADES", value: 13 },
-            { suit: "DIAMONDS", value: 10 },
-            { suit: "CLUBS", value: 7 },
-            { suit: "HEARTS", value: 13 }]} />
-           </div>
-
-            <div style = {styles.playerLeft}>
-              <HandOfCards cards={[
-                { suit: "HEARTS", value: 1 },
-            { suit: "SPADES", value: 13 },
-            { suit: "DIAMONDS", value: 10 },
-            { suit: "CLUBS", value: 7 },
-            { suit: "HEARTS", value: 13 }]} />
-           </div>
-
-            <div style = {styles.playerRight}>
-              <HandOfCards cards={[
-                { suit: "HEARTS", value: 1 },
-            { suit: "SPADES", value: 13 },
-            { suit: "DIAMONDS", value: 10 },
-            { suit: "CLUBS", value: 7 },
-            { suit: "HEARTS", value: 13 }]} />
-            </div>
-
-            <div style = {styles.playerBottom}>
-              <HandOfCards cards={[
+         <Table>
+        <PlayerSeat position="top">
+        <HandOfCards cards={[
             { suit: "HEARTS", value: 1 },
             { suit: "SPADES", value: 13 },
             { suit: "DIAMONDS", value: 10 },
             { suit: "CLUBS", value: 7 },
-            { suit: "HEARTS", value: 13 }]} />
-            </div>
-          </div>
-        </div>
+            { suit: "HEARTS", value: 13 }]}/>
+            </PlayerSeat>
+        <PlayerSeat position="left">
+        <HandOfCards cards={[
+            { suit: "HEARTS", value: 1 },
+            { suit: "SPADES", value: 13 },
+            { suit: "DIAMONDS", value: 10 },
+            { suit: "CLUBS", value: 7 },
+            { suit: "HEARTS", value: 13 }]}/>
+            </PlayerSeat>
+
+      <PlayerSeat position="right"> 
+        <HandOfCards cards={[
+            { suit: "HEARTS", value: 1 },
+            { suit: "SPADES", value: 13 },
+            { suit: "DIAMONDS", value: 10 },
+            { suit: "CLUBS", value: 7 },
+            { suit: "HEARTS", value: 13 }]}/>
+            </PlayerSeat>
+
+      <PlayerSeat position="bottom">
+        <HandOfCards cards={[
+            { suit: "HEARTS", value: 1 },
+            { suit: "SPADES", value: 13 },
+            { suit: "DIAMONDS", value: 10 },
+            { suit: "CLUBS", value: 7 },
+            { suit: "HEARTS", value: 13 }]}/>
+            </PlayerSeat>
+
+      <div className="center-table">
+        {/* played cards will go here later */}
+      </div>
+    </Table>
+    </div>
+
+       
 
   );
 }
