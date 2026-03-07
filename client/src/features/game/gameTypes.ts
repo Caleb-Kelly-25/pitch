@@ -14,9 +14,7 @@ export interface GameState {
     bidding: {
         currentBidderId: string;
         highestBidderId: string;
-        bids: {
-            playerId: number | "pass";
-        }
+        bids: (number | "pass" | null)[]
     }
 
     trickNumber: number;
