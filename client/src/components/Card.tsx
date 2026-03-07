@@ -1,6 +1,8 @@
 import React from "react";
 import { Heart, Diamond, Club, Spade } from "lucide-react";
-import JokerImage from "../assets/Firestone_Headshot.png";
+// import JokerImage from "../assets/Firestone_Headshot.png";
+import JokerImage from "../assets/people-headshot-justin-firestone.jpg";
+
 
 type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
 
