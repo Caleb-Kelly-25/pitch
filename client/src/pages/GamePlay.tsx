@@ -1,8 +1,3 @@
-// import { Home } from "lucide-react"
-import { X } from "lucide-react"
-import { Settings } from "lucide-react";
-import { Info } from "lucide-react";
-import { ChartNoAxesColumnIncreasing } from "lucide-react";
 import BackOfCard from "../assets/BackOfCard.png";
 import Card from "../components/Card";
 import TopBar from "../components/TopBar";
@@ -56,49 +51,10 @@ const styles: Record<string, React.CSSProperties> = {
   }
 };
 
-function wantToLeave(){
-    const confirmLeave = window.confirm("Are you sure you want to leave the game? Your progress will be lost.");
-    if (confirmLeave) {
-      window.history.back();
-    }
-}
-
-function displayTopBar(){
-  return (<div style={styles.topBar}>
-        <X
-          size={45}
-          color="#3d2b24"
-          style={{cursor: "pointer"}}
-          onClick={wantToLeave}
-        />
-        {/* Will be used to show stats Page*/}
-         <ChartNoAxesColumnIncreasing
-          size={45}
-          color="#3d2b24"
-          style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
-         />
-         {/* Will be used to show info Page (Tutorial) */}
-        <Info
-          size={45}
-          color="#3d2b24"
-          style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
-         />
-         {/* Will be used to show settings Page*/}
-         <Settings
-          size={45}
-          color="#3d2b24"
-          style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
-         />
-      </div>)
-}
-
 export default function GamePlay() {
   return (
     <div style={styles.wrapper}>
-      <TopBar></TopBar>
+      <TopBar varient="withBackBtn"></TopBar>
       <div style={styles.main}>
         {/* Game Play Content will go here */}
         {/* <img src={car} alt="This is a car image" /> {/* Use the image  */}     

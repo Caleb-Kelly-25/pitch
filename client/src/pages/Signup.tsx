@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import cardsLogo from "../assets/5_card_logo.png";
+import TopBar from "../components/TopBar";
 // import { Home } from "lucide-react";
 
 const styles: Record<string, React.CSSProperties> = {
@@ -173,9 +174,7 @@ export default function Signup() {
   return (
     <div style={styles.wrapper}>
       {/* Top nav bar */}
-      <div style={styles.topBar}>
-
-      </div>
+      <TopBar varient="empty"></TopBar>
 
       {/* Main content */}
       <div style={styles.main}>
