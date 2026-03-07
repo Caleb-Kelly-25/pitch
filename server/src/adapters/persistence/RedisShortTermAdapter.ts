@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { RedisClientType } from "redis";
 
 export class RedisShortTermAdapter implements IShortTermStoragePort {
-    private redisClient: RedisClientType;
+    private redisClient: RedisClientType<any, any, any>;
 
-    constructor(redisClient: RedisClientType) {
+    constructor(redisClient: RedisClientType<any, any, any>) {
         this.redisClient = redisClient;
     }
 
