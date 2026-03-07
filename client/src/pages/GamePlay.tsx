@@ -4,6 +4,7 @@ import { Settings } from "lucide-react";
 import { Info } from "lucide-react";
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
 import BackOfCard from "../assets/BackOfCard.png";
+import Card from "../components/Card";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -97,6 +98,9 @@ export default function GamePlay() {
         {/* Game Play Content will go here */}
         {/* <img src={car} alt="This is a car image" /> {/* Use the image  */}     
         <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
+        <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
+        <Card suit="HEARTS" value={1} /> {/* Example of using the Card component */}
+        <Card value = {11}  /> {/* Example of a black joker */}
       </div>
     </div>
   );
