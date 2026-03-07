@@ -1,0 +1,85 @@
+import React from "react";
+import { Heart, Diamond, Club, Spade } from "lucide-react";
+import JokerImage from "../assets/Firestone_Headshot.png";
+
+type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
+
+interface CardProps {
+  suit?: Suit;
+  value?: number; // 1=A, 2-10, 11=Joker, 12=J, 13=Q, 14=K
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+}
+
+const suitData: Record<
+  Suit,
+  { Icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; color: string }
+> = {
+  HEARTS: { Icon: Heart, color: "red" },
+  DIAMONDS: { Icon: Diamond, color: "red" },
+  CLUBS: { Icon: Club, color: "black" },
+  SPADES: { Icon: Spade, color: "black" },
+};
+
+function resolveCard(value: number): { display: string; isJoker: boolean } {
+  switch (value) {
+    case 1:  return { display: "A",    isJoker: false };
+    case 11: return { display: "",     isJoker: true  };
+    case 12: return { display: "J",    isJoker: false };
+    case 13: return { display: "Q",    isJoker: false };
+    case 14: return { display: "K",    isJoker: false };
+    default: return { display: String(value), isJoker: false };
+  }
+}
+
+export default function Card({ suit, value, onClick }: CardProps) {
+  const baseStyle: React.CSSProperties = {
+    width: "120px",
+    height: "170px",
+    borderRadius: "12px",
+    border: "2px solid #222",
+    backgroundColor: "white",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    padding: "10px",
+    cursor: "pointer",
+    boxShadow: "2px 4px 8px rgba(0,0,0,0.2)",
+    fontFamily: "serif",
+    position: "relative",
+  };
+
+  if (value === undefined) return null;
+
+  const { display, isJoker } = resolveCard(value);
+
+  if (isJoker) {
+    return (
+      <button style={{ ...baseStyle, color: "purple" }} onClick={onClick}>
+        <div style={{ display: "flex", flexDirection: "column", alignSelf: "flex-start" }}>
+          <div style={{ fontSize: "16px", lineHeight: 1 }}>Joker</div>
+        </div>
+        <img src={JokerImage} alt="Joker" style={{ width: "100%", height: "70px", objectFit: "cover", borderRadius: "6px" }} />
+        <div style={{ display: "flex", flexDirection: "column", transform: "rotate(180deg)", alignSelf: "flex-end" }}>
+          <div style={{ fontSize: "16px", lineHeight: 1 }}>Joker</div>
+        </div>
+      </button>
+    );
+  }
+
+  if (!suit) return null;
+
+  const { Icon, color } = suitData[suit];
+
+  return (
+    <button style={{ ...baseStyle, color }} onClick={onClick}>
+      <div style={{ display: "flex", flexDirection: "column", alignSelf: "flex-start" }}>
+        <div style={{ fontSize: "16px", lineHeight: 1 }}>{display}</div>
+        <Icon size={24} />
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", transform: "rotate(180deg)", alignSelf: "flex-end" }}>
+        <div style={{ fontSize: "16px", lineHeight: 1 }}>{display}</div>
+        <Icon size={24} />
+      </div>
+    </button>
+  );
+}
