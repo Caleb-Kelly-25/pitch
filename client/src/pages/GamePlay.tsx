@@ -89,12 +89,7 @@ export default function GamePlay() {
             { suit: "HEARTS", value: 13 }]}/>
             </PlayerSeat>
         <PlayerSeat position="left">
-        <HandOfCards cards={[
-            { suit: "HEARTS", value: 1 },
-            { suit: "SPADES", value: 13 },
-            { suit: "DIAMONDS", value: 10 },
-            { suit: "CLUBS", value: 7 },
-            { suit: "HEARTS", value: 13 }]}/>
+        <HandOfCards count = {6}/>
             </PlayerSeat>
 
       <PlayerSeat position="right"> 
