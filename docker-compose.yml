@@ -17,19 +17,19 @@ services:
     volumes:
       - mongo-data:/data/db
   
-  frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile.dev
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./client:/app
-      - /app/node_modules
-    environment:
-      - ./client/.env
-    depends_on:
-      - backend
+  # frontend:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - "5173:5173"
+  #   volumes:
+  #     - ./client:/app
+  #     - /app/node_modules
+  #   environment:
+  #     - ./client/.env
+  #   depends_on:
+  #     - backend
 
 volumes:
   mongo-data:

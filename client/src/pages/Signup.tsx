@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../api/auth";
-import { useAuth } from "../auth/useAuth";
+import { useAuth } from "../features/auth/useAuth";
 import cardsLogo from "../assets/5_card_logo.png";
 // import { Home } from "lucide-react";
 
@@ -142,7 +141,7 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const { login: saveToken } = useAuth();
+  const { signup: submitSignup } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -164,8 +163,7 @@ export default function Signup() {
   async function handleSubmit() {
     setError(null);
     try {
-      const { token } = await signup(username, password);
-      saveToken(token);
+      await submitSignup(username, password);
       navigate("/LandingPage");
     } catch (err: any) {
       setError(err.message);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../auth/useAuth";
-import { connectSocket } from "../socket/socket";
+import { useAuth } from "../features/auth/useAuth";
+import { connectSocket } from "../sockets/socket";
 import { useNavigate } from "react-router";
 import cardsLogo from "../assets/5_card_logo.png";
 // import { Home } from "lucide-react";
@@ -104,28 +104,13 @@ const styles: Record<string, React.CSSProperties> = {
 export default function Game() {
   const { token } = useAuth();
   const [textMsg, setTextMsg] = useState("Waiting...");
+  textMsg;
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!token) return;
-
-    setTextMsg(JSON.stringify(token));
-
-    const socket = connectSocket(token);
-
-    socket.on("Message", (msg: string) => {
-        setTextMsg(msg);
-    })
-
-    socket.on("connect", () => {
-      console.log("Connected to game server");
-      socket.emit("joinGame", "default-game");
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+    connectSocket(token);
   }, [token]);
 
   return (
