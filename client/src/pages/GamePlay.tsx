@@ -52,6 +52,35 @@ export default function GamePlay() {
         <Card suit="HEARTS" value={1} /> {/* Example of using the Card component */}
         <Card value = {11}  /> {/* Example of a black joker */}
         
+        \ {/* <HandOfCards cards={[
+          { suit: "HEARTS", value: 1 },
+          { suit: "SPADES", value: 13 },]} /> 
+        <HandOfCards count={6} /> */}
+        <Table>
+
+          <div className="player-top">
+            <HandOfCards count={5} />
+          </div>
+
+          <div className="player-left">
+            <HandOfCards count={5} />
+          </div>
+
+          <div className="player-right">
+            <HandOfCards count={5} />
+          </div>
+
+          <div className="player-bottom">
+            <HandOfCards cards={[
+          { suit: "HEARTS", value: 1 },
+          { suit: "SPADES", value: 13 },
+          { suit: "DIAMONDS", value: 10 },
+          { suit: "CLUBS", value: 7 },
+          { suit: "HEARTS", value: 13 }]} />
+          </div>
+
+</Table>
+        
       </div>
     </div>
   );
