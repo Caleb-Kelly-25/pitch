@@ -1,4 +1,3 @@
-import BackOfCard from "../assets/BackOfCard.png";
 import Card from "../components/Card";
 import HandOfCards from "../components/HandOfCards";
 import Table from "../components/Table";
@@ -46,34 +45,12 @@ export default function GamePlay() {
     <div style={styles.wrapper}>
       <TopBar varient="withBackBtn"></TopBar>
       <div style={styles.main}>
-        {/* <HandOfCards cards={[
-          { suit: "HEARTS", value: 1 },
-          { suit: "SPADES", value: 13 },]} /> 
-        <HandOfCards count={6} /> */}
-        <Table>
-
-          <div className="player-top">
-            <HandOfCards count={5} />
-          </div>
-
-          <div className="player-left">
-            <HandOfCards count={5} />
-          </div>
-
-          <div className="player-right">
-            <HandOfCards count={5} />
-          </div>
-
-          <div className="player-bottom">
-            <HandOfCards cards={[
-          { suit: "HEARTS", value: 1 },
-          { suit: "SPADES", value: 13 },
-          { suit: "DIAMONDS", value: 10 },
-          { suit: "CLUBS", value: 7 },
-          { suit: "HEARTS", value: 13 }]} />
-          </div>
-
-</Table>
+        {/* Game Play Content will go here */}
+        {/* <img src={car} alt="This is a car image" /> {/* Use the image  */}     
+        <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
+        <img src={BackOfCard} alt="Back of Card" style={styles.cardImage} /> {/* Example card image */}
+        <Card suit="HEARTS" value={1} /> {/* Example of using the Card component */}
+        <Card value = {11}  /> {/* Example of a black joker */}
         
       </div>
     </div>

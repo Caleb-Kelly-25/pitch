@@ -2,6 +2,7 @@ import React from "react";
 import { Heart, Diamond, Club, Spade } from "lucide-react";
 // import JokerImage from "../assets/Firestone_Headshot.png";
 import JokerImage from "../assets/people-headshot-justin-firestone.jpg";
+import BackOfCard from "../assets/BackOfCard.png"
 
 
 type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
@@ -9,6 +10,7 @@ type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
 interface CardProps {
   suit?: Suit;
   value?: number; // 1=A, 2-10, 11=Joker, 12=J, 13=Q, 14=K
+  faceDown?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -22,7 +24,7 @@ const suitData: Record<
   SPADES: { Icon: Spade, color: "black" },
 };
 
-function resolveCard(value: number): { display: string; isJoker: boolean } {
+function resolveCard(value: number): { display: string; isJoker: boolean; } {
   switch (value) {
     case 1:  return { display: "A",    isJoker: false };
     case 11: return { display: "",     isJoker: true  };
@@ -33,7 +35,7 @@ function resolveCard(value: number): { display: string; isJoker: boolean } {
   }
 }
 
-export default function Card({ suit, value, onClick }: CardProps) {
+export default function Card({ suit, value, faceDown = false, onClick }: CardProps) {
   const baseStyle: React.CSSProperties = {
     width: "120px",
     height: "170px",
@@ -49,6 +51,21 @@ export default function Card({ suit, value, onClick }: CardProps) {
     fontFamily: "serif",
     position: "relative",
   };
+
+    if (faceDown) {
+    return (
+      <button
+        style={{ ...baseStyle, padding: 0, overflow: "hidden" }}
+        onClick={onClick}
+      >
+        <img
+          src={BackOfCard}
+          alt="Card back"
+          style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px" }}
+        />
+      </button>
+    );
+  }
 
   if (value === undefined) return null;
 
