@@ -5,6 +5,7 @@ import { Info } from "lucide-react";
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
 import BackOfCard from "../assets/BackOfCard.png";
 import Card from "../components/Card";
+import TopBar from "../components/TopBar";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -62,10 +63,8 @@ function wantToLeave(){
     }
 }
 
-export default function GamePlay() {
-  return (
-    <div style={styles.wrapper}>
-      <div style={styles.topBar}>
+function displayTopBar(){
+  return (<div style={styles.topBar}>
         <X
           size={45}
           color="#3d2b24"
@@ -93,7 +92,13 @@ export default function GamePlay() {
           style={{cursor: "pointer"}}
           onClick={() => window.history.back()}
          />
-      </div>
+      </div>)
+}
+
+export default function GamePlay() {
+  return (
+    <div style={styles.wrapper}>
+      <TopBar></TopBar>
       <div style={styles.main}>
         {/* Game Play Content will go here */}
         {/* <img src={car} alt="This is a car image" /> {/* Use the image  */}     
