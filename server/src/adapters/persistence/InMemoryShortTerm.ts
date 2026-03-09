@@ -22,5 +22,9 @@ export default class InMemoryShortTermStorageAdapter implements IShortTermStorag
         this.gameStates.delete(id);
         return Promise.resolve();
     }
+    updateGameState(gameState: GameState): Promise<void> {
+        this.gameStates.set(gameState.id, gameState);
+        return Promise.resolve();
+    }
     
 }

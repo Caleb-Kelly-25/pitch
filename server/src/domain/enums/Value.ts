@@ -9,7 +9,8 @@ export enum Value {
     EIGHT = 8,
     NINE = 9,
     TEN = 10,
-    JACK = 11,
-    QUEEN = 12,
-    KING = 13
+    JOKER = 11,
+    JACK = 12,
+    QUEEN = 13,
+    KING = 14
 }

@@ -1,6 +1,6 @@
 export interface GameState {
     gameId: string;
-    phase: "bidding" | "playing" | "scoring" | "waiting";
+    phase: "BIDDING" | "PLAYING"| "WAITING" | "COMPLETE";
     players: Player[];
     hand: CardModel[];
 
