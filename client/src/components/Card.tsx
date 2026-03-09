@@ -1,7 +1,7 @@
 import React from "react";
 import { Heart, Diamond, Club, Spade } from "lucide-react";
 // import JokerImage from "../assets/Firestone_Headshot.png";
-import JokerImage from "../assets/people-headshot-justin-firestone.jpg";
+import JokerImage from "../assets/Bob_Headshot.jpg";
 import BackOfCard from "../assets/BackOfCard.png"
 
 
