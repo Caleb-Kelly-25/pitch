@@ -80,28 +80,18 @@ export default function GamePlay() {
        
          <Table>
         <PlayerSeat position="top">
-        <HandOfCards cards={[
-            { faceDown: true },
-            { faceDown: true },
-            { suit: "SPADES", faceDown: true },
-            { suit: "CLUBS", value: 7 },
-            { suit: "HEARTS", value: 13 }]}/>
+        <HandOfCards count={5}/>
             </PlayerSeat>
         <PlayerSeat position="left">
-        <HandOfCards count = {6}/>
+        <HandOfCards count={5}/>
             </PlayerSeat>
 
       <PlayerSeat position="right"> 
-        <HandOfCards cards={[
-            { suit: "HEARTS", value: 1 },
-            { suit: "SPADES", value: 13 },
-            { suit: "DIAMONDS", value: 10 },
-            { suit: "CLUBS", value: 7 },
-            { suit: "HEARTS", value: 13 }]}/>
+        <HandOfCards count={5}/>
             </PlayerSeat>
 
       <PlayerSeat position="bottom">
-        <HandOfCards cards={[
+        <HandOfCards overlap = {110} cards={[
             { suit: "HEARTS", value: 1 },
             { suit: "SPADES", value: 13 },
             { suit: "DIAMONDS", value: 10 },

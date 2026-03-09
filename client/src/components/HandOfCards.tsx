@@ -1,17 +1,17 @@
 import Card from "./Card";
 
-export default function HandOfCards({cards, count}) {
-   // If cards are provided, use them. Otherwise, create an array of nulls with length equal to count.
-    const items = cards ?? Array(count).fill(null);
+export default function HandOfCards({cards, count, overlap = 40}) {
+   const items = cards ?? Array(count).fill({ faceDown: true });
+   const totalWidth = 120 + (items.length - 1) * overlap;
 
     return (
-    <div style={{ position: "relative", height: "140px"}}>
+    <div style={{ position: "relative", height: "170px", width: `${totalWidth}px`, flexShrink: 0 }}>
         {items.map((card, index) => (
         <div
             key={index}
             style={{
             position: "absolute",
-            left: `${index * 40}px`, // Adjust the overlap by changing the multiplier
+            left: `${index * overlap}px`,
             }}
         >
             <Card suit={card?.suit} value={card?.value} faceDown={card?.faceDown} />
