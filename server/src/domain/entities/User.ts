@@ -11,7 +11,7 @@ export class User {
 
     constructor(id: string, name: string, email: string, password: string, photoUrl: string, gameId: GameId | null) {
         this.id = id;
-        this.username = username;
+        this.username = name;
         this.email = email;
         this.password = password;
         this.photoUrl = photoUrl;

@@ -8,7 +8,7 @@ export class MongoLongTermAdapter implements ILongTermStoragePort {
     async createUser(user: User): Promise<void> {
         await UserModel.create({
             id: user.id,
-            username: user.name, // Map 'name' from User entity to 'username' in MongoDB schema
+            username: user.username, // Map 'name' from User entity to 'username' in MongoDB schema
             email: user.email,
             password: user.password,
             photoUrl: user.photoUrl,
