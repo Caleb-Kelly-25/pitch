@@ -1,5 +1,4 @@
 import Card from "./Card";
-import BackOfCard from "../assets/BackOfCard.png";
 
 export default function HandOfCards({cards, count}) {
    // If cards are provided, use them. Otherwise, create an array of nulls with length equal to count.
@@ -15,7 +14,7 @@ export default function HandOfCards({cards, count}) {
             left: `${index * 40}px`, // Adjust the overlap by changing the multiplier
             }}
         >
-            <Card suit={card?.suit} value={card?.value} />
+            <Card suit={card?.suit} value={card?.value} faceDown={card?.faceDown} />
         </div>
         ))}
     </div>)
