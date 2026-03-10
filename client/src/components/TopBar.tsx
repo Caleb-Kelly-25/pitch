@@ -27,7 +27,14 @@ function wantToLeave(){
 }
 
 function emptyTopBar(){
-    return(<div style={styles.topBar}></div>);
+    return(<div style={styles.topBar}>
+      <Info
+          size={45}
+          color="#c9c0b8"
+          style={{cursor: "default"}}
+          onClick={undefined}
+         />
+    </div>);
 }
 
 function withoutBackBtnTopBar() {
