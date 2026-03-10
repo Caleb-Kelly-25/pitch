@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { User } from "../models/User";
+import { User } from "../domain/User";
 import { signToken } from "../auth/jwt";
 
 const router = Router();
