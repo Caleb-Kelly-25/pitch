@@ -5,7 +5,7 @@ import type { GameState, Player, CardModel } from "./gameTypes";
 
 const initialState: GameState = {
     gameId: "initialId",
-    phase: "waiting",
+    phase: "WAITING",
 
     players: ["playerId1", "playerId2", "playerId3", "playerId4"].map((id, index) => ({
         id: id,
@@ -28,12 +28,13 @@ const initialState: GameState = {
         bidding: {
             currentBidderId: "playerId2",
             highestBidderId: "playerId1",
-            bids: [0, null, null, null]
+            bids: [5, undefined, undefined, undefined]
         },
     
         trickNumber: 0,
-        leadSuit: "hearts",
-        scores: [0,1]
+        leadSuit: "HEARTS",
+        ourScore: 0,
+        theirScore: 1
 }
 
 export const gameSlice = createSlice({

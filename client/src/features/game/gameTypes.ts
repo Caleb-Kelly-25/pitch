@@ -6,20 +6,19 @@ export interface GameState {
 
     trick: {
         leadPlayerId: string;
-        playedCards: [
-            {playerId:string, card: CardModel}
-        ]
+        playedCards:{playerId:string, card: CardModel | undefined}[];
     }
 
     bidding: {
         currentBidderId: string;
         highestBidderId: string;
-        bids: (number | "pass" | null)[]
+        bids: (number | undefined)[];
     }
 
     trickNumber: number;
-    leadSuit: "hearts" | "diamonds" | "clubs" | "spades" | null;
-    scores: number[]
+    leadSuit: "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES" | null;
+    ourScore: number;
+    theirScore: number;
 }
 
 export interface Player {
