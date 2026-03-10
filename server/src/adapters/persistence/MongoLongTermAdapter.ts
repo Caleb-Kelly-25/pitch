@@ -8,7 +8,7 @@ export class MongoLongTermAdapter implements ILongTermStoragePort {
     async createUser(user: User): Promise<void> {
         await UserModel.create({
             id: user.id,
-            username: user.username, // Map 'name' from User entity to 'username' in MongoDB schema
+            username: user.username,
             email: user.email,
             password: user.password,
             photoUrl: user.photoUrl,
@@ -17,12 +17,20 @@ export class MongoLongTermAdapter implements ILongTermStoragePort {
 
     }
 
-    async getUserById(id: string): Promise<User | null> {
-        const userDoc = await UserModel.findOne({ id });
+    async findByUsername(username: string): Promise<User | null> {
+        const userDoc = await UserModel.findOne({ username });
         if (!userDoc) {
             return null;
         }
         return userDoc as User; // Type assertion to convert IUserDocument to User entity
+    }
+
+    async findById(id: string): Promise<User | null> {
+        const userDoc = await UserModel.findOne({ id });
+        if (!userDoc) {
+            return null;
+        }
+        return userDoc as User; 
     }
 
     async getAllUsers(): Promise<User[]> {
