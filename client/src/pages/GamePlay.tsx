@@ -53,6 +53,7 @@ export default function GamePlay() {
               { suit: "CLUBS", value: 7 },
               { suit: "HEARTS", value: 13 },
             ]}
+            count={5}
           />
         </PlayerSeat>
       </Table>

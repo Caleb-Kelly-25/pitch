@@ -5,7 +5,7 @@ import { setGameState } from "./gameSlice"
 export function registerGameSocketHandlers(socket: Socket) {
 
   socket.on("gameStateUpdate", (msg: any) => {
-    store.dispatch(setGameState(msg))
+    store.dispatch(setGameState(JSON.parse(msg)));
   })
 
 }

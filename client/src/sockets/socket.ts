@@ -3,7 +3,10 @@ import { registerGameSocketHandlers } from "../features/game/registerGameSocketH
 
 export let socket: Socket | null = null;
 
-export function connectSocket(token: string) {
+export function connectSocket(token: string): Socket {
+  if (socket) {
+    return socket;
+  }
 console.log("Connecting socket with token: ", token);
 
   socket = io("http://localhost:3000", {
@@ -15,4 +18,8 @@ console.log("Connecting socket with token: ", token);
   registerGameSocketHandlers(socket);
 
   return socket;
+}
+
+export function playCard(suit: string, value: string) {
+  socket?.emit("playCard", JSON.stringify({ suit, value }));
 }
