@@ -4,9 +4,7 @@ import { connectSocket } from "../sockets/socket";
 import { useNavigate } from "react-router";
 import cardsLogo from "../assets/5_card_logo.png";
 // import { Home } from "lucide-react";
-import { Settings } from "lucide-react";
-import { Info } from "lucide-react";
-import { ChartNoAxesColumnIncreasing } from "lucide-react";
+import TopBar from "../components/TopBar";
 
 
 const styles: Record<string, React.CSSProperties> = {
@@ -23,18 +21,6 @@ const styles: Record<string, React.CSSProperties> = {
     top: 0,
     left: 0,
     overflow: "hidden",
-  },
-  topBar: {
-    backgroundColor: "#c9c0b8",
-    padding: "18px 16px", 
-    display: "flex",
-    alignItems: "center",
-  },
-  homeIcon: {
-    fontSize: "22px",
-    color: "#3d2b24",
-    cursor: "pointer",
-    lineHeight: 1,
   },
   main: {
     flex: 1,
@@ -115,30 +101,7 @@ export default function Game() {
 
   return (
     <div style={styles.wrapper}>
-         {/* Top Nav Bar */}
-      <div style={styles.topBar}>
-        {/* Will be used to show stats Page*/}
-         <ChartNoAxesColumnIncreasing
-          size={45}
-          color="#3d2b24"
-          style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
-         />
-         {/* Will be used to show info Page (Tutorial) */}
-        <Info
-          size={45}
-          color="#3d2b24"
-          style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
-         />
-         {/* Will be used to show settings Page*/}
-         <Settings
-          size={45}
-          color="#3d2b24"
-          style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
-         />
-      </div>
+       <TopBar varient="withoutBackBtn"></TopBar>
           {/* Main Content */}
       <div style={(styles.main)}>
         {/* Left: Game title and logo */}

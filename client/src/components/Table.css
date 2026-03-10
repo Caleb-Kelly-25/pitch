@@ -1,0 +1,19 @@
+.table-grid {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  background: #7a342c;
+  overflow: hidden;
+}
+
+.center-table {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
