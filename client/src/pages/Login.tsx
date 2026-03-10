@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import cardsLogo from "../assets/5_card_logo.png";
 import { useAuth } from "../features/auth/useAuth";
+import TopBar from "../components/TopBar";
 // import { Home } from "lucide-react";
 
 const styles: Record<string, React.CSSProperties> = {
@@ -19,18 +20,6 @@ const styles: Record<string, React.CSSProperties> = {
     top: 0,
     left: 0,
     overflow: "hidden",
-  },
-  topBar: {
-    backgroundColor: "#c9c0b8",
-    padding: "18px 16px",
-    display: "flex",
-    alignItems: "center",
-  },
-  homeIcon: {
-    fontSize: "22px",
-    color: "#3d2b24",
-    cursor: "pointer",
-    lineHeight: 1,
   },
   main: {
     flex: 1,
@@ -181,8 +170,7 @@ export default function Login() {
   return (
     <div style={styles.wrapper}>
       {/* Top nav bar */}
-      <div style={styles.topBar}>
-      </div>
+      <TopBar varient="empty"></TopBar>
 
       {/* Main content */}
       <div style={styles.main}>

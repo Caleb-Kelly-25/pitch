@@ -1,0 +1,36 @@
+/* Each seat is absolutely positioned, centered on its edge, with cards peeking in */
+
+.player-seat {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Top: centered horizontally, cards peek down from top edge (~75% visible = translate up by 25% of card height ~42px) */
+.player-seat.top {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-25%) rotate(180deg);
+}
+
+/* Bottom: centered horizontally, cards peek up from bottom edge */
+.player-seat.bottom {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(35%);
+}
+
+/* Left: centered vertically, cards peek right from left edge */
+.player-seat.left {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(-35%) rotate(90deg);
+}
+
+/* Right: centered vertically, cards peek left from right edge */
+.player-seat.right {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(35%) rotate(-90deg);
+}

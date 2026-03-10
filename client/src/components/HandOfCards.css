@@ -1,0 +1,11 @@
+.hand {
+  display: flex;
+}
+
+.hand .card {
+  margin-left: -40px;
+}
+
+.hand .card:first-child {
+  margin-left: 0;
+}
