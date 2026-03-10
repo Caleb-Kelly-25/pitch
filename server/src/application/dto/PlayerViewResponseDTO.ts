@@ -2,6 +2,8 @@ import { PlayerId } from "../../types/id-declarations";
 import GameState from "../../domain/entities/GameState";
 import { Suit } from "../../domain/enums/Suit";
 import { Value } from "../../domain/enums/Value";
+import { Trick } from "../../domain/entities/Trick";
+import { Card } from "../../domain/entities/Card";
 
 export class PlayerViewResponseDTO {
     gameId: string = "";
@@ -14,11 +16,11 @@ export class PlayerViewResponseDTO {
     bidding: {
         currentBidderId: string;
         highestBidderId: string;
-        bids: (number | "pass" | null)[]
+        bids: (number)[]
     } = {currentBidderId:"", highestBidderId:"", bids:[]};
 
     trickNumber: number = 0;
-    leadSuit: "hearts" | "diamonds" | "clubs" | "spades" | null = null;
+    leadSuit: "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES" | null = null;
     scores: number[] = []
 
     constructor(){}
@@ -48,7 +50,7 @@ export class PlayerViewResponseDTO {
         return this;
     }
 
-    setBidding(bidding: {currentBidderId: string; highestBidderId: string; bids: (number | "pass" | null)[]}) {
+    setBidding(bidding: {currentBidderId: string; highestBidderId: string; bids: (number)[]}) {
         this.bidding = bidding;
         return this;
     }
@@ -58,7 +60,7 @@ export class PlayerViewResponseDTO {
         return this;
     }
 
-    setLeadSuit(leadSuit: "hearts" | "diamonds" | "clubs" | "spades" | null) {
+    setLeadSuit(leadSuit: "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES" | null) {
         this.leadSuit = leadSuit;
         return this;
     }
@@ -70,23 +72,27 @@ export class PlayerViewResponseDTO {
 
     static fromGameState(gameState: GameState, playerId: PlayerId) {
         const dto = new PlayerViewResponseDTO();
-        const playerCards = (gameState.players.find(p => p.id === playerId)?.hand.cards || []).map(c => ({suit: c.suit, value: c.value} as CardModel));
+        const playerCards = (gameState.players.find(p => p.id === playerId)?.hand.cards || []).map(c => (dtoFromCard(c)));
         dto.setGameId(gameState.id)
             .setPhase(gameState.handCycle.handCycleStatus)
             .setPlayers(gameState.players.map(p => ({
                 id: p.id,
-                username: p.name,
-                seat: p.seat,
-                team: p.team,
+                username: p.username,
+                seat: gameState.players.findIndex(p => p.id === playerId) + 1,
+                team: gameState.players.findIndex(p => p.id === playerId) % 2,
                 isDealer: p.isDealer,
                 isConnected: p.isConnected,
                 cardCount: p.hand.cards.length
             } as PlayerDTO)))
             .setHand(playerCards)
-            .setTrick(gameState.trick)
-            .setBidding(gameState.bidding)
-            .setTrickNumber(gameState.trickNumber)
-            .setLeadSuit(gameState.handCycle.trumpSuit)
+            .setTrick(dtoFromTrick(gameState.handCycle.trick))
+            .setBidding({
+        currentBidderId: gameState.handCycle.trick.playerTurn,
+        highestBidderId: gameState.players.find(p => p.currentBid==gameState.handCycle.bidAmount)?.id || "",
+        bids: gameState.players.map(p => p.currentBid ? p.currentBid : 0)
+    })
+            .setTrickNumber(gameState.handCycle.trick.roundNumber)
+            .setLeadSuit(modelSuitFromDomainSuit(gameState.handCycle.trumpSuit))
             .setScores([gameState.teamOneScore, gameState.teamTwoScore]);
 
         return dto;
@@ -105,18 +111,18 @@ export interface PlayerDTO {
 }
 
 
-function modelSuitFromDomainSuit(suit: string): ModelSuit {
+function modelSuitFromDomainSuit(suit: string): ModelSuit | null {
     switch (suit) {
         case Suit.HEARTS:
-            return "hearts";
+            return "HEARTS";
         case Suit.DIAMONDS:
-            return "diamonds";
+            return "DIAMONDS";
         case Suit.CLUBS:
-            return "clubs";
+            return "CLUBS";
         case Suit.SPADES:
-            return "spades";
+            return "SPADES";
         default:
-            throw new Error(`Invalid suit: ${suit}`);
+            return null;
     }
 }
 
@@ -138,9 +144,29 @@ function modelValueFromDomainValue(value: Value): ModelValue {
         }
     }
 }
-        
 
-type ModelSuit = "hearts" | "diamonds" | "clubs" | "spades";
+function dtoFromTrick(trick: Trick): TrickDTO {
+        const plays: {playerId: string, card: CardModel}[] = [];
+        for (const [playerId, card] of trick.cardsPlayed.entries()) {
+            plays.push({
+                playerId,
+                card: {
+                    suit: modelSuitFromDomainSuit(card?.suit || ""),
+                    value: modelValueFromDomainValue(card?.value || Value.ACE)
+                } as CardModel
+            });
+        }
+        return {
+            leadPlayerId: trick.startingPlayerId,
+            playedCards: plays
+        };
+}
+
+function dtoFromCard(card: Card): CardModel {
+    return {suit: modelSuitFromDomainSuit(card.suit), value: modelValueFromDomainValue(card.value)} as CardModel;
+}
+
+type ModelSuit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
 type ModelValue = "A" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K";
 export interface CardModel {
     suit: ModelSuit;
@@ -149,7 +175,6 @@ export interface CardModel {
 
 export interface TrickDTO {
     leadPlayerId: string;
-    playedCards: [
-        {playerId: string, card: CardModel}
-    ]
+    playedCards:{playerId: string, card: CardModel}[];
+    
 }

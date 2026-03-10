@@ -14,6 +14,7 @@ import JwtAuthAdapter from "./adapters/auth/JwtAuthAdapter";
 import WebSocketController from "./adapters/websockets/WebSocketController";
 import UserController from "./adapters/rest/UserController";
 import UserService from "./application/UserService";
+import {GameService} from "./application/GameService"
 
 
 const PORT_NUM = process.env.PORT || 3000;
@@ -48,7 +49,7 @@ const shortStorage = new RedisShortTermAdapter(storageClient); // InMemoryShortT
 const longStorage = new MongoLongTermAdapter(); // InMemoryLongTermStorageAdapter();
 const authAdapter = new JwtAuthAdapter();
 
-const wsController = new WebSocketController(wss, authAdapter);
+const wsController = new WebSocketController(wss, authAdapter, new GameService(shortStorage, longStorage, wsPublisher));
 const userController = new UserController(new UserService(longStorage), authAdapter);
 expressApp.use("/api", createRouter(userController));
 

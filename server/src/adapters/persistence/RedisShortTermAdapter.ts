@@ -11,6 +11,16 @@ export class RedisShortTermAdapter implements IShortTermStoragePort {
         this.redisClient = redisClient;
     }
 
+    async updateGameState(state: GameState): Promise<void> {
+        try {
+            const id = state.id;
+            const value = JSON.stringify(state);
+            await this.redisClient.set(id, value, {EX: 3600})
+        } catch (error) {
+            console.error(`[RedisAdapter] Error updating game ${state.id}:`, error);
+        }
+    }
+
     async createGameState(state: GameState): Promise<void> {
         try {
             const id = uuidv4(); // Use the game state ID as the Redis key

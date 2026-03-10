@@ -1,4 +1,5 @@
 import { Suit } from "../enums/Suit";
+import {Value} from "../enums/Value";
 import { Card } from "./Card";
 import { HandCycleStatus } from "../enums/HandCycleStatus";
 import { PlayerId } from "../../types/id-declarations";
@@ -27,12 +28,13 @@ export class HandCycle {
         this.trick = trick;
     }
 
-    canPlayCard(card: Card) {
+    canPlayCard(card: Card): boolean {
         if (this.handCycleStatus !== HandCycleStatus.PLAYING) {
             return false;
-        } else {
-            
+        } else if (card.suit !== this.trumpSuit && card.value!==Value.JACK && !card.equals(Card.jick(this.trumpSuit))) {
+            return false;
         }
+        return true;
     }
 
 
