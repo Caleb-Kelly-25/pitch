@@ -7,7 +7,7 @@ export default class UserService {
         this.userRepository = userRepository;
     }
 
-    async getUserById(id: string): Promise<User | null> {
+    async findById(id: string): Promise<User | null> {
         return this.userRepository.findById(id);
     }
 

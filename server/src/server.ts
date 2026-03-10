@@ -3,11 +3,13 @@ import express from "express"
 import http from "http"
 import cors from "cors"
 import { Server } from "socket.io"
-import { bootstrap, pubClient, subClient } from "./bootstrap";
+import { bootstrap, pubClient, subClient, storageClient } from "./bootstrap";
 import createRouter from "./adapters/rest/CreateRouter";
 import WSPublisherAdapter from "./adapters/websockets/WSPublisherAdapter";
 import InMemoryShortTermStorageAdapter from "./adapters/persistence/InMemoryShortTerm";
 import InMemoryLongTermStorageAdapter from "./adapters/persistence/InMemoryLongTerm";
+import { MongoLongTermAdapter } from "./adapters/persistence/MongoLongTermAdapter";
+import { RedisShortTermAdapter } from "./adapters/persistence/RedisShortTermAdapter";
 import JwtAuthAdapter from "./adapters/auth/JwtAuthAdapter";
 import WebSocketController from "./adapters/websockets/WebSocketController";
 import UserController from "./adapters/rest/UserController";
@@ -42,8 +44,8 @@ const wss = new Server(httpServer, {
 
 // Adapters
 const wsPublisher = new WSPublisherAdapter(wss);
-const shortStorage = new InMemoryShortTermStorageAdapter();
-const longStorage = new InMemoryLongTermStorageAdapter();
+const shortStorage = new RedisShortTermAdapter(storageClient); // InMemoryShortTermStorageAdapter();
+const longStorage = new MongoLongTermAdapter(); // InMemoryLongTermStorageAdapter();
 const authAdapter = new JwtAuthAdapter();
 
 const wsController = new WebSocketController(wss, authAdapter);
