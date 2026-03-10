@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../application/store"
-import type { GameState, Player, CardModel } from "./gameTypes";
+import type { GameState, Player} from "./gameTypes";
 
 const initialState: GameState = {
     gameId: "initialId",

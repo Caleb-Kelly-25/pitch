@@ -20,44 +20,44 @@ import {GameService} from "./application/GameService"
 const PORT_NUM = process.env.PORT || 3000;
 
 async function startServer() {
-// Connect to MongoDB and Redis
-await bootstrap();
+  // Connect to MongoDB and Redis
+  await bootstrap();
 
-// Create REST api server
-const expressApp = express();
-expressApp.use(express.json());
-expressApp.use(
-  cors({
-    origin: process.env.CLIENT_ORIGIN,
-    credentials: true,
-  })
-);
+  // Create REST api server
+  const expressApp = express();
+  expressApp.use(express.json());
+  expressApp.use(
+    cors({
+      origin: process.env.CLIENT_ORIGIN,
+      credentials: true,
+    })
+  );
 
-const httpServer = http.createServer(expressApp);
+  const httpServer = http.createServer(expressApp);
 
-// Create WebSocket server
-const wss = new Server(httpServer, {
-    cors: {
-        origin: process.env.CLIENT_ORIGIN,
-        methods: ["GET", "POST"],
-    },
-});
+  // Create WebSocket server
+  const wss = new Server(httpServer, {
+      cors: {
+          origin: process.env.CLIENT_ORIGIN,
+          methods: ["GET", "POST"],
+      },
+  });
 
-// Adapters
-const wsPublisher = new WSPublisherAdapter(wss);
-const shortStorage = new RedisShortTermAdapter(storageClient); // InMemoryShortTermStorageAdapter();
-const longStorage = new MongoLongTermAdapter(); // InMemoryLongTermStorageAdapter();
-const authAdapter = new JwtAuthAdapter();
+  // Adapters
+  const wsPublisher = new WSPublisherAdapter(wss);
+  const shortStorage = new RedisShortTermAdapter(storageClient); // InMemoryShortTermStorageAdapter();
+  const longStorage = new MongoLongTermAdapter(); // InMemoryLongTermStorageAdapter();
+  const authAdapter = new JwtAuthAdapter();
 
-const wsController = new WebSocketController(wss, authAdapter, new GameService(shortStorage, longStorage, wsPublisher));
-const userController = new UserController(new UserService(longStorage), authAdapter);
-expressApp.use("/api", createRouter(userController));
+  const wsController = new WebSocketController(wss, authAdapter, new GameService(shortStorage, longStorage, wsPublisher));
+  const userController = new UserController(new UserService(longStorage), authAdapter);
+  expressApp.use("/api", createRouter(userController));
 
 
-// Start Listening
-httpServer.listen(PORT_NUM, () => {
-    console.log(`Server listening on port ${PORT_NUM}`);
-});
+  // Start Listening
+  httpServer.listen(PORT_NUM, () => {
+      console.log(`Server listening on port ${PORT_NUM}`);
+  });
 }
 
 startServer().catch((err) => {
