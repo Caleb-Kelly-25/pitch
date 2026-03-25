@@ -128,13 +128,6 @@ export default function Game() {
                 Find Game
               </button>
             </div>
-
-            {/* <div style={styles.optionBlock}>
-              <h1 style={styles.optionTitle}>Private</h1>
-              <button style={styles.button} onClick={() => navigate("/join-private")}>
-                Join Game
-              </button>
-            </div> */}
         </div>
       </div>
     </div>  
