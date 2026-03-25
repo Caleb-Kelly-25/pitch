@@ -1,4 +1,4 @@
-export class JoinGameDTO {
+export class CreateGameDTO {
     gameCode: string;
     userId: string;
 

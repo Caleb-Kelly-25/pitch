@@ -25,4 +25,30 @@ export class Card {
                 return new Card(Suit.HEARTS, Value.JACK);
         }
     }
+
+    static createFullDeck(): Card[] {
+        const deck: Card[] = [];
+        
+        // Get all suits and values from your enums
+        const suits = Object.values(Suit) as Suit[];
+        const values = Object.values(Value) as Value[];
+
+        // Generate the 52 cards
+        for (const suit of suits) {
+            for (const value of values) {
+                // Ensure we only grab the actual enum values (if using numeric enums)
+                if (typeof value === 'number') {
+                    deck.push(new Card(suit, value));
+                }
+            }
+        }
+
+        // Fisher-Yates Shuffle
+        for (let i = deck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+
+        return deck;
+    }
 }

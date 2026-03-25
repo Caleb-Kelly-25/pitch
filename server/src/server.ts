@@ -4,6 +4,7 @@ import http from "http"
 import cors from "cors"
 import { Server } from "socket.io"
 import { bootstrap, pubClient, subClient, storageClient } from "./bootstrap";
+import { createAdapter } from "@socket.io/redis-adapter";
 import createRouter from "./adapters/rest/CreateRouter";
 import WSPublisherAdapter from "./adapters/websockets/WSPublisherAdapter";
 import InMemoryShortTermStorageAdapter from "./adapters/persistence/InMemoryShortTerm";
@@ -15,6 +16,8 @@ import WebSocketController from "./adapters/websockets/WebSocketController";
 import UserController from "./adapters/rest/UserController";
 import UserService from "./application/UserService";
 import {GameService} from "./application/GameService"
+import RoomController from "./adapters/rest/RoomController";
+import { RoomService } from "./application/RoomService";
 
 
 const PORT_NUM = process.env.PORT || 3000;
@@ -37,11 +40,14 @@ async function startServer() {
 
   // Create WebSocket server
   const wss = new Server(httpServer, {
-      cors: {
-          origin: process.env.CLIENT_ORIGIN,
-          methods: ["GET", "POST"],
-      },
+    cors: {
+      origin: process.env.CLIENT_ORIGIN,
+      methods: ["GET", "POST"],
+    },
   });
+
+  // Attach Redis adapter for horizontal scaling
+  wss.adapter(createAdapter(pubClient, subClient));
 
   // Adapters
   const wsPublisher = new WSPublisherAdapter(wss);
@@ -51,8 +57,8 @@ async function startServer() {
 
   const wsController = new WebSocketController(wss, authAdapter, new GameService(shortStorage, longStorage, wsPublisher));
   const userController = new UserController(new UserService(longStorage), authAdapter);
-  expressApp.use("/api", createRouter(userController));
-
+  const roomController = new RoomController(new RoomService(shortStorage, longStorage, wsPublisher), authAdapter);
+  expressApp.use("/api", createRouter(userController, roomController));
 
   // Start Listening
   httpServer.listen(PORT_NUM, () => {

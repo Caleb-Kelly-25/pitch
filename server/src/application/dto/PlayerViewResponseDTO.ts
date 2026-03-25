@@ -126,40 +126,30 @@ function modelSuitFromDomainSuit(suit: string): ModelSuit | null {
     }
 }
 
-function modelValueFromDomainValue(value: Value): ModelValue {
-    if (value >= 2 && value <= Value.TEN) {
-        return value.toString() as ModelValue;
-    } else {
-        switch(value){
-            case Value.JACK:
-                return "J";
-            case Value.QUEEN:
-                return "Q";
-            case Value.KING:
-                return "K";
-            case Value.ACE:
-                return "A";
-            default:
-                throw new Error(`Invalid value: ${value}`);
-        }
-    }
+function modelValueFromDomainValue(value: Value): number {
+    // 1. Handle Numeric Enums or direct numbers
+    const numValue = Number(value);
+    
+    return numValue;
 }
 
 function dtoFromTrick(trick: Trick): TrickDTO {
-        const plays: {playerId: string, card: CardModel}[] = [];
-        for (const [playerId, card] of trick.cardsPlayed.entries()) {
-            plays.push({
-                playerId,
-                card: {
-                    suit: modelSuitFromDomainSuit(card?.suit || ""),
-                    value: modelValueFromDomainValue(card?.value || Value.ACE)
-                } as CardModel
-            });
-        }
-        return {
-            leadPlayerId: trick.startingPlayerId,
-            playedCards: plays
-        };
+    const plays: {playerId: string, card: CardModel}[] = [];
+    
+    // Ensure we are working with entries, whether it's a Map or Object
+    const entries = Object.entries(trick.cardsPlayed);
+
+    for (const [playerId, card] of entries) {
+        plays.push({
+            playerId,
+            card: dtoFromCard(card as Card) // Reusing your helper function
+        });
+    }
+    
+    return {
+        leadPlayerId: trick.startingPlayerId,
+        playedCards: plays
+    };
 }
 
 function dtoFromCard(card: Card): CardModel {
@@ -167,10 +157,9 @@ function dtoFromCard(card: Card): CardModel {
 }
 
 type ModelSuit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
-type ModelValue = "A" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K";
 export interface CardModel {
     suit: ModelSuit;
-    value: ModelValue;
+    value: number;
 }
 
 export interface TrickDTO {

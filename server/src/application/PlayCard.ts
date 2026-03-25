@@ -29,21 +29,28 @@ export class PlayCard {
 
     static playCard(gameState: GameState, playerId: PlayerId, card: Card): GameState | null {
         // Make sure the player exists in this game and it's their turn
+        console.log(`Player ${playerId} is attempting to play card ${card.value} of ${card.suit} in game ${gameState.id}`);
         const player = gameState.players.find(p => p.id === playerId);
         if (!player || !PlayCard.validateTurn(gameState, playerId)) {
+            console.log(`Invalid play attempt by player ${playerId}. Either player not found or not player's turn.`);
+            console.log("Player turn: ", gameState.handCycle.trick.playerTurn);
+            console.log(player);
             return null;
         }
 
         // If the player has no cards to play, update the game state and take next turn
         if (PlayCard.isOutOfCards(gameState, player)){
+            console.log(`Player ${player.id} has no cards to play, moving to next turn.`);
             PlayCard.updateGameStateForNoCardPlayed(gameState, player);
         } else {
             // Validate the player has the card in their hand and that it's a valid play
-            if (!PlayCard.validateCardInHand(player, card) || !gameState.handCycle.canPlayCard(card)) {
+            if (!PlayCard.validateCardInHand(player, card) /*|| !gameState.handCycle.canPlayCard(card)*/) {
+                console.log(`Invalid play attempt by player ${playerId}. Card not in hand or not a valid play.`);
                 return null;
             }
 
             // If all checks pass, update the game state for the played card and move to the next turn
+            console.log("Updating game state for played card...");
             PlayCard.updateGameStateForPlayedCard(gameState, player, card);
         }
 
@@ -62,7 +69,7 @@ export class PlayCard {
         if (PlayCard.isGameOver(gameState)) {
             gameState.handCycle.handCycleStatus = HandCycleStatus.COMPLETE;
         }
-
+        console.log("Returning game state after play card: ", JSON.stringify(gameState));
         return gameState;
     }
 
@@ -72,13 +79,15 @@ static updateGameStateForPlayedCard(gameState: GameState, player: Player, card: 
     const cardSuit = card.suit;
     const cardValue = card.value;
     player.hand.removeCard({suit: cardSuit, value: cardValue} as Card);
-    gameState.handCycle.trick.cardsPlayed.set(player.id as PlayerId, {suit: cardSuit, value: cardValue} as Card);
+    gameState.handCycle.trick.cardsPlayed[player.id as PlayerId] = {suit: cardSuit, value: cardValue} as Card;
     gameState.handCycle.trick.playerTurn = PlayCard.getNextPlayerId(player.id, gameState.players, gameState.handCycle.trick.startingPlayerId) as PlayerId;
+    console.log("New game state after playing card:", JSON.stringify(gameState));
 }
 
 // PlayCard function is called when a player has no cards to play, it updates the game state accordingly and moves the turn forward
 static updateGameStateForNoCardPlayed(gameState: GameState, player: Player) {
-    gameState.handCycle.trick.cardsPlayed.set(player.id as PlayerId, null);
+    console.log(`Player ${player.id} has no cards to play, moving to next turn.`);
+    gameState.handCycle.trick.cardsPlayed[player.id as PlayerId] = null;
     gameState.handCycle.trick.playerTurn = PlayCard.getNextPlayerId(player.id, gameState.players, gameState.handCycle.trick.startingPlayerId) as PlayerId;
 }
 
@@ -86,7 +95,7 @@ static updateGameStateForNoCardPlayed(gameState: GameState, player: Player) {
 static getNextPlayerId(currentPlayerId: string, players: Player[], startingPlayerId: string): string | null {
     const currentIndex = players.findIndex(p => p.id === currentPlayerId);
     const nextIndex = (currentIndex + 1) % players.length;
-    return players[nextIndex].id===startingPlayerId ? null : players[nextIndex].id;
+    return /*players[nextIndex].id===startingPlayerId ? null : */players[nextIndex].id;
 }
 
 // Validates that it's the player's turn
@@ -102,7 +111,7 @@ static validateCardInHand(player: Player, card: Card): boolean {
 
 // Determines if a player has a playable card in PlayCard cycle
 static isOutOfCards(gameState: GameState, player: Player): boolean {
-    return player.hand.hasSuit(gameState.handCycle.trumpSuit);
+    return !player.hand.hasSuit(gameState.handCycle.trumpSuit);
 }
 
 
@@ -110,9 +119,9 @@ static isOutOfCards(gameState: GameState, player: Player): boolean {
 static calcTrickWinner(gameState: GameState): PlayerId {
     const cardsPlayed = gameState.handCycle.trick.cardsPlayed;
     let winningPlayerId: PlayerId = gameState.handCycle.trick.startingPlayerId;
-    for (const [playerId, card] of cardsPlayed.entries()) {
-        if (PlayCard.compareCards(card as Card, cardsPlayed.get(winningPlayerId) as Card, gameState.handCycle.trumpSuit)) {
-            winningPlayerId = playerId;
+    for (const [playerId, card] of Object.entries(cardsPlayed)) {
+        if (PlayCard.compareCards(card as Card, cardsPlayed[winningPlayerId] as Card, gameState.handCycle.trumpSuit)) {
+            winningPlayerId = playerId as PlayerId;
         }
     }
     return winningPlayerId;
@@ -124,7 +133,7 @@ static compareCards(cardA: Card, cardB: Card, trumpSuit: Suit): boolean {
         return true;
     } else if (cardA === null){
         return false;
-    } else if (cardA.value = Value.ACE) {
+    } else if (cardA.value === Value.ACE) {
         return true;
     } else if (cardB.value === Value.ACE) {
         return false;
@@ -143,13 +152,13 @@ static compareCards(cardA: Card, cardB: Card, trumpSuit: Suit): boolean {
 }
 
 static isTrickOver(trick: Trick) {
-    return trick.cardsPlayed.size === 4;
+    return Object.keys(trick.cardsPlayed).length === 4;
 }
 
 // PlayCard function starts the next trick, call after tallying points
 static nextTrick(gameState: GameState) {
     const winningPlayerId = PlayCard.calcTrickWinner(gameState);
-    gameState.handCycle.trick = new Trick(gameState.handCycle.trick.roundNumber+1, winningPlayerId, new Map<PlayerId, Card | null>(), winningPlayerId);
+    gameState.handCycle.trick = new Trick(gameState.handCycle.trick.roundNumber+1, winningPlayerId, {} as Record<PlayerId, Card | null>, winningPlayerId);
 }
 
 // PlayCard function is called at the end of a trick to tally points
@@ -157,9 +166,9 @@ static nextTrick(gameState: GameState) {
 static tallyTrickPoints(gameState: GameState, trick: Trick) {
     const winningPlayerId = PlayCard.calcTrickWinner(gameState);
     if (gameState.players.findIndex(p => p.id === winningPlayerId) % 2 === 0) {
-        gameState.handCycle.teamOnePoints += Array.from(trick.cardsPlayed.values()).reduce((acc, card) => acc + (PlayCard.cardPointMap[card?.value as Value] || 0), 0);
+        gameState.handCycle.teamOnePoints += Array.from(Object.values(trick.cardsPlayed)).reduce((acc, card) => acc + (PlayCard.cardPointMap[card?.value as Value] || 0), 0);
     } else {
-        gameState.handCycle.teamTwoPoints += Array.from(trick.cardsPlayed.values()).reduce((acc, card) => acc + (PlayCard.cardPointMap[card?.value as Value] || 0), 0);
+        gameState.handCycle.teamTwoPoints += Array.from(Object.values(trick.cardsPlayed)).reduce((acc, card) => acc + (PlayCard.cardPointMap[card?.value as Value] || 0), 0);
     }
     assert(gameState.handCycle.teamOnePoints <= 10 && gameState.handCycle.teamTwoPoints <= 10, "Scores should never exceed 10");
 }
@@ -189,7 +198,7 @@ static tallyPointsHandCycle(gameState: GameState) {
 static nextHandCycle(gameState: GameState) {
     const nextDealerIndex = (gameState.players.findIndex(p => p.id === gameState.handCycle.dealerId) + 1) % gameState.players.length;
     const nextDealerId = gameState.players[nextDealerIndex].id;
-    gameState.handCycle = new HandCycle(nextDealerId, "undefined" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.BIDDING, 0, 0, new Trick(0, nextDealerId, new Map<PlayerId, Card | null>(), nextDealerId));
+    gameState.handCycle = new HandCycle(nextDealerId, "undefined" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.BIDDING, 0, 0, new Trick(0, nextDealerId, {} as Record<PlayerId, Card | null>, nextDealerId));
 }
 
 static isGameOver(gameState: GameState): boolean {

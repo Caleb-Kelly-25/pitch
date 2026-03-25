@@ -14,7 +14,7 @@ export interface IUserDocument extends Omit<User, 'id'>, Document {
 const UserSchema: Schema = new Schema({
     id: { type: String, required: true, unique: true }, // Map 'id' to MongoDB's '_id'
     username: { type: String, unique: true, required: true },
-    email: {type: String, required: true, unique: true},
+    email: {type: String, unique: true},
     password: { type: String, required: true },
     photoUrl: { type: String },
     gameId: { type: String, default: null },

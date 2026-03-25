@@ -26,11 +26,13 @@ export class GameService {
         // Grab the game state
         const gameState = await this.gameStateRepository.getGameStateById(gameId);
         if (!gameState) {
+            console.log(`Game with ID ${gameId} not found.`);
             return false;
         }
 
         const newGameState: (GameState | null) = PlayCard.playCard(gameState, playerId as PlayerId, new Card(cardSuit, cardValue));
         if (!newGameState) {
+            console.log(`Failed to play card for player ${playerId} in game ${gameId}.`);
             return false;
         }
 

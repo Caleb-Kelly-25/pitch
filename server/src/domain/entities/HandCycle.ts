@@ -6,6 +6,7 @@ import { PlayerId } from "../../types/id-declarations";
 import { Trick } from "./Trick";
 
 export class HandCycle {
+    
     dealerId: PlayerId;
     bidWinner: PlayerId;
     bidAmount: number;
@@ -31,10 +32,14 @@ export class HandCycle {
     canPlayCard(card: Card): boolean {
         if (this.handCycleStatus !== HandCycleStatus.PLAYING) {
             return false;
-        } else if (card.suit !== this.trumpSuit && card.value!==Value.JACK && !card.equals(Card.jick(this.trumpSuit))) {
+        } else if (card.suit !== this.trumpSuit && card.value!==Value.JOKER && !card.equals(Card.jick(this.trumpSuit))) {
             return false;
         }
         return true;
+    }
+
+    static fromJSONObject(handCycle: HandCycle): HandCycle {
+        return new HandCycle(handCycle.dealerId, handCycle.bidWinner, handCycle.bidAmount, handCycle.trumpSuit, handCycle.blindCards.map(c => {const card = new Card(c.suit, c.value); return card;}), handCycle.handCycleStatus, handCycle.teamOnePoints, handCycle.teamTwoPoints, Trick.fromJSONObject(handCycle.trick));
     }
 
 

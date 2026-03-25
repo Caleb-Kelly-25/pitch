@@ -2,6 +2,7 @@ import { PlayerId, UserId } from "../../types/id-declarations";
 import { Hand } from "./Hand";
 
 export class Player {
+    
     id: PlayerId;
     username: string;
     userId: UserId;
@@ -22,5 +23,9 @@ export class Player {
         this.isDealer = isDealer;
         this.currentBid = currentBid;
         this.seatNumber = seatNumber;
+    }
+
+    static fromJSONObject(p: Player): Player {
+        return new Player(p.id, p.username, p.userId, Hand.fromJSONObject(p.hand), p.isBidder, p.isConnected, p.isDealer, p.currentBid, p.seatNumber);
     }
 }
