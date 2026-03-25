@@ -20,7 +20,7 @@ export class PlayCard {
         [Value.SEVEN]: 0,
         [Value.EIGHT]: 0,
         [Value.NINE]: 0,
-        [Value.TEN]: 0,
+        [Value.TEN]: 1,
         [Value.JOKER]: 1,
         [Value.JACK]: 1,
         [Value.QUEEN]: 0,
