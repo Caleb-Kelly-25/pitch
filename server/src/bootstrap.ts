@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import { createClient } from "redis";
 
-export const pubClient = createClient({ url: process.env.REDIS_URL });
-export const subClient = pubClient.duplicate();
+export const pubClient = createClient({ url: process.env.REDIS_URL }); //sends out messages to channels
+export const subClient = pubClient.duplicate(); //listens to messages from channels
+export const storageClient = pubClient.duplicate(); //stores game state data in Redis
 
 export async function bootstrap() {
   mongoose
@@ -12,4 +13,7 @@ export async function bootstrap() {
 
   await pubClient.connect();
   await subClient.connect();
+  await storageClient.connect();
+
+  console.log("Redis connected");
 }

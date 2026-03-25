@@ -6,16 +6,24 @@ services:
       - "3000:3000"
     env_file:
       - ./server/.env
+
+  # REDIS: used for "Hot" data caching (Live game state, current turn, bidding)
+  # This is memory-based and extremely fast for real-time play.
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+
+  # MONGO: used for "Cold" data storage (User accounts, Match history, Leaderboards)
+  # This is disk-based and keeps data permanently even if the server restarts.
   mongo:
     image: mongo:7.0
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
+      - mongo-data:/data/db # Ensures player stats aren't lost on restart     
+      
+
   
   # frontend:
   #   build:
