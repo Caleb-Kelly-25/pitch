@@ -1,27 +1,45 @@
 import { Suit } from "../enums/Suit";
+import {Value} from "../enums/Value";
 import { Card } from "./Card";
 import { HandCycleStatus } from "../enums/HandCycleStatus";
 import { PlayerId } from "../../types/id-declarations";
+import { Trick } from "./Trick";
 
 export class HandCycle {
+    
     dealerId: PlayerId;
     bidWinner: PlayerId;
     bidAmount: number;
     trumpSuit: Suit;
     blindCards: Card[];
     handCycleStatus: HandCycleStatus;
-    team1Points: number;
-    team2Points: number;
+    teamOnePoints: number;
+    teamTwoPoints: number;
+    trick: Trick;
 
-    constructor(dealerId: PlayerId, bidWinner: PlayerId, bidAmount: number, trumpSuit: Suit, blindCards: Card[], handCycleStatus: HandCycleStatus, team1Points: number, team2Points: number) {
+    constructor(dealerId: PlayerId, bidWinner: PlayerId, bidAmount: number, trumpSuit: Suit, blindCards: Card[], handCycleStatus: HandCycleStatus, teamOnePoints: number, teamTwoPoints: number, trick: Trick) {
         this.dealerId = dealerId;
         this.bidWinner = bidWinner;
         this.bidAmount = bidAmount;
         this.trumpSuit = trumpSuit;
         this.blindCards = blindCards;
         this.handCycleStatus = handCycleStatus;
-        this.team1Points = team1Points;
-        this.team2Points = team2Points;
+        this.teamOnePoints = teamOnePoints;
+        this.teamTwoPoints = teamTwoPoints;
+        this.trick = trick;
+    }
+
+    canPlayCard(card: Card): boolean {
+        if (this.handCycleStatus !== HandCycleStatus.PLAYING) {
+            return false;
+        } else if (card.suit !== this.trumpSuit && card.value!==Value.JOKER && !card.equals(Card.jick(this.trumpSuit))) {
+            return false;
+        }
+        return true;
+    }
+
+    static fromJSONObject(handCycle: HandCycle): HandCycle {
+        return new HandCycle(handCycle.dealerId, handCycle.bidWinner, handCycle.bidAmount, handCycle.trumpSuit, handCycle.blindCards.map(c => {const card = new Card(c.suit, c.value); return card;}), handCycle.handCycleStatus, handCycle.teamOnePoints, handCycle.teamTwoPoints, Trick.fromJSONObject(handCycle.trick));
     }
 
 

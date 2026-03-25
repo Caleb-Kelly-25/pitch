@@ -1,25 +1,24 @@
 export interface GameState {
     gameId: string;
-    phase: "bidding" | "playing" | "scoring" | "waiting";
+    phase: "BIDDING" | "PLAYING"| "WAITING" | "COMPLETE";
     players: Player[];
     hand: CardModel[];
 
     trick: {
         leadPlayerId: string;
-        playedCards: [
-            {playerId:string, card: CardModel}
-        ]
+        playedCards:{playerId:string, card: CardModel | undefined}[];
     }
 
     bidding: {
         currentBidderId: string;
         highestBidderId: string;
-        bids: (number | "pass" | null)[]
+        bids: (number | undefined)[];
     }
 
     trickNumber: number;
-    leadSuit: "hearts" | "diamonds" | "clubs" | "spades" | null;
-    scores: number[]
+    leadSuit: "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES" | null;
+    ourScore: number;
+    theirScore: number;
 }
 
 export interface Player {
@@ -33,8 +32,8 @@ export interface Player {
 }
 
 
-type Suit = "hearts" | "diamonds" | "clubs" | "spades";
-type Value = "A" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K";
+type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
+type Value = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14; // 1=A, 2-10, 11=Joker, 12=J, 13=Q, 14=K
 export interface CardModel {
     suit: Suit;
     value: Value;

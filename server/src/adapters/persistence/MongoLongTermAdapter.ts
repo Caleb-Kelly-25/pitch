@@ -6,6 +6,7 @@ import UserModel from "./MongoModels/UserModel";
 export class MongoLongTermAdapter implements ILongTermStoragePort {
     
     async createUser(user: User): Promise<void> {
+        user.id = crypto.randomUUID();
         await UserModel.create({
             id: user.id,
             username: user.username,
@@ -17,10 +18,24 @@ export class MongoLongTermAdapter implements ILongTermStoragePort {
 
     }
 
+    async updateUser(user: User): Promise<void> {
+        await UserModel.updateOne({ id: user.id }, {
+            username: user.username,
+            email: user.email,
+            password: user.password,
+            photoUrl: user.photoUrl,
+            gameId: user.gameId
+        });
+    }
+
     async findByUsername(username: string): Promise<User | null> {
         const userDoc = await UserModel.findOne({ username });
         if (!userDoc) {
             return null;
+        }
+        if (!userDoc.id){
+            userDoc.id = crypto.randomUUID();
+            UserModel.updateOne({ username: username }, { id: userDoc.id });
         }
         return userDoc as User; // Type assertion to convert IUserDocument to User entity
     }

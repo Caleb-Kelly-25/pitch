@@ -1,14 +1,19 @@
 import {Server, Socket} from "socket.io";
 import IAuthAdapter from "../auth/IAuthAdapter";
+import { GameService } from "../../application/GameService";
+import { PlayCardDTO } from "../../application/dto/PlayCardDTO";
+import { IdentityPayload } from "../auth/IdentityPayload";
 
 
 export default class WebSocketController {
     private wss: Server;
     private authAdapter: IAuthAdapter;
+    private gameService: GameService;
 
-    constructor (wss: Server, authAdapter: IAuthAdapter) {
+    constructor (wss: Server, authAdapter: IAuthAdapter, gameService: GameService) {
         this.wss = wss;
         this.authAdapter = authAdapter;
+        this.gameService = gameService;
 
         this.wss.use((socket, next) => this.socketAuth(socket, next));
             
@@ -37,10 +42,32 @@ export default class WebSocketController {
         socket.on("disconnect", () => this.disconnect(socket));
 
         socket.on("MessageEvent", (messageText) => this.onMessageEvent(messageText));
+
+        socket.on("PlayCardEvent", (data) => {this.onPlayCardEvent(socket.user, data)});
+
+        socket.join(`player:${socket.user.userId}`);
     }
     
     disconnect(socket: Socket) {
         console.log("Socket disconnected!");
+    }
+
+    onPlayCardEvent(user: IdentityPayload, data: string){
+        console.log("Play card detected");
+        const parsedData = JSON.parse(data);
+        if (!parsedData.gameId || !parsedData.suit || !parsedData.value) {
+            console.error("Invalid PlayCardEvent data:", data);
+            return;
+        }
+        const dto = new PlayCardDTO(parsedData.gameId, user.userId, parsedData.suit, parsedData.value);
+        this.gameService.playCard(dto).then(success => {
+            if (!success) {
+                console.log("Invalid attempt to play card:", data);
+            }
+        }).catch(err => {
+            console.error("Error processing PlayCardEvent:", err);
+        });
+
     }
 
     onMessageEvent(messageText: string) {

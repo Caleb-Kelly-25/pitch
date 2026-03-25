@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuth } from "../features/auth/useAuth";
 import { connectSocket } from "../sockets/socket";
 import { useNavigate } from "react-router";
@@ -89,8 +89,6 @@ const styles: Record<string, React.CSSProperties> = {
 
 export default function Game() {
   const { token } = useAuth();
-  const [textMsg, setTextMsg] = useState("Waiting...");
-  textMsg;
 
   const navigate = useNavigate();
 

@@ -2,6 +2,9 @@ import HandOfCards from "../components/HandOfCards";
 import Table from "../components/Table";
 import TopBar from "../components/TopBar";
 import PlayerSeat from "../components/PlayerSeat";
+import { useGame } from "../features/game/useGame";
+import type { CardProps } from "../components/Card";
+import { playCard } from "../features/game/gameService";
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
@@ -21,39 +24,33 @@ const styles: Record<string, React.CSSProperties> = {
 };
 
 export default function GamePlay() {
+  const gameState = useGame();
+  console.log(gameState);
   return (
     <div style={styles.wrapper}>
       <TopBar varient="withBackBtn" />
 
       <Table
-        top={{ suit: "HEARTS", value: 1 }}
-        bottom={{ suit: "DIAMONDS", value: 7 }}
-        left={{ suit: "SPADES", value: 11 }}
-        right={{ suit: "CLUBS", value: 1 }}
+        bottom = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[0].id)?.card}
+        left = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[1].id)?.card}
+        top = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[2].id)?.card}
+        right = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[3].id)?.card}
       >
         <PlayerSeat position="top">
-          <HandOfCards count={5} />
+          <HandOfCards count={gameState.players[2].cardCount} />
         </PlayerSeat>
 
         <PlayerSeat position="left">
-          <HandOfCards count={5} />
+          <HandOfCards count={gameState.players[1].cardCount} />
+          {console.log(gameState.players[1].cardCount)}
         </PlayerSeat>
 
         <PlayerSeat position="right">
-          <HandOfCards count={5} />
+          <HandOfCards count={gameState.players[3].cardCount} />
         </PlayerSeat>
 
         <PlayerSeat position="bottom">
-          <HandOfCards
-            overlap={110}
-            cards={[
-              { suit: "HEARTS", value: 1 },
-              { suit: "SPADES", value: 13 },
-              { suit: "DIAMONDS", value: 10 },
-              { suit: "CLUBS", value: 7 },
-              { suit: "HEARTS", value: 13 },
-            ]}
-          />
+          <HandOfCards count={gameState.hand.length} cards={gameState.hand.map((card) => ({ suit: card.suit, value: card.value, onClick: () => playCard(card.suit, card.value, gameState.gameId) } as CardProps))} />
         </PlayerSeat>
       </Table>
     </div>

@@ -5,4 +5,5 @@ export default interface IGameStateRepository {
     createGameState(gameState: GameState): Promise<void>;
     getAllGameStates(): Promise<GameState[]>;
     deleteGameState(id: string): Promise<void>;
+    updateGameState(gameState: GameState): Promise<void>;
 }
