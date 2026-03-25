@@ -26,10 +26,10 @@ export default function GamePlay() {
       <TopBar varient="withBackBtn" />
 
       <Table
-        top={{ suit: "HEARTS", value: 1 }}
-        bottom={{ suit: "DIAMONDS", value: 7 }}
-        left={{ suit: "SPADES", value: 11 }}
-        right={{ suit: "CLUBS", value: 1 }}
+        top={{ suit: "HEARTS", value: 3}}
+        bottom={{ suit: "HEARTS", value: 1 }}
+        left={{ suit: "HEARTS", value: 4 }}
+        right={{ suit: "HEARTS", value: 9 }}
       >
         <PlayerSeat position="top">
           <HandOfCards count={5} />
@@ -47,7 +47,7 @@ export default function GamePlay() {
           <HandOfCards
             overlap={110}
             cards={[
-              { suit: "HEARTS", value: 1 },
+              { suit: "HEARTS", value: 14 },
               { suit: "SPADES", value: 13 },
               { suit: "DIAMONDS", value: 10 },
               { suit: "CLUBS", value: 7 },

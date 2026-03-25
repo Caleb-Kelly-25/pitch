@@ -61,16 +61,17 @@ async function handleSubmit() {
     //Validate Game Code and Join Game
   }
 
-export default function JoinPrivate() {
-
+export default function JoinGame() {
+    
     return(
         <div style={styles.wrapper}>
-            {/* Top Nav Bar */}
-            <TopBar varient="withBackBtn"></TopBar>
+              {/* Top Nav Bar */}
+              <TopBar varient="withBackBtn"></TopBar>
              {/* Main Content */}
                 <div style={(styles.main)}>
              
-                     <h1>Join Private Game</h1>
+                     <h1>Join Game</h1>
+                     <h2>Select from options to join public game, or input code to join private game</h2>
                  <input
             //   type="password"
                       style={styles.input}
@@ -87,5 +88,4 @@ export default function JoinPrivate() {
             </div>
         </div>
     )
-
 }

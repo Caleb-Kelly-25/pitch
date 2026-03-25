@@ -123,16 +123,9 @@ export default function Game() {
               </button>
             </div>
             <div style={styles.optionBlock}>
-              <h1 style={styles.optionTitle}>Public</h1>
-              <button style={styles.button} onClick={() => navigate("/join-public")}>
+              <h1 style={styles.optionTitle}>Join</h1>
+              <button style={styles.button} onClick={() => navigate("/joinGame")}>
                 Find Game
-              </button>
-            </div>
-
-            <div style={styles.optionBlock}>
-              <h1 style={styles.optionTitle}>Private</h1>
-              <button style={styles.button} onClick={() => navigate("/join-private")}>
-                Join Game
               </button>
             </div>
         </div>
