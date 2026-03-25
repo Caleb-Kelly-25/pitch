@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import TopBar from "../components/TopBar";
 
 const styles: Record<string, React.CSSProperties> = {
@@ -61,8 +62,12 @@ async function handleSubmit() {
     //Validate Game Code and Join Game
   }
 
-export default function JoinGame() {
-    
+export default function JoinPublic() {
+    const navigate = useNavigate();
+    const gameState = useGame();
+    const [password, setPassword] = useState("");
+    const token = useAuth().token;
+    if (gameState.gameId === "" || gameState.phase == "WAITING" || gameState.players.length < 4) {
     return(
         <div style={styles.wrapper}>
               {/* Top Nav Bar */}

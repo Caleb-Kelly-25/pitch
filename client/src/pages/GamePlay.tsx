@@ -44,16 +44,7 @@ export default function GamePlay() {
         </PlayerSeat>
 
         <PlayerSeat position="bottom">
-          <HandOfCards
-            overlap={110}
-            cards={[
-              { suit: "HEARTS", value: 14 },
-              { suit: "SPADES", value: 13 },
-              { suit: "DIAMONDS", value: 10 },
-              { suit: "CLUBS", value: 7 },
-              { suit: "HEARTS", value: 13 },
-            ]}
-          />
+          <HandOfCards count={gameState.hand.length} cards={gameState.hand.map((card) => ({ suit: card.suit, value: card.value, onClick: () => playCard(card.suit, card.value, setGameState.gameId) } as CardProps))} />
         </PlayerSeat>
       </Table>
     </div>
