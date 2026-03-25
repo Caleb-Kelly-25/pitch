@@ -3,13 +3,16 @@ import { registerGameSocketHandlers } from "../features/game/registerGameSocketH
 
 export let socket: Socket | null = null;
 
-export function connectSocket(token: string) {
+export function connectSocket(token: string): Socket {
+  if (socket) {
+    socket.disconnect();
+  }
 console.log("Connecting socket with token: ", token);
 
   socket = io("http://localhost:3000", {
     auth: { token },
     reconnection: true,
-    reconnectionAttempts: 5,
+    reconnectionAttempts: 7,
   });
 
   registerGameSocketHandlers(socket);

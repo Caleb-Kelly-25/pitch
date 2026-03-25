@@ -7,7 +7,7 @@ import BackOfCard from "../assets/BackOfCard.png"
 
 type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
 
-interface CardProps {
+export interface CardProps {
   suit?: Suit;
   value?: number; // 1=A, 2-10, 11=Joker, 12=J, 13=Q, 14=K
   faceDown?: boolean;

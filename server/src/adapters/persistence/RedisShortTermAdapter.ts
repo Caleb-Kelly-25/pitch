@@ -11,13 +11,24 @@ export class RedisShortTermAdapter implements IShortTermStoragePort {
         this.redisClient = redisClient;
     }
 
+    async updateGameState(state: GameState): Promise<void> {
+        try {
+            const id = state.id;
+            const value = JSON.stringify(state);
+            await this.redisClient.set(id, value, {EX: 3600})
+        } catch (error) {
+            console.error(`[RedisAdapter] Error updating game ${state.id}:`, error);
+        }
+    }
+
     async createGameState(state: GameState): Promise<void> {
         try {
-            const id = uuidv4(); // Use the game state ID as the Redis key
-            state.id = id as GameId; // Ensure the game state has its ID set to the Redis key
-            
+            if (!state.id) {
+                const id = uuidv4(); // Use the game state ID as the Redis key
+                state.id = id as GameId; // Ensure the game state has its ID set to the Redis key
+            }
             const value = JSON.stringify(state); // Convert the game state object to a JSON string for storage
-            await this.redisClient.set(id, value, { EX: 3600 });
+            await this.redisClient.set(state.id, value, { EX: 3600 });
 
         } catch (error) {
             console.error(`[RedisAdapter] Error creating game ${state.id}:`, error);
@@ -30,7 +41,8 @@ export class RedisShortTermAdapter implements IShortTermStoragePort {
             if (!data) {
                 return null; // Return null if the game state is not found
             }
-            return JSON.parse(data) as GameState; // Parse the JSON string back into a GameState object
+             // Parse the JSON string back into a GameState object
+            return GameState.fromJSONObject(JSON.parse(data) as GameState);
         } catch (error) {
             console.error(`[RedisAdapter] Error getting game ${id}:`, error);
             return null; //Fail Gracefully

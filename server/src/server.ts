@@ -4,6 +4,7 @@ import http from "http"
 import cors from "cors"
 import { Server } from "socket.io"
 import { bootstrap, pubClient, subClient, storageClient } from "./bootstrap";
+import { createAdapter } from "@socket.io/redis-adapter";
 import createRouter from "./adapters/rest/CreateRouter";
 import WSPublisherAdapter from "./adapters/websockets/WSPublisherAdapter";
 import InMemoryShortTermStorageAdapter from "./adapters/persistence/InMemoryShortTerm";
@@ -14,49 +15,55 @@ import JwtAuthAdapter from "./adapters/auth/JwtAuthAdapter";
 import WebSocketController from "./adapters/websockets/WebSocketController";
 import UserController from "./adapters/rest/UserController";
 import UserService from "./application/UserService";
+import {GameService} from "./application/GameService"
+import RoomController from "./adapters/rest/RoomController";
+import { RoomService } from "./application/RoomService";
 
 
 const PORT_NUM = process.env.PORT || 3000;
 
 async function startServer() {
-// Connect to MongoDB and Redis
-await bootstrap();
+  // Connect to MongoDB and Redis
+  await bootstrap();
 
-// Create REST api server
-const expressApp = express();
-expressApp.use(express.json());
-expressApp.use(
-  cors({
-    origin: process.env.CLIENT_ORIGIN,
-    credentials: true,
-  })
-);
+  // Create REST api server
+  const expressApp = express();
+  expressApp.use(express.json());
+  expressApp.use(
+    cors({
+      origin: process.env.CLIENT_ORIGIN,
+      credentials: true,
+    })
+  );
 
-const httpServer = http.createServer(expressApp);
+  const httpServer = http.createServer(expressApp);
 
-// Create WebSocket server
-const wss = new Server(httpServer, {
+  // Create WebSocket server
+  const wss = new Server(httpServer, {
     cors: {
-        origin: process.env.CLIENT_ORIGIN,
-        methods: ["GET", "POST"],
+      origin: process.env.CLIENT_ORIGIN,
+      methods: ["GET", "POST"],
     },
-});
+  });
 
-// Adapters
-const wsPublisher = new WSPublisherAdapter(wss);
-const shortStorage = new RedisShortTermAdapter(storageClient); // InMemoryShortTermStorageAdapter();
-const longStorage = new MongoLongTermAdapter(); // InMemoryLongTermStorageAdapter();
-const authAdapter = new JwtAuthAdapter();
+  // Attach Redis adapter for horizontal scaling
+  wss.adapter(createAdapter(pubClient, subClient));
 
-const wsController = new WebSocketController(wss, authAdapter);
-const userController = new UserController(new UserService(longStorage), authAdapter);
-expressApp.use("/api", createRouter(userController));
+  // Adapters
+  const wsPublisher = new WSPublisherAdapter(wss);
+  const shortStorage = new RedisShortTermAdapter(storageClient); // InMemoryShortTermStorageAdapter();
+  const longStorage = new MongoLongTermAdapter(); // InMemoryLongTermStorageAdapter();
+  const authAdapter = new JwtAuthAdapter();
 
+  const wsController = new WebSocketController(wss, authAdapter, new GameService(shortStorage, longStorage, wsPublisher));
+  const userController = new UserController(new UserService(longStorage), authAdapter);
+  const roomController = new RoomController(new RoomService(shortStorage, longStorage, wsPublisher), authAdapter);
+  expressApp.use("/api", createRouter(userController, roomController));
 
-// Start Listening
-httpServer.listen(PORT_NUM, () => {
-    console.log(`Server listening on port ${PORT_NUM}`);
-});
+  // Start Listening
+  httpServer.listen(PORT_NUM, () => {
+      console.log(`Server listening on port ${PORT_NUM}`);
+  });
 }
 
 startServer().catch((err) => {

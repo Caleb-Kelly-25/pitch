@@ -1,5 +1,11 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../components/TopBar";
+import { useAuth } from "../features/auth/useAuth";
+import { joinGame } from "../features/game/gameService";
+import { registerGameSocketHandlers } from "../features/game/registerGameSocketHandlers";
+import { useGame } from "../features/game/useGame";
+import { useNavigate } from "react-router-dom";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -58,8 +64,9 @@ const styles: Record<string, React.CSSProperties> = {
   },
 }
 
-async function handleSubmit() {
+async function handleSubmit(password: string, token:string|null) {
     //Validate Game Code and Join Game
+    joinGame(password, token || "");
   }
 
 export default function JoinPublic() {
@@ -81,16 +88,17 @@ export default function JoinPublic() {
             //   type="password"
                       style={styles.input}
                       placeholder="Game Code"
-            //   value={password}
-            //below, Validate Game Code and Join Game on enter key press
-            //   onChange={(e) => setPassword(e.target.value)}
-            //   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+               value={password}
+                      onChange={(e) => setPassword(e.target.value)}
             />
 
-                <button style={styles.enterBtn} onClick={handleSubmit}>
+                <button style={styles.enterBtn} onClick={() => handleSubmit(password, token)}>
                     Enter
                 </button>
             </div>
         </div>
     )
+} else {
+    return(<>{navigate("/GamePlay")}</>);
+}
 }

@@ -1,5 +1,9 @@
 import { useGame } from "../features/game/useGame";
 import TopBar from "../components/TopBar";
+import { useState } from "react";
+import { createGame } from "../features/game/gameService";
+import { useAuth } from "../features/auth/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
@@ -30,18 +34,21 @@ const styles: Record<string, React.CSSProperties> = {
   },
 }
 
+
+
 /* function getGameCode() generates a random place holder game code. Later this fucnction will be updated to actually call the backend for a functioning game code.*/
 function getGameCode(){
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
 export default function Host() {
+    const [gameCode, setGameCode] = useState("");
+    const [gameId, setGameId] = useState("");
+    const gameState = useGame();
+    const auth = useAuth();
+    const navigate = useNavigate();
 
-
-  const game = useGame();
-  console.log("Current game state: ", game);
-
-
+    if (gameState.gameId === "" || gameState.phase == "WAITING" || gameState.players.length < 4) {
     return(
         <div style={styles.wrapper}>
             {/* Top Nav Bar */}
@@ -49,10 +56,16 @@ export default function Host() {
             {/* Main Content */}
                 <div style={(styles.main)}>
                         <h1>Host Game</h1>
-                        <h2>Game Code: {getGameCode()}</h2>
+                        <button onClick={async () => {setGameCode(getGameCode()); setGameId(await createGame(gameCode, auth.token || ""))}}>Create Game</button>
+                        <h2>Game Code: {gameCode}</h2>
+                        <h2>Game Id: {gameId}</h2>
                         <h3>Waiting for players...</h3>
-                        {/* <h3>Waiting for {getNeededPlayers()} players</h3> */}
+                        {<h3>Waiting for {4-gameState.players.length} players</h3>}
                 </div>
         </div>
     );
+  } else {
+    
+    return(<>{navigate("/gameplay")}</>);
+  }
 }
