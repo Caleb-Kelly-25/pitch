@@ -95,9 +95,42 @@ function withBackBtnTopBar() {
       </div>);
 }
 
-export default function TopBar({varient}: {varient: "empty" | "withBackBtn" | "withoutBackBtn" }){ 
+
+function withBackBtnTopBarGamePlay() {
+    return(<div style={styles.topBar}>
+        <X
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+        />
+        {/* Will be used to show stats Page*/}
+         <ChartNoAxesColumnIncreasing
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+         />
+         {/* Will be used to show info Page (Tutorial) */}
+        <Info
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+         />
+         {/* Will be used to show settings Page*/}
+         <Settings
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+         />
+      </div>);
+}
+export default function TopBar({varient}: {varient: "empty" | "withBackBtn" | "withoutBackBtn" | "withBackBtnTopBarGamePlay"}){ 
    
     if (varient === "empty") return emptyTopBar();
     else if (varient === "withBackBtn") return withBackBtnTopBar();
+    else if (varient == "withBackBtnTopBarGamePlay") return withBackBtnTopBarGamePlay();
     else return withoutBackBtnTopBar();
 }
