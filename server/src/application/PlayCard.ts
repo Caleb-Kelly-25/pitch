@@ -30,6 +30,7 @@ export class PlayCard {
     static playCard(gameState: GameState, playerId: PlayerId, card: Card): GameState | null {
         // Make sure the player exists in this game and it's their turn
         console.log(`Player ${playerId} is attempting to play card ${card.value} of ${card.suit} in game ${gameState.id}`);
+
         const player = gameState.players.find(p => p.id === playerId);
         if (!player || !PlayCard.validateTurn(gameState, playerId)) {
             console.log(`Invalid play attempt by player ${playerId}. Either player not found or not player's turn.`);
@@ -173,10 +174,12 @@ static tallyTrickPoints(gameState: GameState, trick: Trick) {
     assert(gameState.handCycle.teamOnePoints <= 10 && gameState.handCycle.teamTwoPoints <= 10, "Scores should never exceed 10");
 }
 
+//This function might be better placed in a different file once bidding is implemented etc. but for now it will stay here since it's closely related to play card and the hand cycle logic
 static isHandCycleOver(gameState: GameState): boolean {
     return gameState.players.every(p => PlayCard.isOutOfCards(gameState, p));
 }
 
+//NOTE: tallyPointsHandCycle should probably be in a different file once bidding is implemented etc.
 static tallyPointsHandCycle(gameState: GameState) {
     if (gameState.players.findIndex(p => p.id === gameState.handCycle.bidWinner)%2 === 0) {
         if (gameState.handCycle.teamOnePoints >= gameState.handCycle.bidAmount) {
@@ -195,12 +198,14 @@ static tallyPointsHandCycle(gameState: GameState) {
     }
 }
 
+//NOTE: nextHandCycle should probabaly be in a different file once bidding is implemented etc.
 static nextHandCycle(gameState: GameState) {
     const nextDealerIndex = (gameState.players.findIndex(p => p.id === gameState.handCycle.dealerId) + 1) % gameState.players.length;
     const nextDealerId = gameState.players[nextDealerIndex].id;
     gameState.handCycle = new HandCycle(nextDealerId, "undefined" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.BIDDING, 0, 0, new Trick(0, nextDealerId, {} as Record<PlayerId, Card | null>, nextDealerId));
 }
 
+//NOTE: isGameOver should also be in a different file
 static isGameOver(gameState: GameState): boolean {
     return gameState.teamOneScore >= 52 || gameState.teamTwoScore >= 52;
 }
