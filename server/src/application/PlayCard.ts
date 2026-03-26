@@ -31,10 +31,17 @@ export class PlayCard {
         // Make sure the player exists in this game and it's their turn
         console.log(`Player ${playerId} is attempting to play card ${card.value} of ${card.suit} in game ${gameState.id}`);
 
+
+        //Validates if the card can be played in the current HandCycle (is it the PLAYING phase)
+        if (gameState.handCycle.handCycleStatus !== HandCycleStatus.PLAYING) {
+            console.log(`Illegal play attempt by player ${playerId}. (Not PLAYING phase)`);
+            return null;
+        }
+
         const player = gameState.players.find(p => p.id === playerId);
         if (!player || !PlayCard.validateTurn(gameState, playerId)) {
             console.log(`Invalid play attempt by player ${playerId}. Either player not found or not player's turn.`);
-            console.log("Player turn: ", gameState.handCycle.trick.playerTurn);
+            console.log("Player turn: ", gameState.handCycle.trick!.playerTurn); //the ! after trick is safe because if PLAYING then trick is guaranteed
             console.log(player);
             return null;
         }
@@ -56,8 +63,8 @@ export class PlayCard {
         }
 
         // If the trick is over, tally points and start the next trick
-        if (PlayCard.isTrickOver(gameState.handCycle.trick)) {
-            PlayCard.tallyTrickPoints(gameState, gameState.handCycle.trick);
+        if (PlayCard.isTrickOver(gameState.handCycle.trick!)) {
+            PlayCard.tallyTrickPoints(gameState, gameState.handCycle.trick!);
             PlayCard.nextTrick(gameState);
         }
 
@@ -80,16 +87,16 @@ static updateGameStateForPlayedCard(gameState: GameState, player: Player, card: 
     const cardSuit = card.suit;
     const cardValue = card.value;
     player.hand.removeCard({suit: cardSuit, value: cardValue} as Card);
-    gameState.handCycle.trick.cardsPlayed[player.id as PlayerId] = {suit: cardSuit, value: cardValue} as Card;
-    gameState.handCycle.trick.playerTurn = PlayCard.getNextPlayerId(player.id, gameState.players, gameState.handCycle.trick.startingPlayerId) as PlayerId;
+    gameState.handCycle.trick!.cardsPlayed[player.id as PlayerId] = {suit: cardSuit, value: cardValue} as Card;
+    gameState.handCycle.trick!.playerTurn = PlayCard.getNextPlayerId(player.id, gameState.players, gameState.handCycle.trick!.startingPlayerId) as PlayerId;
     console.log("New game state after playing card:", JSON.stringify(gameState));
 }
 
 // PlayCard function is called when a player has no cards to play, it updates the game state accordingly and moves the turn forward
 static updateGameStateForNoCardPlayed(gameState: GameState, player: Player) {
     console.log(`Player ${player.id} has no cards to play, moving to next turn.`);
-    gameState.handCycle.trick.cardsPlayed[player.id as PlayerId] = null;
-    gameState.handCycle.trick.playerTurn = PlayCard.getNextPlayerId(player.id, gameState.players, gameState.handCycle.trick.startingPlayerId) as PlayerId;
+    gameState.handCycle.trick!.cardsPlayed[player.id as PlayerId] = null;
+    gameState.handCycle.trick!.playerTurn = PlayCard.getNextPlayerId(player.id, gameState.players, gameState.handCycle.trick!.startingPlayerId) as PlayerId;
 }
 
 // Returns the next player id or null if there are no more players in the trick
@@ -101,7 +108,7 @@ static getNextPlayerId(currentPlayerId: string, players: Player[], startingPlaye
 
 // Validates that it's the player's turn
 static validateTurn (gameState: GameState, playerId: PlayerId): boolean {
-    return gameState.handCycle.trick.playerTurn === playerId;
+    return gameState.handCycle.trick!.playerTurn === playerId;
 }
 
 // Validates that a player has the card
@@ -118,8 +125,8 @@ static isOutOfCards(gameState: GameState, player: Player): boolean {
 
 
 static calcTrickWinner(gameState: GameState): PlayerId {
-    const cardsPlayed = gameState.handCycle.trick.cardsPlayed;
-    let winningPlayerId: PlayerId = gameState.handCycle.trick.startingPlayerId;
+    const cardsPlayed = gameState.handCycle.trick!.cardsPlayed;
+    let winningPlayerId: PlayerId = gameState.handCycle.trick!.startingPlayerId;
     for (const [playerId, card] of Object.entries(cardsPlayed)) {
         if (PlayCard.compareCards(card as Card, cardsPlayed[winningPlayerId] as Card, gameState.handCycle.trumpSuit)) {
             winningPlayerId = playerId as PlayerId;
@@ -159,7 +166,7 @@ static isTrickOver(trick: Trick) {
 // PlayCard function starts the next trick, call after tallying points
 static nextTrick(gameState: GameState) {
     const winningPlayerId = PlayCard.calcTrickWinner(gameState);
-    gameState.handCycle.trick = new Trick(gameState.handCycle.trick.roundNumber+1, winningPlayerId, {} as Record<PlayerId, Card | null>, winningPlayerId);
+    gameState.handCycle.trick = new Trick(gameState.handCycle.trick!.roundNumber+1, winningPlayerId, {} as Record<PlayerId, Card | null>, winningPlayerId);
 }
 
 // PlayCard function is called at the end of a trick to tally points
@@ -202,7 +209,8 @@ static tallyPointsHandCycle(gameState: GameState) {
 static nextHandCycle(gameState: GameState) {
     const nextDealerIndex = (gameState.players.findIndex(p => p.id === gameState.handCycle.dealerId) + 1) % gameState.players.length;
     const nextDealerId = gameState.players[nextDealerIndex].id;
-    gameState.handCycle = new HandCycle(nextDealerId, "undefined" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.BIDDING, 0, 0, new Trick(0, nextDealerId, {} as Record<PlayerId, Card | null>, nextDealerId));
+    gameState.handCycle = new HandCycle(nextDealerId, "undefined" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.BIDDING, 0, 0, 
+        null /*REPLACE WITH A NEW BIDDING CYCLE */ , new Trick(0, nextDealerId, {} as Record<PlayerId, Card | null>, nextDealerId));
 }
 
 //NOTE: isGameOver should also be in a different file
