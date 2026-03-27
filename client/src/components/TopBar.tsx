@@ -17,6 +17,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
     lineHeight: 1,
   },
+  additonalBarFormat: {}
 }
 
 function wantToLeave(){
@@ -24,6 +25,18 @@ function wantToLeave(){
     if (confirmLeave) {
       window.history.back();
     }
+}
+
+function statBar() {
+//  TODO: Fill in
+}
+
+function infoBar() {
+//  TODO: Fill in
+}
+
+function settingsBar() {
+//  TODO: Fill in
 }
 
 function emptyTopBar(){
@@ -44,26 +57,59 @@ function withoutBackBtnTopBar() {
           size={45}
           color="#3d2b24"
           style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
+          onClick={statBar}
          />
          {/* Will be used to show info Page (Tutorial) */}
         <Info
           size={45}
           color="#3d2b24"
           style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
+          onClick={infoBar}
          />
          {/* Will be used to show settings Page*/}
          <Settings
           size={45}
           color="#3d2b24"
           style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
+          onClick={settingsBar}
          />
       </div>)
 }
 
 function withBackBtnTopBar() {
+    return(<div style={styles.topBar}>
+        <X
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={() => window.history.back()}
+        />
+        {/* Will be used to show stats Page*/}
+         <ChartNoAxesColumnIncreasing
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={statBar}
+         />
+         {/* Will be used to show info Page (Tutorial) */}
+        <Info
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={infoBar}
+         />
+         {/* Will be used to show settings Page*/}
+         <Settings
+          size={45}
+          color="#3d2b24"
+          style={{cursor: "pointer"}}
+          onClick={settingsBar}
+         />
+      </div>);
+}
+
+
+function withBackBtnTopBarGamePlay() {
     return(<div style={styles.topBar}>
         <X
           size={45}
@@ -76,28 +122,28 @@ function withBackBtnTopBar() {
           size={45}
           color="#3d2b24"
           style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
+          onClick={statBar}
          />
          {/* Will be used to show info Page (Tutorial) */}
         <Info
           size={45}
           color="#3d2b24"
           style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
+          onClick={infoBar}
          />
          {/* Will be used to show settings Page*/}
          <Settings
           size={45}
           color="#3d2b24"
           style={{cursor: "pointer"}}
-          onClick={() => window.history.back()}
+          onClick={settingsBar}
          />
       </div>);
 }
-
-export default function TopBar({varient}: {varient: "empty" | "withBackBtn" | "withoutBackBtn" }){ 
+export default function TopBar({varient}: {varient: "empty" | "withBackBtn" | "withoutBackBtn" | "withBackBtnTopBarGamePlay"}){ 
    
     if (varient === "empty") return emptyTopBar();
     else if (varient === "withBackBtn") return withBackBtnTopBar();
+    else if (varient == "withBackBtnTopBarGamePlay") return withBackBtnTopBarGamePlay();
     else return withoutBackBtnTopBar();
 }

@@ -28,7 +28,7 @@ export default function GamePlay() {
   console.log(gameState);
   return (
     <div style={styles.wrapper}>
-      <TopBar varient="withBackBtn" />
+      <TopBar varient="withBackBtnTopBarGamePlay" />
 
       <Table
         bottom = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[0].id)?.card}
