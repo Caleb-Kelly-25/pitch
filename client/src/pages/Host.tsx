@@ -59,7 +59,7 @@ export default function Host() {
                         <button onClick={async () => {setGameCode(getGameCode()); setGameId(await createGame(gameCode, auth.token || ""))}}>Create Game</button>
                         <h2>Game Code: {gameCode}</h2>
                         <h2>Game Id: {gameId}</h2>
-                        <h3>Waiting for players...</h3>
+                        {/* <h3>Waiting for players...</h3> */}
                         {<h3>Waiting for {4-gameState.players.length} players</h3>}
                 </div>
         </div>
