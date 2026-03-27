@@ -7,15 +7,12 @@ const initialState: GameState = {
     gameId: "initialId",
     phase: "WAITING",
 
-    players: [].map((id, index) => ({
-        id: id,
-        username: `Player${index + 1}`,
-        seat: (index + 1) as 1 | 2 | 3 | 4,
-        team: index % 2 ? 0 : 1,
-        isDealer: index === 0,
-        isConnected: true,
-        cardCount: index
-    } as Player)),
+    players: [
+        { id: "playerId1", username: "Player1", seat: 1 as const, team: 0 as const, isDealer: true,  isConnected: true, cardCount: 6 },
+        { id: "playerId2", username: "Player2", seat: 2 as const, team: 1 as const, isDealer: false, isConnected: true, cardCount: 6 },
+        { id: "playerId3", username: "Player3", seat: 3 as const, team: 0 as const, isDealer: false, isConnected: true, cardCount: 6 },
+        { id: "playerId4", username: "Player4", seat: 4 as const, team: 1 as const, isDealer: false, isConnected: true, cardCount: 6 },
+    ],
 
     hand: [{
         suit: "HEARTS",

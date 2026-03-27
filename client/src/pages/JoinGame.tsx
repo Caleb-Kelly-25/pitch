@@ -5,7 +5,6 @@ import { useAuth } from "../features/auth/useAuth";
 import { joinGame } from "../features/game/gameService";
 import { registerGameSocketHandlers } from "../features/game/registerGameSocketHandlers";
 import { useGame } from "../features/game/useGame";
-import { useNavigate } from "react-router-dom";
 
 const styles: Record<string, React.CSSProperties> = {
     wrapper: {
