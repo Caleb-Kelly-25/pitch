@@ -23,14 +23,30 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-export default function GamePlay() {
+// This function is used to determine the current phase of the game call coresponding functions
+export function determinePhase() {
   const gameState = useGame();
-  console.log(gameState);
-  return (
-    <div style={styles.wrapper}>
-      <TopBar varient="withBackBtnTopBarGamePlay" />
+  if (gameState.phase === "WAITING") {
+    return "Waiting for players to join...";
+  }
+  else if (gameState.phase === "BIDDING") {
+    displayTable();
+    displayScore();
+    
+    return "Bidding phase";
+  } else if (gameState.phase === "PLAYING") {
+    return "Playing phase";
+  } else if (gameState.phase === "COMPLETE") {
+    return "Complete phase";
+  } else {
+    return "Unknown phase";
+  }
+}
 
-      <Table
+export function displayTable() {
+  const gameState = useGame();
+  return (
+    <Table
         bottom = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[0].id)?.card}
         left = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[1].id)?.card}
         top = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[2].id)?.card}
@@ -53,6 +69,22 @@ export default function GamePlay() {
           <HandOfCards count={gameState.hand.length} cards={gameState.hand.map((card) => ({ suit: card.suit, value: card.value, onClick: () => playCard(card.suit, card.value, gameState.gameId) } as CardProps))} />
         </PlayerSeat>
       </Table>
+  )
+}
+
+export function displayScore() {
+  //TODO: implement score display
+  //Score for Us vs. Them
+  //Score for this round and whole game
+}
+
+export default function GamePlay() {
+  const gameState = useGame();
+  console.log(gameState);
+  return (
+    <div style={styles.wrapper}>
+      <TopBar varient="withBackBtnTopBarGamePlay" />
+        {displayTable()}
     </div>
   );
 }
