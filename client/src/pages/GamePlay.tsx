@@ -34,7 +34,7 @@ export function determinePhase() {
     displayTable();
     displayScore();
     
-    return "Bidding phase";
+    return biddingPhase();
   } else if (gameState.phase === "PLAYING") {
     return "Playing phase";
   } else if (gameState.phase === "COMPLETE") {
@@ -81,6 +81,10 @@ export function displayScore() {
   //Score for this round and whole game
 }
 
+export function biddingPhase(){
+
+}
+
 export default function GamePlay() {
   const gameState = useGame();
   console.log(gameState);
@@ -88,6 +92,8 @@ export default function GamePlay() {
     <div style={styles.wrapper}>
       <TopBar varient="withBackBtnTopBarGamePlay" />
         {displayTable()}
+        {determinePhase()}
+          
     </div>
   );
 }
