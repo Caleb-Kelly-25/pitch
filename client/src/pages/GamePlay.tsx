@@ -5,6 +5,7 @@ import PlayerSeat from "../components/PlayerSeat";
 import { useGame } from "../features/game/useGame";
 import type { CardProps } from "../components/Card";
 import { playCard } from "../features/game/gameService";
+import { useAuth } from "../features/auth/useAuth";
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
@@ -23,18 +24,36 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-export default function GamePlay() {
+// This function is used to determine the current phase of the game call coresponding functions
+export function determinePhase() {
   const gameState = useGame();
-  console.log(gameState);
-  return (
-    <div style={styles.wrapper}>
-      <TopBar varient="withBackBtnTopBarGamePlay" />
+  if (gameState.phase === "WAITING") {
+    return "Waiting for players to join...";
+  }
+  else if (gameState.phase === "BIDDING") {
+    displayTable();
+    displayScore();
+    
+    return "Bidding phase";
+  } else if (gameState.phase === "PLAYING") {
+    return "Playing phase";
+  } else if (gameState.phase === "COMPLETE") {
+    return "Complete phase";
+  } else {
+    return "Unknown phase";
+  }
+}
 
-      <Table
-        bottom = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[0].id)?.card}
-        left = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[1].id)?.card}
-        top = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[2].id)?.card}
-        right = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[3].id)?.card}
+export function displayTable() {
+  const gameState = useGame();
+  const auth = useAuth();
+  const ourIndex = gameState.players.findIndex(p => p.id === auth.user?.id);
+  return (
+    <Table
+        bottom = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[(0+ourIndex)%4].id)?.card}
+        left = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[(1+ourIndex)%4].id)?.card}
+        top = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[(2+ourIndex)%4].id)?.card}
+        right = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[(3+ourIndex)%4].id)?.card}
       >
         <PlayerSeat position="top">
           <HandOfCards count={gameState.players[2].cardCount} />
@@ -53,6 +72,22 @@ export default function GamePlay() {
           <HandOfCards count={gameState.hand.length} cards={gameState.hand.map((card) => ({ suit: card.suit, value: card.value, onClick: () => playCard(card.suit, card.value, gameState.gameId) } as CardProps))} />
         </PlayerSeat>
       </Table>
+  )
+}
+
+export function displayScore() {
+  //TODO: implement score display
+  //Score for Us vs. Them
+  //Score for this round and whole game
+}
+
+export default function GamePlay() {
+  const gameState = useGame();
+  console.log(gameState);
+  return (
+    <div style={styles.wrapper}>
+      <TopBar varient="withBackBtnTopBarGamePlay" />
+        {displayTable()}
     </div>
   );
 }
