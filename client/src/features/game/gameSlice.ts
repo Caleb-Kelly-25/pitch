@@ -5,7 +5,7 @@ import type { GameState, Player} from "./gameTypes";
 
 const initialState: GameState = {
     gameId: "initialId",
-    phase: "WAITING",
+    phase: "BIDDING",
 
     players: [
         { id: "playerId1", username: "Player1", seat: 1 as const, team: 0 as const, isDealer: true,  isConnected: true, cardCount: 6 },
@@ -17,12 +17,19 @@ const initialState: GameState = {
     hand: [{
         suit: "HEARTS",
         value: 1
-    }],
+        },{
+        suit: "SPADES",
+        value: 14
+        },{
+        suit: "DIAMONDS",
+        value: 11
+        }
+    ],
     trick: {
             leadPlayerId: "playerId1",
             playedCards: [
-                {playerId: "playerId1", card: {suit: "HEARTS", value: 1}},
-                {playerId: "playerId2", card: {suit: "DIAMONDS", value: 12}},
+                {playerId: "playerId1", card: undefined},
+                {playerId: "playerId2", card: undefined},
                 {playerId: "playerId3", card: undefined},
                 {playerId: "playerId4", card: undefined},
             ]
@@ -31,11 +38,11 @@ const initialState: GameState = {
         bidding: {
             currentBidderId: "playerId2",
             highestBidderId: "playerId1",
-            bids: [5, undefined, undefined, undefined]
+            bids: [5, 0, 0, 0]
         },
     
         trickNumber: 0,
-        leadSuit: "HEARTS",
+        leadSuit: null,
         ourScore: 0,
         theirScore: 1
 }

@@ -22,21 +22,54 @@ const styles: Record<string, React.CSSProperties> = {
     left: 0,
     overflow: "hidden",
   },
+  //  container: {
+  //   display: "flex",
+  //   justifyContent: "center",  // horizontal center
+  //   alignItems: "center",      // vertical center
+  //   height: "100vh",           // full screen height
+  // },
+  title: {
+    position: "fixed",       // float above the page
+    top: "50%",              // vertical center
+    left: "50%",             // horizontal center
+    transform: "translate(-50%, -50%)", // truly center
+    fontSize: "2rem",
+    color: "white",
+    textAlign: "center",
+    zIndex: 1000,            // make sure it's above other content
+    pointerEvents: "none",   // lets clicks pass through if needed
+  },
 };
 
 // This function is used to determine the current phase of the game call coresponding functions
 export function determinePhase() {
   const gameState = useGame();
   if (gameState.phase === "WAITING") {
-    return "Waiting for players to join...";
+    return (
+      <div>
+          <div style = {styles.title}>Waiting for players to join...
+          </div>
+      </div>
+      );
   }
   else if (gameState.phase === "BIDDING") {
     displayTable();
     displayScore();
+    biddingPhase();
+    pickSuit();
     
-    return biddingPhase();
+    return(
+      <>
+        {displayTable()}
+        {/* {displayScore()} */}
+        {biddingPhase()}
+      </>
+    );
+    
+    //TODO: learn how to return multiple functions in react, may need to make a new component for the bidding phase
   } else if (gameState.phase === "PLAYING") {
-    return "Playing phase";
+    return displayTable(),displayScore();
+    
   } else if (gameState.phase === "COMPLETE") {
     return "Complete phase";
   } else {
@@ -82,7 +115,71 @@ export function displayScore() {
 }
 
 export function biddingPhase(){
+  //If your turn
+  if (useGame().bidding.currentBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id) {
+      // a conditional so if no one bids, the dealer starts with a 5 bid
+    if (useGame().bidding.bids.every(bid => bid === undefined)) {
+      return (
+      <div>
+          <div style = {styles.title}> You are the dealer. If no one bids, you start with a 5 bid. It's your turn to bid. Please select a bid or pass.
+          </div>
+            biddingButtons()
+        </div>)
+    } else {
+      return (
+        <div>
+          <div style = {styles.title}>It's your turn to bid. Please select a bid or pass.
+          </div>
+            biddingButtons()
+        </div>
+    )
+  } 
+  //If not your turn
+  } else {  
+     //May cause issues if you are the highest bidder, not sure if it will let you choose the suit
+   
+    if (useGame().bidding.bids.every(bid => bid !== undefined)) {
+      return pickSuit();
+    } else if (useGame().bidding.highestBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id){
+      return <div>
+          <div style = {styles.title}>You are the highest bidder. Please wait for other players to bid or pass.
+          </div>
+        </div>
+    } else { return "Waiting for other players to bid...";}
+  }
+}
 
+export function biddingButtons(){
+  //TODO: implement actual bidding options and logic
+  return(<div> <button onClick={() => useGame().placeBid(0)}>Pass</button>
+          <button onClick={() => useGame().placeBid(5)}>5</button>
+          <button onClick={() => useGame().placeBid(6)}>6</button>
+          <button onClick={() => useGame().placeBid(7)}>7</button>
+          <button onClick={() => useGame().placeBid(8)}>8</button>
+          <button onClick={() => useGame().placeBid(9)}>9</button>
+          <button onClick={() => useGame().placeBid(10)}>10</button>
+          <button onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
+        </div>  
+        );
+}
+
+export function pickSuit() {  
+  if (useGame().bidding.bids.every(bid => bid !== undefined)) {
+    if (useGame().bidding.highestBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id) {
+      return (<div>
+        <div style = {styles.title}>You won the bid! Please select a suit to lead with.</div>
+        <button onClick={() => useGame().pickSuit("HEARTS")}>Hearts</button>
+        <button onClick={() => useGame().pickSuit("DIAMONDS")}>Diamonds</button>
+        <button onClick={() => useGame().pickSuit("CLUBS")}>Clubs</button>
+        <button onClick={() => useGame().pickSuit("SPADES")}>Spades</button>
+      </div>)
+    } else {
+      return <div>
+          <div style = {styles.title}>Waiting for the highest bidder to select a suit...
+          </div>
+        </div>
+    }
+  }
 }
 
 export default function GamePlay() {
@@ -91,9 +188,7 @@ export default function GamePlay() {
   return (
     <div style={styles.wrapper}>
       <TopBar varient="withBackBtnTopBarGamePlay" />
-        {displayTable()}
         {determinePhase()}
-          
     </div>
   );
 }
