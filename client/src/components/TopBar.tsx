@@ -32,7 +32,8 @@ function statBar() {
 }
 
 function infoBar() {
-//  TODO: Fill in
+
+  window.open("https://gamerules.com/rules/10-point-pitch/", "_blank");
 }
 
 function settingsBar() {
@@ -64,7 +65,7 @@ function withoutBackBtnTopBar() {
           size={45}
           color="#3d2b24"
           style={{cursor: "pointer"}}
-          onClick={infoBar}
+          onClick= {infoBar}
          />
          {/* Will be used to show settings Page*/}
          <Settings
