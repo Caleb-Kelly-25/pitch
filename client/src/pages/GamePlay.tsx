@@ -5,6 +5,7 @@ import PlayerSeat from "../components/PlayerSeat";
 import { useGame } from "../features/game/useGame";
 import type { CardProps } from "../components/Card";
 import { playCard } from "../features/game/gameService";
+import { useAuth } from "../features/auth/useAuth";
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
@@ -45,12 +46,14 @@ export function determinePhase() {
 
 export function displayTable() {
   const gameState = useGame();
+  const auth = useAuth();
+  const ourIndex = gameState.players.findIndex(p => p.id === auth.user?.id);
   return (
     <Table
-        bottom = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[0].id)?.card}
-        left = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[1].id)?.card}
-        top = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[2].id)?.card}
-        right = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[3].id)?.card}
+        bottom = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[(0+ourIndex)%4].id)?.card}
+        left = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[(1+ourIndex)%4].id)?.card}
+        top = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[(2+ourIndex)%4].id)?.card}
+        right = {gameState.trick.playedCards.find(p => p.playerId === gameState.players[(3+ourIndex)%4].id)?.card}
       >
         <PlayerSeat position="top">
           <HandOfCards count={gameState.players[2].cardCount} />

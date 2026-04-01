@@ -73,6 +73,7 @@ export default function JoinPublic() {
     const gameState = useGame();
     const [password, setPassword] = useState("");
     const token = useAuth().token;
+    console.log(token);
     if (gameState.gameId === "" || gameState.phase == "WAITING" || gameState.players.length < 4) {
     return(
         <div style={styles.wrapper}>
