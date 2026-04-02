@@ -58,11 +58,6 @@ export function determinePhase() {
       );
   }
   else if (gameState.phase === "BIDDING") {
-    displayTable();
-    displayScore();
-    biddingPhase();
-    pickSuit();
-    
     return(
       <>
         {displayTable()}
@@ -70,7 +65,6 @@ export function determinePhase() {
         {biddingPhase()}
       </>
     );
-    
     //TODO: learn how to return multiple functions in react, may need to make a new component for the bidding phase
   } else if (gameState.phase === "PLAYING") {
     return displayTable(),displayScore();
@@ -120,59 +114,56 @@ export function displayScore() {
 }
 
 export function biddingPhase(){
-  //If your turn
-  if (useGame().bidding.currentBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id) {
-      // a conditional so if no one bids, the dealer starts with a 5 bid
-    if (useGame().bidding.bids.every(bid => bid === undefined)) {
+  //if not your turn
+  if (useGame().bidding.currentBidderId !== useGame().players.find(p => p.id === useAuth().user?.id)?.id) {
+    //and you are the highest bidder 
+    if (useGame().bidding.highestBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id){
+      return (<div>
+          <div style = {styles.title}>You are the highest bidder. Please wait for other players to bid or pass.
+          </div>
+        </div>);
+    //and you are not the highest bidder
+    } else {
       return (
       <div>
+          <div style = {styles.title}>Waiting for other players to bid...
+          </div>
+        </div>
+      );
+    }
+  //if it is your turn
+  } else {
+    // a conditional so if no one bids, the dealer starts with a 5 bid
+    if (useGame().bidding.bids.every(bid => bid === undefined)) {
+      return (
+        <div>
           <div style = {styles.title}> You are the dealer. If no one bids, you start with a 5 bid. It's your turn to bid. Please select a bid or pass.
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(8)}>8</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(9)}>9</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(10)}>10</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
-        </div> 
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(8)}>8</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(9)}>9</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(10)}>10</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
+          </div> 
         </div>   
-        );
+      );
     } else {
       return (
         <div>
           <div style = {styles.title}>It's your turn to bid. Please select a bid or pass.
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(8)}>8</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(9)}>9</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(10)}>10</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
           </div>
-            biddingButtons()
         </div>
     )
   } 
-  //If not your turn
-  } else {  
-     //May cause issues if you are the highest bidder, not sure if it will let you choose the suit
-   
-    if (useGame().bidding.bids.every(bid => bid !== undefined)) {
-      return pickSuit();
-    } else if (useGame().bidding.highestBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id){
-      return <div>
-          <div style = {styles.title}>You are the highest bidder. Please wait for other players to bid or pass.
-          </div>
-        </div>
-    } else { return "Waiting for other players to bid...";}
-  }
 }
-
-export function biddingButtons(){
-  //TODO: implement actual bidding options and logic
-  return(<div style = {styles.title}> <button onClick={() => useGame().placeBid(0)}>Pass</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(8)}>8</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(9)}>9</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(10)}>10</button>
-          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
-        </div>  
-        );
 }
 
 export function pickSuit() {  
@@ -193,6 +184,15 @@ export function pickSuit() {
         </div>
     }
   }
+}
+
+export function blind() {
+  //TODO: implement blind logic and display
+  return (<div>
+    <div style = {styles.title}>The blind is in play. Please wait for the round to start.
+    </div>
+  </div>)
+
 }
 
 export default function GamePlay() {
