@@ -163,6 +163,22 @@ export function biddingPhase(){
         </div>
     )
   } 
+//if everyone has bid
+  if (useGame().bidding.bids.every(bid => bid !== undefined)) {
+    //and you are the highest bidder
+    if (useGame().bidding.highestBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id) {
+      return (<>
+        {pickSuit()}
+        {blind()}
+      </>);
+      //and you are not the highest bidder
+    } else{
+      return (<div>
+        <div style = {styles.title}>Waiting for the highest bidder to select a suit...
+        </div>
+      </div>);
+    }
+  }
 }
 }
 
@@ -192,7 +208,6 @@ export function blind() {
     <div style = {styles.title}>The blind is in play. Please wait for the round to start.
     </div>
   </div>)
-
 }
 
 export default function GamePlay() {
