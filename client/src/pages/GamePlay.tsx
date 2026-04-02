@@ -22,12 +22,6 @@ const styles: Record<string, React.CSSProperties> = {
     left: 0,
     overflow: "hidden",
   },
-  //  container: {
-  //   display: "flex",
-  //   justifyContent: "center",  // horizontal center
-  //   alignItems: "center",      // vertical center
-  //   height: "100vh",           // full screen height
-  // },
   title: {
     position: "fixed",       // float above the page
     top: "50%",              // vertical center
@@ -38,6 +32,17 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: "center",
     zIndex: 1000,            // make sure it's above other content
     pointerEvents: "none",   // lets clicks pass through if needed
+  },
+    buttonStyle: {
+      fontSize: "1rem",      // controls the text size
+      padding: "10px 20px",  // makes the button larger or smaller
+      margin: "5px",         // space between buttons
+      borderRadius: "8px",   // rounded corners
+      cursor: "pointer",     // changes cursor on hover
+      backgroundColor: "linear-gradient(to bottom, #E05254, #7A2C2E)",
+      color: "#f5ede0",
+      border: "none",        // remove default browser border
+      transition: "background-color 0.2s", // smooth hover effect
   },
 };
 
@@ -122,9 +127,16 @@ export function biddingPhase(){
       return (
       <div>
           <div style = {styles.title}> You are the dealer. If no one bids, you start with a 5 bid. It's your turn to bid. Please select a bid or pass.
-          </div>
-            biddingButtons()
-        </div>)
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(8)}>8</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(9)}>9</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(10)}>10</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
+        </div> 
+        </div>   
+        );
     } else {
       return (
         <div>
@@ -151,14 +163,14 @@ export function biddingPhase(){
 
 export function biddingButtons(){
   //TODO: implement actual bidding options and logic
-  return(<div> <button onClick={() => useGame().placeBid(0)}>Pass</button>
-          <button onClick={() => useGame().placeBid(5)}>5</button>
-          <button onClick={() => useGame().placeBid(6)}>6</button>
-          <button onClick={() => useGame().placeBid(7)}>7</button>
-          <button onClick={() => useGame().placeBid(8)}>8</button>
-          <button onClick={() => useGame().placeBid(9)}>9</button>
-          <button onClick={() => useGame().placeBid(10)}>10</button>
-          <button onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
+  return(<div style = {styles.title}> <button onClick={() => useGame().placeBid(0)}>Pass</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(8)}>8</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(9)}>9</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(10)}>10</button>
+          <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
         </div>  
         );
 }
@@ -167,11 +179,12 @@ export function pickSuit() {
   if (useGame().bidding.bids.every(bid => bid !== undefined)) {
     if (useGame().bidding.highestBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id) {
       return (<div>
-        <div style = {styles.title}>You won the bid! Please select a suit to lead with.</div>
-        <button onClick={() => useGame().pickSuit("HEARTS")}>Hearts</button>
-        <button onClick={() => useGame().pickSuit("DIAMONDS")}>Diamonds</button>
-        <button onClick={() => useGame().pickSuit("CLUBS")}>Clubs</button>
-        <button onClick={() => useGame().pickSuit("SPADES")}>Spades</button>
+        <div style = {styles.title}>You won the bid! Please select a suit to lead with.
+        <button style = {styles.buttonStyle}onClick={() => useGame().pickSuit("HEARTS")}>Hearts</button>
+        <button style = {styles.buttonStyle}onClick={() => useGame().pickSuit("DIAMONDS")}>Diamonds</button>
+        <button style = {styles.buttonStyle}onClick={() => useGame().pickSuit("CLUBS")}>Clubs</button>
+        <button style = {styles.buttonStyle}onClick={() => useGame().pickSuit("SPADES")}>Spades</button>
+        </div>
       </div>)
     } else {
       return <div>
