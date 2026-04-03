@@ -23,6 +23,15 @@ const initialState: GameState = {
         },{
         suit: "DIAMONDS",
         value: 11
+        },{
+        suit: "CLUBS",
+        value: 10
+        },{
+        suit: "HEARTS",
+        value: 13
+        },{
+        suit: "SPADES",
+        value: 12
         }
     ],
     trick: {

@@ -134,6 +134,7 @@ export function biddingPhase(){
   //if it is your turn
   } else {
     // a conditional so if no one bids, the dealer starts with a 5 bid
+    //TODO: currently had first person dealer, when should be last person dealer
     if (useGame().bidding.bids.every(bid => bid === undefined)) {
       return (
         <div>
