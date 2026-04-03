@@ -47,7 +47,7 @@ const initialState: GameState = {
         bidding: {
             currentBidderId: "playerId1",
             highestBidderId: "playerId1",
-            bids: [5, 0, 0, 0]
+            bids: [5, 0, 0, undefined]
         },
     
         trickNumber: 0,

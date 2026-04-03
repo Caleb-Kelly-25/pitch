@@ -114,42 +114,30 @@ export function displayScore() {
 }
 
 export function biddingPhase(){
+  const isTurn = useGame().bidding.currentBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id;
+  const isHighestBidder = useGame().bidding.highestBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id;
+  const isDealersTurn = useGame().bidding.bids.filter(bid => bid === undefined).length ===1;
+  const first3PlayersPassed = useGame().bidding.bids.slice(0,3).every(bid => bid === 0);
+
   //if not your turn
-  if (useGame().bidding.currentBidderId !== useGame().players.find(p => p.id === useAuth().user?.id)?.id) {
+  if (!isTurn) {
     //and you are the highest bidder 
-    if (useGame().bidding.highestBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id){
+    if (!isHighestBidder) {
       return (<div>
-          <div style = {styles.title}>You are the highest bidder. Please wait for other players to bid or pass.
+          <div style = {styles.title}>You are the highest bidder. Please wait for other players to bid or pass...
           </div>
         </div>);
     //and you are not the highest bidder
     } else {
-      return (
-      <div>
-          <div style = {styles.title}>Waiting for other players to bid...
+      return (<div>
+          <div style = {styles.title}>You are the highest bidder. Please wait for other players to bid or pass...
           </div>
         </div>
       );
     }
   //if it is your turn
   } else {
-    // a conditional so if no one bids, the dealer starts with a 5 bid
-    //TODO: currently had first person dealer, when should be last person dealer
-    if (useGame().bidding.bids.every(bid => bid === undefined)) {
-      return (
-        <div>
-          <div style = {styles.title}> You are the dealer. If no one bids, you start with a 5 bid. It's your turn to bid. Please select a bid or pass.
-            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
-            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
-            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
-            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(8)}>8</button>
-            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(9)}>9</button>
-            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(10)}>10</button>
-            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
-          </div> 
-        </div>   
-      );
-    } else {
+    if (!isDealersTurn) {
       return (
         <div>
           <div style = {styles.title}>It's your turn to bid. Please select a bid or pass.
@@ -162,26 +150,42 @@ export function biddingPhase(){
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
           </div>
         </div>
-    )
-  } 
-//if everyone has bid
-  if (useGame().bidding.bids.every(bid => bid !== undefined)) {
-    //and you are the highest bidder
-    if (useGame().bidding.highestBidderId === useGame().players.find(p => p.id === useAuth().user?.id)?.id) {
-      return (<>
-        {pickSuit()}
-        {blind()}
-      </>);
-      //and you are not the highest bidder
-    } else{
-      return (<div>
-        <div style = {styles.title}>Waiting for the highest bidder to select a suit...
-        </div>
-      </div>);
+      );
+      //if is dealer
+    } else {
+      //did the first 3 Players Passed
+        if (first3PlayersPassed) {
+          return (
+            <div> 
+              <div style = {styles.title}>You are the dealer and the first 3 players passed. You must bid at least a 5 to play. Please select a bid.
+                <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
+                <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
+                <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
+                <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(8)}>8</button>
+                <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(9)}>9</button>
+                <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(10)}>10</button>
+                <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
+             </div>
+          </div>
+          );
+        } else {
+          return (
+        <div>
+          <div style = {styles.title}>It's your turn to bid. Please select a bid or pass.
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(8)}>8</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(9)}>9</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(10)}>10</button>
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(11)}>Shoot the Moon</button>
+          </div>
+        </div>);
+        }
+      }
     }
   }
-}
-}
+
 
 export function pickSuit() {  
   if (useGame().bidding.bids.every(bid => bid !== undefined)) {
