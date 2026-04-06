@@ -6,9 +6,9 @@ export class BiddingCycle {
     currentBidderId: PlayerId;
     highestBidderId: PlayerId | null;
     highestBid: number;
-    playerBids: Record<PlayerId, number>;
+    playerBids: Record<PlayerId, (number | undefined)>; //maps playerId to their bid, if they have not bid yet it will be undefined
 
-    constructor(currentBidderId: PlayerId, highestBidderId: PlayerId | null, highestBid: number, playerBids: Record<PlayerId, number>) {
+    constructor(currentBidderId: PlayerId, highestBidderId: PlayerId | null, highestBid: number, playerBids: Record<PlayerId, (number | undefined)>) {
         this.currentBidderId = currentBidderId;
         this.highestBidderId = highestBidderId;
         this.highestBid = highestBid;
