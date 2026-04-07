@@ -1,8 +1,9 @@
 import { Suit } from "../enums/Suit";
-import {Value} from "../enums/Value";
+import { Value } from "../enums/Value";
 import { Card } from "./Card";
 import { Player } from "./Player";
 import { HandCycleStatus } from "../enums/HandCycleStatus";
+import GameState from "./GameState";
 import { PlayerId } from "../../types/id-declarations";
 import { BiddingCycle } from "./BiddingCycle";
 import { Trick } from "./Trick";
@@ -32,6 +33,36 @@ export class HandCycle {
         this.teamTwoPoints = teamTwoPoints;
         this.biddingCycle = biddingCycle;
         this.trick = trick;
+    }
+
+    //NOTE: Currently not being used, but handles transitions between statuses
+    public nextStatus(gameState: GameState) {
+        switch(this.handCycleStatus) {
+            case HandCycleStatus.WAITING:
+                this.startBidding(gameState.players); 
+                this.handCycleStatus = HandCycleStatus.BIDDING;
+                break;
+            case HandCycleStatus.BIDDING:
+                this.handCycleStatus = HandCycleStatus.PLAYING;
+                break;
+            case HandCycleStatus.PLAYING:
+                //PlayCard.tallyPointsHandCycle(gameState); //right now calls this but function will probably change
+                
+                if (this.teamOnePoints >= 52 || this.teamTwoPoints >= 52) { //if (PlayCard.isGameOver(gameState)) {
+                    this.handCycleStatus = HandCycleStatus.COMPLETE;
+                    //call some GameOver function here later? probably in GameState file
+                } else {
+                    //PlayCard.nextHandCycle(gameState); //right now calls this but function will probably change
+                    //Call function in GameState that closes this handCycle and creates a new one
+                    //gameState.rotateHandCycle(); <-- this is what I want to do but it does create circular dependency, need to figure out how to resolve that
+                }
+                break;
+            case HandCycleStatus.COMPLETE:
+                //TBD idk what would go here if we even need it, maybe some cleanup? 
+                break;
+            default:
+                throw new Error(`Invalid hand cycle status: ${this.handCycleStatus}`);
+        }
     }
 
     //I wonder if this should be in the PlayCard file instead of the HandCycle file, since it is closely related to the logic of playing a card
@@ -64,9 +95,8 @@ export class HandCycle {
         biddingOrder.forEach(player => {
             this.biddingCycle!.playerBids[player.id as PlayerId] = undefined;
         })
-
-        this.handCycleStatus = HandCycleStatus.BIDDING;
     }
+
 
 
 
