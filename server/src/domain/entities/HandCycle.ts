@@ -1,6 +1,7 @@
 import { Suit } from "../enums/Suit";
 import {Value} from "../enums/Value";
 import { Card } from "./Card";
+import { Player } from "./Player";
 import { HandCycleStatus } from "../enums/HandCycleStatus";
 import { PlayerId } from "../../types/id-declarations";
 import { BiddingCycle } from "./BiddingCycle";
@@ -42,6 +43,32 @@ export class HandCycle {
         }
         return true;
     }
+
+    //Starts the bidding phase of each HandCycle, inits the biddingCycle and changes Status
+    public startBidding(players: Player[]) {
+        const dealerIndex = players.findIndex(player => player.id === this.dealerId);
+
+        const biddingOrder = [
+            ...players.slice(dealerIndex + 1), //Starts with dealer index until end of array
+            ...players.slice(0, dealerIndex + 1) //Adds the players before the dealer index + dealer
+        ]
+
+        this.biddingCycle = new BiddingCycle(
+            biddingOrder[0].id as PlayerId, //currentBidderId
+            null, //highestBidderId
+            0, //highestBid
+            {} as Record<PlayerId, number | undefined> //playerBids, will be filled for players as undefined
+        );
+
+        //Initialize all player bids to undefined
+        biddingOrder.forEach(player => {
+            this.biddingCycle!.playerBids[player.id as PlayerId] = undefined;
+        })
+
+        this.handCycleStatus = HandCycleStatus.BIDDING;
+    }
+
+
 
     static fromJSONObject(handCycle: HandCycle): HandCycle {
         return new HandCycle(

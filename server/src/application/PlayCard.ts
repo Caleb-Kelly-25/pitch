@@ -68,12 +68,14 @@ export class PlayCard {
             PlayCard.nextTrick(gameState);
         }
 
+        //TODO: Maybe move this to HandCycle
         // If the hand cycle is over, tally points and start a new hand cycle
         if (PlayCard.isHandCycleOver(gameState)) {
             PlayCard.tallyPointsHandCycle(gameState);
             PlayCard.nextHandCycle(gameState);
         }
 
+        //TODO: Maybe move this to GameState or HandCycle
         if (PlayCard.isGameOver(gameState)) {
             gameState.handCycle.handCycleStatus = HandCycleStatus.COMPLETE;
         }
@@ -186,7 +188,6 @@ static isHandCycleOver(gameState: GameState): boolean {
     return gameState.players.every(p => PlayCard.isOutOfCards(gameState, p));
 }
 
-//NOTE: tallyPointsHandCycle should probably be in a different file once bidding is implemented etc.
 static tallyPointsHandCycle(gameState: GameState) {
     if (gameState.players.findIndex(p => p.id === gameState.handCycle.bidWinner)%2 === 0) {
         if (gameState.handCycle.teamOnePoints >= gameState.handCycle.bidAmount) {
