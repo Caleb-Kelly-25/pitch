@@ -89,7 +89,6 @@ export class PlaceBid {
 
         //Set the bids for the other players to 0 or what they already bidded 
         PlaceBid.setOtherBidsForShootingMoon(gameState, playerId);
-        biddingCycle.currentBidderId = playerId; //If shooting the moon, the same player is technically the current bidder since everyone else has to pass
         console.log(`Player ${playerId} has shot the moon! Setting all other bids to 0.`);
     }
 
@@ -130,14 +129,14 @@ export class PlaceBid {
 
         //Loop through other players and set their bids to 0 until we loop back to the shooting player
         //If the player has bid already, we don't overwrite their bid (it won't matter since shooting the moon will override it anyway, good for stats)
-        let currentBidderId = PlaceBid.getNextBidderId(gameState, shootingPlayerId);
+        let currentBidderId = PlaceBid.getNextBidderId(gameState, shootingPlayerId); //local variable without modifying actual currBidder
         while (currentBidderId !== shootingPlayerId) {
             if (biddingCycle.playerBids[currentBidderId] === undefined) {
                 biddingCycle.playerBids[currentBidderId] = 0;
             }
             currentBidderId = PlaceBid.getNextBidderId(gameState, currentBidderId);
         }
-        
+        biddingCycle.currentBidderId =shootingPlayerId; //same player is technically the current bidder since everyone else has to pass/ double checking though even though using local var
     }
 
     //Checks if bidding is complete by checking if every player in the game has bid
