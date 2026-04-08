@@ -141,6 +141,7 @@ export function biddingPhase(){
       return (
         <div>
           <div style = {styles.title}>It's your turn to bid. Please select a bid or pass.
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(4)}>4</button>
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
@@ -158,6 +159,7 @@ export function biddingPhase(){
           return (
             <div> 
               <div style = {styles.title}>You are the dealer and the first 3 players passed. You must bid at least a 5 to play. Please select a bid.
+                <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(4)}>4</button>
                 <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
                 <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
                 <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
@@ -172,6 +174,7 @@ export function biddingPhase(){
           return (
         <div>
           <div style = {styles.title}>It's your turn to bid. Please select a bid or pass.
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(4)}>4</button>
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(7)}>7</button>
