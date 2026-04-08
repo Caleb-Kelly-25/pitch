@@ -21,7 +21,8 @@ export function requestUpdate() {
     }
 }
 
-export function placeBid() {
+export function PlaceBidEvent(gameId: string, bid: number) {
+    
 
 }
 
