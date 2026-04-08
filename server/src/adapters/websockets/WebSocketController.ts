@@ -1,6 +1,7 @@
 import {Server, Socket} from "socket.io";
 import IAuthAdapter from "../auth/IAuthAdapter";
 import { GameService } from "../../application/GameService";
+import { BidDTO } from "../../application/dto/BidDTO";
 import { PlayCardDTO } from "../../application/dto/PlayCardDTO";
 import { IdentityPayload } from "../auth/IdentityPayload";
 
@@ -43,6 +44,8 @@ export default class WebSocketController {
 
         socket.on("MessageEvent", (messageText) => this.onMessageEvent(messageText));
 
+        socket.on("PlaceBidEvent", (data) =>{this.onPlaceBidEvent(socket.user, data)});
+
         socket.on("PlayCardEvent", (data) => {this.onPlayCardEvent(socket.user, data)});
 
         socket.join(`player:${socket.user.userId}`);
@@ -50,6 +53,26 @@ export default class WebSocketController {
     
     disconnect(socket: Socket) {
         console.log("Socket disconnected!");
+    }
+
+    onPlaceBidEvent(user: IdentityPayload, data: string) {
+        console.log("Place bid detected");
+        const parsedData = JSON.parse(data);
+        //Validation that frontend sent all necessary data
+        if (!parsedData.gameId || parsedData.bidValue === undefined) {
+            console.error("Invalid PlaceBidEvent data:", data);
+            return;
+        }
+
+        const dto = new BidDTO(parsedData.gameId, user.userId, parsedData.bidValue);
+
+        this.gameService.placeBid(dto).then(success => {
+            if (!success) {
+                console.log("Invalid attempt to place bid:", data);
+            }
+        }).catch(err => {
+            console.error("Error processing PlaceBidEvent:", err);
+        });
     }
 
     onPlayCardEvent(user: IdentityPayload, data: string){
