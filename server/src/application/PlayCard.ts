@@ -210,8 +210,8 @@ static tallyPointsHandCycle(gameState: GameState) {
 static nextHandCycle(gameState: GameState) {
     const nextDealerIndex = (gameState.players.findIndex(p => p.id === gameState.handCycle.dealerId) + 1) % gameState.players.length;
     const nextDealerId = gameState.players[nextDealerIndex].id;
-    gameState.handCycle = new HandCycle(nextDealerId, "undefined" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.BIDDING, 0, 0, 
-        null /*REPLACE WITH A NEW BIDDING CYCLE */ , new Trick(0, nextDealerId, {} as Record<PlayerId, Card | null>, nextDealerId));
+    gameState.handCycle = new HandCycle(nextDealerId, "undefined" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.WAITING, 0, 0, null, null);
+    gameState.handCycle.nextStatus(gameState);
 }
 
 //NOTE: isGameOver should also be in a different file

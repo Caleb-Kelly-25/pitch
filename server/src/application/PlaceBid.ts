@@ -57,7 +57,7 @@ export class PlaceBid {
         //If every player has placed a bid, transition to next phase
         if (PlaceBid.isBiddingComplete(gameState)) {
             console.log(`Bidding complete for game ${gameState.id}. Transitioning to playing phase.`);
-            PlaceBid.endBiddingPhase(gameState);
+            gameState.handCycle.nextStatus(gameState); //This will transition the hand cycle to playing and also do other necessary updates for the next phase
         }
 
         console.log("New game state after placing bid:", JSON.stringify(gameState));
@@ -145,14 +145,5 @@ export class PlaceBid {
 
         return gameState.players.every(player => bids[player.id as PlayerId] !== undefined);
     }
-
-    //Ends the bidding phase and transitions to playing phase
-    static endBiddingPhase(gameState: GameState) {
-        gameState.handCycle.bidWinner = gameState.handCycle.biddingCycle!.highestBidderId!;
-        gameState.handCycle.bidAmount = gameState.handCycle.biddingCycle!.highestBid;
-        gameState.handCycle.handCycleStatus = HandCycleStatus.PLAYING; //Want to make it call a funciton in HandCycle to transition the phase, but for now this is fine
-        gameState.handCycle.biddingCycle = null; //Free up memory by dereferencing the bidding cycle
-    }
-
 
 }

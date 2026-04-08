@@ -43,7 +43,13 @@ export class HandCycle {
                 this.handCycleStatus = HandCycleStatus.BIDDING;
                 break;
             case HandCycleStatus.BIDDING:
+                this.bidWinner = this.biddingCycle!.highestBidderId!; //the ! is safe here because if BIDDING then biddingCycle and highestBidderId are guaranteed
+                this.bidAmount = this.biddingCycle!.highestBid;
+
                 this.handCycleStatus = HandCycleStatus.PLAYING;
+
+                this.biddingCycle = null;
+                this.trick = new Trick(0, this.bidWinner, {} as Record<PlayerId, Card | null>, this.bidWinner);
                 break;
             case HandCycleStatus.PLAYING:
                 //PlayCard.tallyPointsHandCycle(gameState); //right now calls this but function will probably change
