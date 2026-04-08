@@ -1,11 +1,11 @@
 export class BidDTO {
     gameId: string;
     playerId: string;
-    bidValue: number;
+    bidAmount: number;
 
-    constructor(gameId: string, playerId: string, bidValue: number) {
+    constructor(gameId: string, playerId: string, bidAmount: number) {
         this.gameId = gameId;
         this.playerId = playerId;
-        this.bidValue = bidValue;
+        this.bidAmount = bidAmount;
     }
 }

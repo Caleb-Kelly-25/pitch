@@ -23,7 +23,7 @@ export class GameService {
     }
 
     async placeBid(bidDTO: BidDTO) {
-        const { gameId, playerId, bidValue } = bidDTO;
+        const { gameId, playerId, bidAmount } = bidDTO;
 
         const gameState = await this.gameStateRepository.getGameStateById(gameId);
         if (!gameState) {
@@ -31,7 +31,7 @@ export class GameService {
             return false;
         }
 
-        const newGameState: (GameState | null) = PlaceBid.placeBid(gameState, playerId as PlayerId, bidValue);
+        const newGameState: (GameState | null) = PlaceBid.placeBid(gameState, playerId as PlayerId, bidAmount);
 
         if (!newGameState) {
             console.log(`Failed to place bid for player ${playerId} in game ${gameId}.`);

@@ -59,12 +59,12 @@ export default class WebSocketController {
         console.log("Place bid detected");
         const parsedData = JSON.parse(data);
         //Validation that frontend sent all necessary data
-        if (!parsedData.gameId || parsedData.bidValue === undefined) {
+        if (!parsedData.gameId || parsedData.bidAmount === undefined) {
             console.error("Invalid PlaceBidEvent data:", data);
             return;
         }
 
-        const dto = new BidDTO(parsedData.gameId, user.userId, parsedData.bidValue);
+        const dto = new BidDTO(parsedData.gameId, user.userId, parsedData.bidAmount);
 
         this.gameService.placeBid(dto).then(success => {
             if (!success) {
