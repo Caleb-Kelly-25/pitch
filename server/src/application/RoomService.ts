@@ -1,3 +1,4 @@
+import { BiddingCycle } from "../domain/entities/BiddingCycle";
 import { Card } from "../domain/entities/Card";
 import GameState from "../domain/entities/GameState";
 import { Hand } from "../domain/entities/Hand";
@@ -32,7 +33,19 @@ export class RoomService {
         if (!username) {
             throw new Error("User not found");
         }
-        const newRoom = new GameState(gameCode as GameId, [new Player(userId as PlayerId, username, userId as UserId, new Hand([]), false, false, false, 0, 0)], gameCode, new HandCycle(userId as PlayerId, "" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.WAITING, 0, 0, new Trick(0, userId as PlayerId, {} as Record<PlayerId, Card | null>, userId as PlayerId)),0,0 );
+        const newRoom = new GameState(gameCode as GameId,
+            [new Player(userId as PlayerId, username, userId as UserId, new Hand([]), false, false, false, 0, 0)],
+            gameCode,
+            new HandCycle(userId as PlayerId,
+                "" as PlayerId, 0, Suit.HEARTS,
+                [],
+                HandCycleStatus.WAITING,
+                0,
+                0,
+                new BiddingCycle(userId as PlayerId, null, 0, {}),
+                new Trick(0, userId as PlayerId, {} as Record<PlayerId, Card | null>, userId as PlayerId)),
+            0,
+            0);
         await this.shortTermStorage.createGameState(newRoom);
         const user = await this.userRepository.findById(userId as UserId);
         if(!user) {
@@ -60,12 +73,6 @@ export class RoomService {
                     room.players.push(newPlayer);
                 
                     await this.shortTermStorage.updateGameState(room);
-                    
-                    const user = await this.userRepository.findById(userId as UserId);
-                    if(!user) {
-                        throw new Error("User not found");
-                    }
-                    await this.userRepository.updateUser(user);
                 
                 // If the room is now full, we can initialize the hand cycle and start the game
                 if (room.players.length === 4) {
@@ -78,7 +85,6 @@ export class RoomService {
                     await this.shortTermStorage.updateGameState(room);
                     await this.initializeGame(room);
                 }
-
             }
             
             this.publisher.publishGameStateToRoom(room.id, room);

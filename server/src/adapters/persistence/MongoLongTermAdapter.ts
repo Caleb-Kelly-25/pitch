@@ -41,16 +41,31 @@ export class MongoLongTermAdapter implements ILongTermStoragePort {
     }
 
     async findById(id: string): Promise<User | null> {
+        console.log(await this.getAllUsers());
         const userDoc = await UserModel.findOne({ id });
         if (!userDoc) {
             return null;
         }
-        return userDoc as User; 
+        return new User(
+            userDoc.id,
+            userDoc.username,
+            userDoc.email,
+            userDoc.password,
+            userDoc.photoUrl,
+            userDoc.gameId
+        ); 
     }
 
     async getAllUsers(): Promise<User[]> {
         const userDocs = await UserModel.find();
-        return userDocs as User[]; 
+        return userDocs.map(userDoc => new User(
+            userDoc.id,
+            userDoc.username,
+            userDoc.email,
+            userDoc.password,
+            userDoc.photoUrl,
+            userDoc.gameId
+        ));
     }
 
     async deleteUser(id: string): Promise<void> {

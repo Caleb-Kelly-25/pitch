@@ -7,7 +7,9 @@ import {useAuth} from "../auth/useAuth";
 export function playCard(suit: string, value: number, gameId: string) {
     console.log("Playing card");
     if (!socket) {
-        throw new Error("Socket not connected, can't play card.");
+        //throw new Error("Socket not connected, can't play card.");
+        console.log("Socket not connected, connecting socket...");
+        
     } else {
         socket?.emit("PlayCardEvent", JSON.stringify({ gameId:gameId, playerId: "", suit:suit, value:value }));
     }
