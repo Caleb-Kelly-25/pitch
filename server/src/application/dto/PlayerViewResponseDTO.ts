@@ -11,7 +11,7 @@ export class PlayerViewResponseDTO {
     players: PlayerDTO[] = [];
     hand: CardModel[] = [];
 
-    trick: TrickDTO = {} as TrickDTO;
+    trick: TrickDTO | null = {} as TrickDTO;
 
     bidding: {
         currentBidderId: string;
@@ -73,6 +73,7 @@ export class PlayerViewResponseDTO {
     static fromGameState(gameState: GameState, playerId: PlayerId) {
         const dto = new PlayerViewResponseDTO();
         const playerCards = (gameState.players.find(p => p.id === playerId)?.hand.cards || []).map(c => (dtoFromCard(c)));
+        
         dto.setGameId(gameState.id)
             .setPhase(gameState.handCycle.handCycleStatus)
             .setPlayers(gameState.players.map(p => ({
@@ -85,13 +86,13 @@ export class PlayerViewResponseDTO {
                 cardCount: p.hand.cards.length
             } as PlayerDTO)))
             .setHand(playerCards)
-            .setTrick(dtoFromTrick(gameState.handCycle.trick))
+            .setTrick(dtoFromTrick(gameState.handCycle?.trick))
             .setBidding({
-        currentBidderId: gameState.handCycle.trick.playerTurn,
-        highestBidderId: gameState.players.find(p => p.currentBid==gameState.handCycle.bidAmount)?.id || "",
-        bids: gameState.players.map(p => p.currentBid ? p.currentBid : 0)
-    })
-            .setTrickNumber(gameState.handCycle.trick.roundNumber)
+                currentBidderId: gameState.handCycle.trick?.playerTurn || "",
+                highestBidderId: gameState.players.find(p => p.currentBid==gameState.handCycle.bidAmount)?.id || "",
+                bids: gameState.players.map(p => p.currentBid ? p.currentBid : 0)
+              })
+            .setTrickNumber(gameState.handCycle.trick?.roundNumber || 0)
             .setLeadSuit(modelSuitFromDomainSuit(gameState.handCycle.trumpSuit))
             .setScores([gameState.teamOneScore, gameState.teamTwoScore]);
 
@@ -133,7 +134,13 @@ function modelValueFromDomainValue(value: Value): number {
     return numValue;
 }
 
-function dtoFromTrick(trick: Trick): TrickDTO {
+function dtoFromTrick(trick: Trick | null): TrickDTO {
+    if (!trick) {
+        return {
+            leadPlayerId: "",
+            playedCards: []
+        };
+    }
     const plays: {playerId: string, card: CardModel}[] = [];
     
     // Ensure we are working with entries, whether it's a Map or Object
