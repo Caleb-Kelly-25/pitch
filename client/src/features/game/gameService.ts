@@ -54,3 +54,12 @@ export async function joinGame(gameCode: string, token: string) {
         connectSocket(token);
     }
 }
+
+export async function placeBid(amount: number, gameId: string) {
+    if (!socket) {
+        //throw new Error("Socket not connected, can't play card.");
+        console.log("Socket not connected, connecting socket...");
+    } else {
+        socket?.emit("PlaceBidEvent", JSON.stringify({ gameId:gameId, amount:amount }));
+    }
+}
