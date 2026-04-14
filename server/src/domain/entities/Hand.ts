@@ -2,6 +2,7 @@ import assert from "assert";
 import { Card } from "./Card";
 import { Value } from "../enums/Value";
 import { Suit } from "../enums/Suit";
+
 export class Hand {
     
     cards: Card[];
