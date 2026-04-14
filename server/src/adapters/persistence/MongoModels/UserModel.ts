@@ -31,7 +31,7 @@ UserSchema.pre("save", async function (this: IUserDocument, next) {
     if (this.isModified("password")) {
         this.password = await bcrypt.hash(this.password, 10);
     }
-    next();
+    //next(); TODO: Check if this is needed, as the function is async and we are awaiting the hash.
 });
 
 // Compare password for login
