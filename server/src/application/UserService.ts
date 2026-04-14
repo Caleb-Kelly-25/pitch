@@ -3,6 +3,7 @@ import IUserRepository from "../domain/repositories/IUserRepository";
 
 export default class UserService {
     private userRepository: IUserRepository;
+    
     constructor (userRepository: IUserRepository) {
         this.userRepository = userRepository;
     }
