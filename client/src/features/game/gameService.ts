@@ -21,7 +21,7 @@ export function requestUpdate() {
     }
 }
 
-export function PlaceBidEvent(gameId: string, bid: number) {
+export function PlaceBidEvent(gameId: string, bidAmount: number) {
     
 
 }
