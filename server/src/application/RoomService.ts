@@ -67,6 +67,9 @@ export class RoomService {
                     }
                     await this.userRepository.updateUser(user);
                 
+
+                //UPDATE: change this to call a createHandCycle method instead of hardcoding
+                // Also need to make a newHandCycle method in GameState or HandCycle
                 // If the room is now full, we can initialize the hand cycle and start the game
                 if (room.players.length === 4) {
                     room.handCycle.handCycleStatus = HandCycleStatus.BIDDING;
