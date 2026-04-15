@@ -136,7 +136,7 @@ export class PlaceBid {
             }
             currentBidderId = PlaceBid.getNextBidderId(gameState, currentBidderId);
         }
-        biddingCycle.currentBidderId =shootingPlayerId; //same player is technically the current bidder since everyone else has to pass/ double checking though even though using local var
+        biddingCycle.currentBidderId = shootingPlayerId; //same player is technically the current bidder since everyone else has to pass/ double checking though even though using local var
     }
 
     //Checks if bidding is complete by checking if every player in the game has bid
