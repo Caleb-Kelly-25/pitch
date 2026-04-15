@@ -5,7 +5,7 @@ import type { GameState, Player} from "./gameTypes";
 
 const initialState: GameState = {
     gameId: "initialId",
-    phase: "WAITING",
+    phase: "BIDDING",
 
     players: [
         { id: "playerId1", username: "Player1", seat: 1 as const, team: 0 as const, isDealer: true,  isConnected: true, cardCount: 6 },
