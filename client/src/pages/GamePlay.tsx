@@ -222,7 +222,7 @@ export default function GamePlay() {
   const gameState = useGame();
   console.log(gameState);
   return (
-    <div style={styles.wrapnper}>
+    <div style={styles.wrapper}>
       <TopBar varient="withBackBtnTopBarGamePlay" />
         {determinePhase()}
     </div>
