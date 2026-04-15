@@ -5,36 +5,49 @@ import type { GameState, Player} from "./gameTypes";
 
 const initialState: GameState = {
     gameId: "initialId",
-    phase: "WAITING",
+    phase: "BIDDING",
 
-    players: [].map((id, index) => ({
-        id: id,
-        username: `Player${index + 1}`,
-        seat: (index + 1) as 1 | 2 | 3 | 4,
-        team: index % 2 ? 0 : 1,
-        isDealer: index === 0,
-        isConnected: true,
-        cardCount: index
-    } as Player)),
+    players: [
+        { id: "playerId1", username: "Player1", seat: 1 as const, team: 0 as const, isDealer: true,  isConnected: true, cardCount: 6 },
+        { id: "playerId2", username: "Player2", seat: 2 as const, team: 1 as const, isDealer: false, isConnected: true, cardCount: 6 },
+        { id: "playerId3", username: "Player3", seat: 3 as const, team: 0 as const, isDealer: false, isConnected: true, cardCount: 6 },
+        { id: "playerId4", username: "Player4", seat: 4 as const, team: 1 as const, isDealer: false, isConnected: true, cardCount: 6 },
+    ],
 
     hand: [{
         suit: "HEARTS",
         value: 1
-    }],
+        },{
+        suit: "SPADES",
+        value: 14
+        },{
+        suit: "DIAMONDS",
+        value: 11
+        },{
+        suit: "CLUBS",
+        value: 10
+        },{
+        suit: "HEARTS",
+        value: 13
+        },{
+        suit: "SPADES",
+        value: 12
+        }
+    ],
     trick: {
             leadPlayerId: "playerId1",
             playedCards: [
-                {playerId: "playerId1", card: {suit: "HEARTS", value: 1}},
-                {playerId: "playerId2", card: {suit: "DIAMONDS", value: 12}},
+                {playerId: "playerId1", card: undefined},
+                {playerId: "playerId2", card: undefined},
                 {playerId: "playerId3", card: undefined},
                 {playerId: "playerId4", card: undefined},
             ]
         },
     
         bidding: {
-            currentBidderId: "playerId2",
+            currentBidderId: "playerId1",
             highestBidderId: "playerId1",
-            bids: [5, undefined, undefined, undefined]
+            bids: [4, 5, 0, 6]
         },
     
         trickNumber: 0,

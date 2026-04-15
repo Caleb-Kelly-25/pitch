@@ -73,7 +73,7 @@ export default function Card({ suit, value, faceDown = false, onClick }: CardPro
 
   if (isJoker) {
     return (
-      <button style={{ ...baseStyle, color: "purple" }} onClick={onClick}>
+      <button style={{ ...baseStyle, color: "black" }} onClick={onClick}>
         <div style={{ display: "flex", flexDirection: "column", alignSelf: "flex-start" }}>
           <div style={{ fontSize: "16px", lineHeight: 1 }}>Joker</div>
         </div>

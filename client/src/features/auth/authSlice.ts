@@ -5,7 +5,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import * as authApi from "./authApi"
 
 const initialState: AuthState = {
-  user: null,
+  user: {
+    id: "playerId1",
+    username: "Player1Name",
+    email: "player1@site.com"
+  },
   token: null,
   loading: false,
   error: null,
