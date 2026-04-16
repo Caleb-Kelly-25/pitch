@@ -111,6 +111,9 @@ export function displayScore() {
   //TODO: implement score display
   //Score for Us vs. Them
   //Score for this round and whole game
+
+  
+
 }
 
 export function biddingPhase(){
@@ -174,6 +177,7 @@ export function biddingPhase(){
           return (
         <div>
           <div style = {styles.title}>It's your turn to bid. Please select a bid or pass.
+            <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(0)}>Pass</button>
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(4)}>4</button>
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(5)}>5</button>
             <button style = {styles.buttonStyle}onClick={() => useGame().placeBid(6)}>6</button>

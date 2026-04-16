@@ -7,7 +7,9 @@ import {useAuth} from "../auth/useAuth";
 export function playCard(suit: string, value: number, gameId: string) {
     console.log("Playing card");
     if (!socket) {
-        throw new Error("Socket not connected, can't play card.");
+        //throw new Error("Socket not connected, can't play card.");
+        console.log("Socket not connected, connecting socket...");
+        
     } else {
         socket?.emit("PlayCardEvent", JSON.stringify({ gameId:gameId, playerId: "", suit:suit, value:value }));
     }
@@ -21,7 +23,7 @@ export function requestUpdate() {
     }
 }
 
-export function PlaceBidEvent(gameId: string, bid: number) {
+export function PlaceBidEvent(gameId: string, bidAmount: number) {
     
 
 }
@@ -60,5 +62,14 @@ export async function joinGame(gameCode: string, token: string) {
 
     if (res.ok) {
         connectSocket(token);
+    }
+}
+
+export async function placeBid(amount: number, gameId: string) {
+    if (!socket) {
+        //throw new Error("Socket not connected, can't play card.");
+        console.log("Socket not connected, connecting socket...");
+    } else {
+        socket?.emit("PlaceBidEvent", JSON.stringify({ gameId:gameId, amount:amount }));
     }
 }
