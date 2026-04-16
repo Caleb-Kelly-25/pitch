@@ -51,7 +51,7 @@ export class RoomService {
         if(!user) {
             throw new Error("User not found");
         }
-        await this.userRepository.updateUser(user);
+        await this.userRepository.updateUser(user);  
     }
 
     async joinRoom(gameCode: string, userId: string) {
@@ -79,12 +79,10 @@ export class RoomService {
                 // Also need to make a newHandCycle method in GameState or HandCycle
                 // If the room is now full, we can initialize the hand cycle and start the game
                 if (room.players.length === 4) {
-                    room.handCycle.handCycleStatus = HandCycleStatus.BIDDING;
-                    room.handCycle.dealerId = room.players[Math.floor(Math.random() * room.players.length)].id; // Randomly select a dealer
-                    room.handCycle.bidWinner = "" as PlayerId; // No bid winner yet
-                    room.handCycle.bidAmount = 0;
-                    room.handCycle.trumpSuit = Suit.HEARTS; // Default trump suit, can be changed during bidding
-                    room.handCycle.blindCards = []; // No blind cards at the start
+                    //randomly select a dealer and initialize the handCycle
+                    const randomDealerId = room.players[Math.floor(Math.random() * room.players.length)].id;
+                    room.initializeHandCycle(randomDealerId);
+
                     await this.shortTermStorage.updateGameState(room);
                     await this.initializeGame(room);
                 }
@@ -102,7 +100,7 @@ export class RoomService {
             }
         }
 
-        game.handCycle.blindCards = deck as Card[];
+        game.handCycle.blindCards = deck;
 
         await this.shortTermStorage.updateGameState(game);
     }

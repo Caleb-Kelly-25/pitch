@@ -121,7 +121,7 @@ static validateCardInHand(player: Player, card: Card): boolean {
 
 // Determines if a player has a playable card in PlayCard cycle
 static isOutOfCards(gameState: GameState, player: Player): boolean {
-    return !player.hand.hasSuit(gameState.handCycle.trumpSuit);
+    return !player.hand.hasSuit(gameState.handCycle.trumpSuit!);
 }
 
 
@@ -130,7 +130,7 @@ static calcTrickWinner(gameState: GameState): PlayerId {
     const cardsPlayed = gameState.handCycle.trick!.cardsPlayed;
     let winningPlayerId: PlayerId = gameState.handCycle.trick!.startingPlayerId;
     for (const [playerId, card] of Object.entries(cardsPlayed)) {
-        if (PlayCard.compareCards(card as Card, cardsPlayed[winningPlayerId] as Card, gameState.handCycle.trumpSuit)) {
+        if (PlayCard.compareCards(card as Card, cardsPlayed[winningPlayerId] as Card, gameState.handCycle.trumpSuit!)) {
             winningPlayerId = playerId as PlayerId;
         }
     }
@@ -210,8 +210,7 @@ static tallyPointsHandCycle(gameState: GameState) {
 static nextHandCycle(gameState: GameState) {
     const nextDealerIndex = (gameState.players.findIndex(p => p.id === gameState.handCycle.dealerId) + 1) % gameState.players.length;
     const nextDealerId = gameState.players[nextDealerIndex].id;
-    gameState.handCycle = new HandCycle(nextDealerId, "undefined" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.WAITING, 0, 0, null, null);
-    gameState.handCycle.nextStatus(gameState);
+    gameState.initializeHandCycle(nextDealerId);
 }
 
 //NOTE: isGameOver should also be in a different file

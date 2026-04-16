@@ -13,7 +13,7 @@ export class HandCycle {
     dealerId: PlayerId;
     bidWinner: PlayerId;
     bidAmount: number;
-    trumpSuit: Suit;
+    trumpSuit: Suit | null; //trump suit will be determined after bidding
     blindCards: Card[];
     handCycleStatus: HandCycleStatus;
     teamOnePoints: number;
@@ -22,7 +22,7 @@ export class HandCycle {
     biddingCycle: BiddingCycle | null; //When bidding is done, this will be null and the handCycle will transition to playing
     trick: Trick | null; //When bidding or playing is done, this will be null
 
-    constructor(dealerId: PlayerId, bidWinner: PlayerId, bidAmount: number, trumpSuit: Suit, blindCards: Card[], handCycleStatus: HandCycleStatus, teamOnePoints: number, teamTwoPoints: number, biddingCycle: BiddingCycle | null, trick: Trick | null) {
+    constructor(dealerId: PlayerId, bidWinner: PlayerId, bidAmount: number, trumpSuit: Suit | null, blindCards: Card[], handCycleStatus: HandCycleStatus, teamOnePoints: number, teamTwoPoints: number, biddingCycle: BiddingCycle | null, trick: Trick | null) {
         this.dealerId = dealerId;
         this.bidWinner = bidWinner;
         this.bidAmount = bidAmount;
@@ -34,6 +34,8 @@ export class HandCycle {
         this.biddingCycle = biddingCycle;
         this.trick = trick;
     }
+
+
 
     //NOTE: Currently not being used, but handles transitions between statuses
     public nextStatus(gameState: GameState) {
@@ -75,7 +77,7 @@ export class HandCycle {
     canPlayCard(card: Card): boolean {
         if (this.handCycleStatus !== HandCycleStatus.PLAYING) {
             return false;
-        } else if (card.suit !== this.trumpSuit && card.value!==Value.JOKER && !card.equals(Card.jick(this.trumpSuit))) {
+        } else if (card.suit !== this.trumpSuit && card.value!==Value.JOKER && !card.equals(Card.jick(this.trumpSuit!))) {
             return false;
         }
         return true;
