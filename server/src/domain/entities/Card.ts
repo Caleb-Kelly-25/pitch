@@ -38,10 +38,16 @@ export class Card {
             for (const value of values) {
                 // Ensure we only grab the actual enum values (if using numeric enums)
                 if (typeof value === 'number') {
+                    if (value === Value.JOKER) continue; // Skip the JOKER for the standard deck
+
                     deck.push(new Card(suit, value));
                 }
             }
         }
+
+        //Manually add the 2 jokers to the deck
+        deck.push(new Card(Suit.HEARTS, Value.JOKER));
+        deck.push(new Card(Suit.CLUBS, Value.JOKER));
 
         // Fisher-Yates Shuffle
         for (let i = deck.length - 1; i > 0; i--) {
