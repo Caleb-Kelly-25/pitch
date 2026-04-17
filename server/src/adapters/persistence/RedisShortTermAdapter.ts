@@ -1,7 +1,6 @@
 import GameState from "../../domain/entities/GameState";
 import IShortTermStoragePort from "../../ports/IShortTermStoragePort";
 import { GameId } from "../../types/id-declarations";
-import { v4 as uuidv4 } from 'uuid';
 import { RedisClientType } from "redis";
 
 export class RedisShortTermAdapter implements IShortTermStoragePort {
@@ -24,7 +23,7 @@ export class RedisShortTermAdapter implements IShortTermStoragePort {
     async createGameState(state: GameState): Promise<void> {
         try {
             if (!state.id) {
-                const id = uuidv4(); // Use the game state ID as the Redis key
+                const id = crypto.randomUUID();
                 state.id = id as GameId; // Ensure the game state has its ID set to the Redis key
             }
             const value = JSON.stringify(state); // Convert the game state object to a JSON string for storage

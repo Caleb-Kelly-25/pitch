@@ -62,10 +62,10 @@ describe("Card class", () => {
   });
 
   describe("createFullDeck", () => {
-    it("should create a deck of 52 cards", () => {
+    it("should create a deck of 54 cards", () => {
       const deck = Card.createFullDeck();
 
-      expect(deck.length).toBe(52);
+      expect(deck.length).toBe(54);
     });
 
     it("should contain unique cards", () => {
@@ -75,7 +75,7 @@ describe("Card class", () => {
         deck.map(card => `${card.suit}-${card.value}`)
       );
 
-      expect(unique.size).toBe(52);
+      expect(unique.size).toBe(54);
     });
 
     it("should contain all suit/value combinations", () => {
@@ -83,7 +83,8 @@ describe("Card class", () => {
 
       const allCombos: string[] = [];
       const suits = Object.values(Suit) as Suit[];
-      const values = Object.values(Value) as Value[];
+      const valueInit = Object.values(Value) as Value[];
+      const values = valueInit.filter((v) => v!=Value.JOKER)
 
       for (const suit of suits) {
         for (const value of values) {

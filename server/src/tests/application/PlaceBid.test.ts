@@ -93,16 +93,14 @@ it("handles shooting the moon (bid = 11)", () => {
 
   const result = PlaceBid.placeBid(gameState, "p1" as PlayerId, 11);
 
-  const bidding = gameState.handCycle.biddingCycle;
+  expect(result).not.toBeNull();
 
-  expect(bidding.highestBid).toBe(11);
-  expect(bidding.playerBids["p1"]).toBe(11);
-  expect(bidding.highestBidderId).toBe("p1");
-
-  // others should be forced to 0
-  expect(bidding.playerBids["p2"]).toBe(0);
-  expect(bidding.playerBids["p3"]).toBe(0);
-  expect(bidding.playerBids["p4"]).toBe(0);
+  // Moon shot completes bidding immediately, so handCycle transitions to PLAYING
+  const handCycle = gameState.handCycle;
+  expect(handCycle.handCycleStatus).toBe(HandCycleStatus.PLAYING);
+  expect(handCycle.bidAmount).toBe(11);
+  expect(handCycle.bidWinner).toBe("p1");
+  expect(handCycle.biddingCycle).toBeNull();
 });
 
 it("transitions to PLAYING when bidding is complete", () => {

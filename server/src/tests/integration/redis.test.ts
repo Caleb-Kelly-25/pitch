@@ -108,4 +108,52 @@ it("sets expiration on stored game state", async () => {
   expect(ttl).toBeGreaterThan(0);
 });
 
+it("assigns a UUID when createGameState is called with no id", async () => {
+  const state = createGameState("" as GameId);
+
+  await adapter.createGameState(state);
+
+  expect(state.id).toBeTruthy();
+  const stored = await client.get(state.id);
+  expect(stored).not.toBeNull();
+});
+
+it("returns empty array from getAllGameStates when Redis is empty", async () => {
+  const all = await adapter.getAllGameStates();
+  expect(all).toEqual([]);
+});
+
+});
+
+describe("RedisShortTermAdapter error handling", () => {
+  function brokenAdapter(overrides: Partial<Record<string, () => Promise<any>>> = {}) {
+    const fail = () => Promise.reject(new Error("Redis error"));
+    const brokenClient = {
+      set:  overrides["set"]  ?? fail,
+      get:  overrides["get"]  ?? fail,
+      del:  overrides["del"]  ?? fail,
+      keys: overrides["keys"] ?? fail,
+    };
+    return new RedisShortTermAdapter(brokenClient as any);
+  }
+
+  it("updateGameState swallows Redis errors", async () => {
+    await expect(brokenAdapter().updateGameState({ id: "x" } as any)).resolves.toBeUndefined();
+  });
+
+  it("createGameState swallows Redis errors", async () => {
+    await expect(brokenAdapter().createGameState({ id: "x" } as any)).resolves.toBeUndefined();
+  });
+
+  it("getGameStateById returns null on Redis error", async () => {
+    await expect(brokenAdapter().getGameStateById("x")).resolves.toBeNull();
+  });
+
+  it("deleteGameState swallows Redis errors", async () => {
+    await expect(brokenAdapter().deleteGameState("x")).resolves.toBeUndefined();
+  });
+
+  it("getAllGameStates returns empty array on Redis error", async () => {
+    await expect(brokenAdapter().getAllGameStates()).resolves.toEqual([]);
+  });
 });

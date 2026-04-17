@@ -33,7 +33,7 @@ export class Card {
         const suits = Object.values(Suit) as Suit[];
         const values = Object.values(Value) as Value[];
 
-        // Generate the 52 cards
+        // Generate the 54 cards
         for (const suit of suits) {
             for (const value of values) {
                 // Ensure we only grab the actual enum values (if using numeric enums)
@@ -43,12 +43,14 @@ export class Card {
             }
         }
 
+        const filtered = deck.filter(c => !(c.equals(new Card(Suit.DIAMONDS, Value.JOKER)) || c.equals(new Card(Suit.SPADES, Value.JOKER))));
+
         // Fisher-Yates Shuffle
-        for (let i = deck.length - 1; i > 0; i--) {
+        for (let i = filtered.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [deck[i], deck[j]] = [deck[j], deck[i]];
+            [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
         }
 
-        return deck;
+        return filtered;
     }
 }

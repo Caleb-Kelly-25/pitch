@@ -134,7 +134,7 @@ describe("RoomService.initializeGame", () => {
       expect(p.hand.cards.length).toBe(9);
     }
 
-    expect(game.handCycle.blindCards.length).toBe(52 - 36);
+    expect(game.handCycle.blindCards.length).toBe(54 - 36);
     expect(storage.updateGameState).toHaveBeenCalledWith(game);
   });
 });
