@@ -23,6 +23,16 @@ export function requestUpdate() {
     }
 }
 
+export function PlaceBidEvent(gameId: string, bidAmount: number) {
+    
+
+}
+
+export function pickSuit() {
+    
+}
+
+
 export async function createGame(gameCode: string, token: string): Promise<string> {
     const res = await fetch(`${API_URL}/api/game/create`, {
         method: "POST",

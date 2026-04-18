@@ -9,7 +9,7 @@ export interface IUserDocument extends Omit<User, 'id'>, Document {
 const UserSchema: Schema = new Schema({
     _id: { type: String },
     username: { type: String, unique: true, required: true },
-    email: { type: String, required: true },
+    email: {type: String},
     password: { type: String, required: true },
     photoUrl: { type: String, default: null },
     gameId: { type: String, default: null },

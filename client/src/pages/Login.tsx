@@ -85,7 +85,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: "30px",
     border: "none",
     backgroundColor: "rgba(200, 175, 165, 0.6)",
-    color: "#3d2b24",
+    color: "#211A17",
     fontSize: "16px",
     fontFamily: "'Georgia', serif",
     outline: "none",
