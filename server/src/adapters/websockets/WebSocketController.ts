@@ -55,7 +55,7 @@ export default class WebSocketController {
         console.log("Socket disconnected!");
     }
 
-    onPlaceBidEvent(user: IdentityPayload, data: string) {
+    async onPlaceBidEvent(user: IdentityPayload, data: string) {
         console.log("Place bid detected");
         const parsedData = JSON.parse(data);
         //Validation that frontend sent all necessary data
@@ -66,7 +66,7 @@ export default class WebSocketController {
 
         const dto = new BidDTO(parsedData.gameId, user.userId, parsedData.bidAmount);
 
-        this.gameService.placeBid(dto).then(success => {
+        await this.gameService.placeBid(dto).then(success => {
             if (!success) {
                 console.log("Invalid attempt to place bid:", data);
             }
@@ -75,15 +75,15 @@ export default class WebSocketController {
         });
     }
 
-    onPlayCardEvent(user: IdentityPayload, data: string){
+    async onPlayCardEvent(user: IdentityPayload, data: string){
         console.log("Play card detected");
         const parsedData = JSON.parse(data);
-        if (!parsedData.gameId || !parsedData.suit || !parsedData.value) {
+        if (!parsedData.gameId || parsedData.suit === undefined || parsedData.value === undefined) {
             console.error("Invalid PlayCardEvent data:", data);
             return;
         }
         const dto = new PlayCardDTO(parsedData.gameId, user.userId, parsedData.suit, parsedData.value);
-        this.gameService.playCard(dto).then(success => {
+        await this.gameService.playCard(dto).then(success => {
             if (!success) {
                 console.log("Invalid attempt to play card:", data);
             }

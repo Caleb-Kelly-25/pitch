@@ -112,7 +112,7 @@ export class HandCycle {
             handCycle.bidWinner, 
             handCycle.bidAmount, 
             handCycle.trumpSuit, 
-            handCycle.blindCards.map(c => {const card = new Card(c.suit, c.value); return card;}),
+            (handCycle.blindCards ?? []).map(c => new Card(c.suit, c.value)),
             handCycle.handCycleStatus, 
             handCycle.teamOnePoints, 
             handCycle.teamTwoPoints, 

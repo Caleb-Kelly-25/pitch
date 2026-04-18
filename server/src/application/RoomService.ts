@@ -76,12 +76,12 @@ export class RoomService {
                 
                 // If the room is now full, we can initialize the hand cycle and start the game
                 if (room.players.length === 4) {
-                    room.handCycle.handCycleStatus = HandCycleStatus.BIDDING;
-                    room.handCycle.dealerId = room.players[Math.floor(Math.random() * room.players.length)].id; // Randomly select a dealer
-                    room.handCycle.bidWinner = "" as PlayerId; // No bid winner yet
+                    room.handCycle.dealerId = room.players[Math.floor(Math.random() * room.players.length)].id;
+                    room.handCycle.bidWinner = "" as PlayerId;
                     room.handCycle.bidAmount = 0;
-                    room.handCycle.trumpSuit = Suit.HEARTS; // Default trump suit, can be changed during bidding
-                    room.handCycle.blindCards = []; // No blind cards at the start
+                    room.handCycle.trumpSuit = Suit.HEARTS;
+                    room.handCycle.blindCards = [];
+                    room.handCycle.nextStatus(room); // WAITING → BIDDING, calls startBidding which initialises playerBids for all 4 players
                     await this.shortTermStorage.updateGameState(room);
                     await this.initializeGame(room);
                 }

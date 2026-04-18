@@ -2,6 +2,7 @@ import assert from "assert";
 import { Card } from "./Card";
 import { Value } from "../enums/Value";
 import { Suit } from "../enums/Suit";
+
 export class Hand {
     
     cards: Card[];
@@ -39,6 +40,7 @@ export class Hand {
     }
 
     static fromJSONObject(hand: Hand): Hand {
-        return new Hand(hand.cards.map(c => {const card = new Card(c.suit, c.value); return card;}));
+        if (!hand) return new Hand([]);
+        return new Hand((hand.cards ?? []).map(c => new Card(c.suit, c.value)));
     }
 }

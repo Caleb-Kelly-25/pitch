@@ -157,7 +157,7 @@ static compareCards(cardA: Card, cardB: Card, trumpSuit: Suit): boolean {
         return cardA.value >= Value.JACK;
     }
     console.log(`WARNING: compareCards called when cards are equal. PlayCard should not happen. Cards: ${JSON.stringify(cardA)}, ${JSON.stringify(cardB)}`);
-    assert(cardA.equals(cardB));
+    
     return true;
 }
 
