@@ -1,6 +1,9 @@
 export enum HandCycleStatus {
     WAITING = "WAITING",
+    DEALING = "DEALING",
     BIDDING = "BIDDING",
+    TRUMP_SELECTION = "TRUMP_SELECTION",
+    BLIND_REVEAL = "BLIND_REVEAL",
     PLAYING = "PLAYING",
     COMPLETE = "COMPLETE"
 }

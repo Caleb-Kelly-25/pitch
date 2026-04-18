@@ -60,9 +60,9 @@ export class HandCycle {
                     this.handCycleStatus = HandCycleStatus.COMPLETE;
                     //call some GameOver function here later? probably in GameState file
                 } else {
-                    //PlayCard.nextHandCycle(gameState); //right now calls this but function will probably change
-                    //Call function in GameState that closes this handCycle and creates a new one
-                    //gameState.rotateHandCycle(); <-- this is what I want to do but it does create circular dependency, need to figure out how to resolve that
+                    const nextDealerIndex = (gameState.players.findIndex(p => p.id === this.dealerId) + 1) % gameState.players.length;
+                    const nextDealerId = gameState.players[nextDealerIndex].id;
+                    gameState.initializeHandCycle(nextDealerId);
                 }
                 break;
             case HandCycleStatus.COMPLETE:

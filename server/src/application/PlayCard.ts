@@ -206,7 +206,7 @@ static tallyPointsHandCycle(gameState: GameState) {
     }
 }
 
-//NOTE: nextHandCycle should probabaly be in a different file once bidding is implemented etc.
+//NOTE: the nextHandCycle is being handled somewhere else, leaving this in case it is still being called
 static nextHandCycle(gameState: GameState) {
     const nextDealerIndex = (gameState.players.findIndex(p => p.id === gameState.handCycle.dealerId) + 1) % gameState.players.length;
     const nextDealerId = gameState.players[nextDealerIndex].id;
