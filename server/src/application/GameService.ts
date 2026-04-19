@@ -1,67 +1,85 @@
-import { NullExpression } from "mongoose";
 import { Card } from "../domain/entities/Card";
-import GameState from "../domain/entities/GameState";
-import { Player } from "../domain/entities/Player";
 import IGameStateRepository from "../domain/repositories/IGameStateRepository";
-import IUserRepository from "../domain/repositories/IUserRepository";
+import { GameNotFoundError } from "../domain/errors/GameErrors";
 import IGamePublisherPort from "../ports/IGamePublisherPort";
 import { PlayerId } from "../types/id-declarations";
 import { BidDTO } from "./dto/BidDTO";
 import { PlayCardDTO } from "./dto/PlayCardDTO";
-import { PlaceBid } from "./PlaceBid";
-import { PlayCard } from "./PlayCard";
+import { PickSuitDTO } from "./dto/PickSuitDTO";
+import { BlindCardDTO } from "./dto/BlindCardDTO";
+import { DiscardHandCardDTO } from "./dto/DiscardHandCardDTO";
+import { placeBid } from "./PlaceBid";
+import { playCard } from "./PlayCard";
+import { pickSuit } from "./PickSuit";
+import { processBlindCard } from "./BlindCard";
+import { discardHandCard } from "./DiscardHandCard";
 
 export class GameService {
     private gameStateRepository: IGameStateRepository;
-    private userRepository: IUserRepository;
     private gamePub: IGamePublisherPort;
 
-    constructor(gameStateRepository: IGameStateRepository, userRepository: IUserRepository, gamePub: IGamePublisherPort) {
+    constructor(gameStateRepository: IGameStateRepository, gamePub: IGamePublisherPort) {
         this.gameStateRepository = gameStateRepository;
-        this.userRepository = userRepository;
         this.gamePub = gamePub;
     }
 
-    async placeBid(bidDTO: BidDTO) {
+    async placeBid(bidDTO: BidDTO): Promise<void> {
         const { gameId, playerId, bidAmount } = bidDTO;
 
         const gameState = await this.gameStateRepository.getGameStateById(gameId);
-        if (!gameState) {
-            console.log(`Game with ID ${gameId} not found.`);
-            return false;
-        }
+        if (!gameState) throw new GameNotFoundError(gameId);
 
-        const newGameState: (GameState | null) = PlaceBid.placeBid(gameState, playerId as PlayerId, bidAmount);
+        placeBid(gameState, playerId as PlayerId, bidAmount);
 
-        if (!newGameState) {
-            console.log(`Failed to place bid for player ${playerId} in game ${gameId}.`);
-            return false;
-        }
-
-        await this.gameStateRepository.updateGameState(newGameState);
-        await this.gamePub.publishGameStateToRoom(newGameState.id, newGameState);
-        return true;
+        await this.gameStateRepository.updateGameState(gameState);
+        this.gamePub.publishGameStateToRoom(gameState.id, gameState);
     }
 
-    async playCard(playCardRequest: PlayCardDTO) {
-        const { gameId, playerId, cardSuit, cardValue } = playCardRequest;
+    async playCard(dto: PlayCardDTO): Promise<void> {
+        const { gameId, playerId, cardSuit, cardValue } = dto;
 
-        // Grab the game state
         const gameState = await this.gameStateRepository.getGameStateById(gameId);
-        if (!gameState) {
-            console.log(`Game with ID ${gameId} not found.`);
-            return false;
-        }
+        if (!gameState) throw new GameNotFoundError(gameId);
 
-        const newGameState: (GameState | null) = PlayCard.playCard(gameState, playerId as PlayerId, new Card(cardSuit, cardValue));
-        if (!newGameState) {
-            console.log(`Failed to play card for player ${playerId} in game ${gameId}.`);
-            return false;
-        }
+        playCard(gameState, playerId as PlayerId, new Card(cardSuit, cardValue));
 
-        await this.gameStateRepository.updateGameState(newGameState);
-        await this.gamePub.publishGameStateToRoom(newGameState.id, newGameState);
-        return true;
+        await this.gameStateRepository.updateGameState(gameState);
+        this.gamePub.publishGameStateToRoom(gameState.id, gameState);
     }
 
+    async pickSuit(dto: PickSuitDTO): Promise<void> {
+        const { gameId, playerId, suit } = dto;
+
+        const gameState = await this.gameStateRepository.getGameStateById(gameId);
+        if (!gameState) throw new GameNotFoundError(gameId);
+
+        pickSuit(gameState, playerId as PlayerId, suit);
+
+        await this.gameStateRepository.updateGameState(gameState);
+        this.gamePub.publishGameStateToRoom(gameState.id, gameState);
+    }
+
+    async discardHandCard(dto: DiscardHandCardDTO): Promise<void> {
+        const { gameId, playerId, cardSuit, cardValue } = dto;
+
+        const gameState = await this.gameStateRepository.getGameStateById(gameId);
+        if (!gameState) throw new GameNotFoundError(gameId);
+
+        discardHandCard(gameState, playerId as PlayerId, cardSuit, cardValue);
+
+        await this.gameStateRepository.updateGameState(gameState);
+        this.gamePub.publishGameStateToRoom(gameState.id, gameState);
+    }
+
+    async blindCard(dto: BlindCardDTO): Promise<void> {
+        const { gameId, playerId, action, swapSuit, swapValue } = dto;
+
+        const gameState = await this.gameStateRepository.getGameStateById(gameId);
+        if (!gameState) throw new GameNotFoundError(gameId);
+
+        processBlindCard(gameState, playerId as PlayerId, action, swapSuit, swapValue);
+
+        await this.gameStateRepository.updateGameState(gameState);
+        this.gamePub.publishGameStateToRoom(gameState.id, gameState);
+    }
 }

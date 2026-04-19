@@ -2,126 +2,228 @@ import { Suit } from "../enums/Suit";
 import { Value } from "../enums/Value";
 import { Card } from "./Card";
 import { Player } from "./Player";
-import { HandCycleStatus } from "../enums/HandCycleStatus";
-import GameState from "./GameState";
 import { PlayerId } from "../../types/id-declarations";
 import { BiddingCycle } from "./BiddingCycle";
 import { Trick } from "./Trick";
 
-export class HandCycle {
-    
+// Discriminated union — each phase carries exactly the data it needs.
+// No optional fields, no null assertions required by callers.
+
+export interface WaitingHand {
+    phase: 'waiting';
     dealerId: PlayerId;
-    bidWinner: PlayerId;
+}
+
+export interface BiddingHand {
+    phase: 'bidding';
+    dealerId: PlayerId;
+    blindCards: Card[];
+    biddingCycle: BiddingCycle;
+}
+
+export interface TrumpSelectHand {
+    phase: 'trumpselection';
+    dealerId: PlayerId;
+    bidWinnerId: PlayerId;
+    bidAmount: number;
+    blindCards: Card[];
+}
+
+export interface BlindCardsHand {
+    phase: 'blindcards';
+    dealerId: PlayerId;
+    bidWinnerId: PlayerId;
     bidAmount: number;
     trumpSuit: Suit;
     blindCards: Card[];
-    handCycleStatus: HandCycleStatus;
-    teamOnePoints: number;
-    teamTwoPoints: number;
+    currentBlindCard: Card | null;
+}
 
-    biddingCycle: BiddingCycle | null; //When bidding is done, this will be null and the handCycle will transition to playing
-    trick: Trick | null; //When bidding or playing is done, this will be null
+export interface PlayingHand {
+    phase: 'playing';
+    dealerId: PlayerId;
+    bidWinnerId: PlayerId;
+    bidAmount: number;
+    trumpSuit: Suit;
+    trick: Trick;
+    teamOneHandPoints: number;
+    teamTwoHandPoints: number;
+}
 
-    constructor(dealerId: PlayerId, bidWinner: PlayerId, bidAmount: number, trumpSuit: Suit, blindCards: Card[], handCycleStatus: HandCycleStatus, teamOnePoints: number, teamTwoPoints: number, biddingCycle: BiddingCycle | null, trick: Trick | null) {
-        this.dealerId = dealerId;
-        this.bidWinner = bidWinner;
-        this.bidAmount = bidAmount;
-        this.trumpSuit = trumpSuit;
-        this.blindCards = blindCards;
-        this.handCycleStatus = handCycleStatus;
-        this.teamOnePoints = teamOnePoints;
-        this.teamTwoPoints = teamTwoPoints;
-        this.biddingCycle = biddingCycle;
-        this.trick = trick;
-    }
+export interface CompleteHand {
+    phase: 'complete';
+    dealerId: PlayerId;
+    bidWinnerId: PlayerId;
+    bidAmount: number;
+    trumpSuit: Suit;
+    teamOneHandPoints: number;
+    teamTwoHandPoints: number;
+}
 
-    //NOTE: Currently not being used, but handles transitions between statuses
-    public nextStatus(gameState: GameState) {
-        switch(this.handCycleStatus) {
-            case HandCycleStatus.WAITING:
-                this.startBidding(gameState.players); 
-                this.handCycleStatus = HandCycleStatus.BIDDING;
-                break;
-            case HandCycleStatus.BIDDING:
-                this.bidWinner = this.biddingCycle!.highestBidderId!; //the ! is safe here because if BIDDING then biddingCycle and highestBidderId are guaranteed
-                this.bidAmount = this.biddingCycle!.highestBid;
+export type HandCycle = WaitingHand | BiddingHand | TrumpSelectHand | BlindCardsHand | PlayingHand | CompleteHand;
 
-                this.handCycleStatus = HandCycleStatus.PLAYING;
+// --- Factory / transition functions ---
 
-                this.biddingCycle = null;
-                this.trick = new Trick(0, this.bidWinner, {} as Record<PlayerId, Card | null>, this.bidWinner);
-                break;
-            case HandCycleStatus.PLAYING:
-                //PlayCard.tallyPointsHandCycle(gameState); //right now calls this but function will probably change
-                
-                if (this.teamOnePoints >= 52 || this.teamTwoPoints >= 52) { //if (PlayCard.isGameOver(gameState)) {
-                    this.handCycleStatus = HandCycleStatus.COMPLETE;
-                    //call some GameOver function here later? probably in GameState file
-                } else {
-                    //PlayCard.nextHandCycle(gameState); //right now calls this but function will probably change
-                    //Call function in GameState that closes this handCycle and creates a new one
-                    //gameState.rotateHandCycle(); <-- this is what I want to do but it does create circular dependency, need to figure out how to resolve that
-                }
-                break;
-            case HandCycleStatus.COMPLETE:
-                //TBD idk what would go here if we even need it, maybe some cleanup? 
-                break;
-            default:
-                throw new Error(`Invalid hand cycle status: ${this.handCycleStatus}`);
-        }
-    }
+export function createWaitingHand(dealerId: PlayerId): WaitingHand {
+    return { phase: 'waiting', dealerId };
+}
 
-    //I wonder if this should be in the PlayCard file instead of the HandCycle file, since it is closely related to the logic of playing a card
-    canPlayCard(card: Card): boolean {
-        if (this.handCycleStatus !== HandCycleStatus.PLAYING) {
-            return false;
-        } else if (card.suit !== this.trumpSuit && card.value!==Value.JOKER && !card.equals(Card.jick(this.trumpSuit))) {
-            return false;
-        }
-        return true;
-    }
+export function startBidding(hand: WaitingHand, players: Player[]): BiddingHand {
+    const dealerIndex = players.findIndex(p => p.id === hand.dealerId);
+    const biddingOrder = [
+        ...players.slice(dealerIndex + 1),
+        ...players.slice(0, dealerIndex + 1),
+    ];
 
-    //Starts the bidding phase of each HandCycle, inits the biddingCycle and changes Status
-    public startBidding(players: Player[]) {
-        const dealerIndex = players.findIndex(player => player.id === this.dealerId);
+    const playerBids: Record<PlayerId, number | undefined> = {} as Record<PlayerId, number | undefined>;
+    biddingOrder.forEach(p => { playerBids[p.id] = undefined; });
 
-        const biddingOrder = [
-            ...players.slice(dealerIndex + 1), //Starts with dealer index until end of array
-            ...players.slice(0, dealerIndex + 1) //Adds the players before the dealer index + dealer
-        ]
+    return {
+        phase: 'bidding',
+        dealerId: hand.dealerId,
+        blindCards: [],
+        biddingCycle: new BiddingCycle(biddingOrder[0].id, null, 0, playerBids),
+    };
+}
 
-        this.biddingCycle = new BiddingCycle(
-            biddingOrder[0].id as PlayerId, //currentBidderId
-            null, //highestBidderId
-            0, //highestBid
-            {} as Record<PlayerId, number | undefined> //playerBids, will be filled for players as undefined
-        );
+export function startTrumpSelection(hand: BiddingHand): TrumpSelectHand {
+    const { highestBidderId, highestBid } = hand.biddingCycle;
+    if (!highestBidderId) throw new Error('Bidding ended with no winner');
 
-        //Initialize all player bids to undefined
-        biddingOrder.forEach(player => {
-            this.biddingCycle!.playerBids[player.id as PlayerId] = undefined;
-        })
-    }
+    return {
+        phase: 'trumpselection',
+        dealerId: hand.dealerId,
+        bidWinnerId: highestBidderId,
+        bidAmount: highestBid,
+        blindCards: hand.blindCards,
+    };
+}
 
+export function startBlindCards(hand: TrumpSelectHand, trumpSuit: Suit, players: Player[]): BlindCardsHand {
+    const jick = Card.jick(trumpSuit);
 
-
-
-    static fromJSONObject(handCycle: HandCycle): HandCycle {
-        return new HandCycle(
-            handCycle.dealerId, 
-            handCycle.bidWinner, 
-            handCycle.bidAmount, 
-            handCycle.trumpSuit, 
-            (handCycle.blindCards ?? []).map(c => new Card(c.suit, c.value)),
-            handCycle.handCycleStatus, 
-            handCycle.teamOnePoints, 
-            handCycle.teamTwoPoints, 
-
-            //checks if biddingCycle and trick are present in the JSON, if they are it converts them to their respective classes, if not it sets them to null
-            handCycle.biddingCycle ? BiddingCycle.fromJSONObject(handCycle.biddingCycle) : null, 
-            handCycle.trick ? Trick.fromJSONObject(handCycle.trick) : null
+    // Strip non-trump/non-joker/non-jick cards from every player
+    for (const player of players) {
+        player.hand.cards = player.hand.cards.filter(c =>
+            c.suit === trumpSuit ||
+            c.value === Value.JOKER ||
+            c.equals(jick)
         );
     }
 
+    // Auto-deal blind cards to non-bid-winner players until they have 6
+    const blindDeck = [...hand.blindCards];
+    for (const player of players) {
+        if (player.id === hand.bidWinnerId) continue;
+        while (player.hand.cards.length < 6 && blindDeck.length > 0) {
+            player.hand.cards.push(blindDeck.pop() as Card);
+        }
+    }
 
+    // Prepare the first blind card for the bid winner (if any remain and they have room)
+    const bidWinner = players.find(p => p.id === hand.bidWinnerId)!;
+    let currentBlindCard: Card | null = null;
+    if (blindDeck.length > 0 && bidWinner.hand.cards.length < 6) {
+        currentBlindCard = blindDeck.pop() as Card;
+    }
+
+    return {
+        phase: 'blindcards',
+        dealerId: hand.dealerId,
+        bidWinnerId: hand.bidWinnerId,
+        bidAmount: hand.bidAmount,
+        trumpSuit,
+        blindCards: blindDeck,
+        currentBlindCard,
+    };
+}
+
+export function startPlayingFromBlindCards(hand: BlindCardsHand): PlayingHand {
+    return {
+        phase: 'playing',
+        dealerId: hand.dealerId,
+        bidWinnerId: hand.bidWinnerId,
+        bidAmount: hand.bidAmount,
+        trumpSuit: hand.trumpSuit,
+        trick: new Trick(0, hand.bidWinnerId, {} as Record<PlayerId, Card | null>, hand.bidWinnerId),
+        teamOneHandPoints: 0,
+        teamTwoHandPoints: 0,
+    };
+}
+
+export function completeHand(hand: PlayingHand): CompleteHand {
+    return {
+        phase: 'complete',
+        dealerId: hand.dealerId,
+        bidWinnerId: hand.bidWinnerId,
+        bidAmount: hand.bidAmount,
+        trumpSuit: hand.trumpSuit,
+        teamOneHandPoints: hand.teamOneHandPoints,
+        teamTwoHandPoints: hand.teamTwoHandPoints,
+    };
+}
+
+
+
+export function handCycleFromJSON(data: any): HandCycle {
+    switch (data.phase) {
+        case 'waiting':
+            return { phase: 'waiting', dealerId: data.dealerId };
+
+        case 'bidding':
+            return {
+                phase: 'bidding',
+                dealerId: data.dealerId,
+                blindCards: (data.blindCards ?? []).map((c: any) => new Card(c.suit, c.value)),
+                biddingCycle: BiddingCycle.fromJSONObject(data.biddingCycle),
+            };
+
+        case 'trumpselection':
+            return {
+                phase: 'trumpselection',
+                dealerId: data.dealerId,
+                bidWinnerId: data.bidWinnerId,
+                bidAmount: data.bidAmount,
+                blindCards: (data.blindCards ?? []).map((c: any) => new Card(c.suit, c.value)),
+            };
+
+        case 'blindcards':
+            return {
+                phase: 'blindcards',
+                dealerId: data.dealerId,
+                bidWinnerId: data.bidWinnerId,
+                bidAmount: data.bidAmount,
+                trumpSuit: data.trumpSuit,
+                blindCards: (data.blindCards ?? []).map((c: any) => new Card(c.suit, c.value)),
+                currentBlindCard: data.currentBlindCard
+                    ? new Card(data.currentBlindCard.suit, data.currentBlindCard.value)
+                    : null,
+            };
+
+        case 'playing':
+            return {
+                phase: 'playing',
+                dealerId: data.dealerId,
+                bidWinnerId: data.bidWinnerId,
+                bidAmount: data.bidAmount,
+                trumpSuit: data.trumpSuit,
+                trick: Trick.fromJSONObject(data.trick),
+                teamOneHandPoints: data.teamOneHandPoints,
+                teamTwoHandPoints: data.teamTwoHandPoints,
+            };
+
+        case 'complete':
+            return {
+                phase: 'complete',
+                dealerId: data.dealerId,
+                bidWinnerId: data.bidWinnerId,
+                bidAmount: data.bidAmount,
+                trumpSuit: data.trumpSuit,
+                teamOneHandPoints: data.teamOneHandPoints,
+                teamTwoHandPoints: data.teamTwoHandPoints,
+            };
+
+        default:
+            throw new Error(`Unknown hand phase in stored data: '${data.phase}'`);
+    }
 }

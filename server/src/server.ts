@@ -7,8 +7,6 @@ import { bootstrap, pubClient, subClient, storageClient } from "./bootstrap";
 import { createAdapter } from "@socket.io/redis-adapter";
 import createRouter from "./adapters/rest/CreateRouter";
 import WSPublisherAdapter from "./adapters/websockets/WSPublisherAdapter";
-import InMemoryShortTermStorageAdapter from "./adapters/persistence/InMemoryShortTerm";
-import InMemoryLongTermStorageAdapter from "./adapters/persistence/InMemoryLongTerm";
 import { MongoLongTermAdapter } from "./adapters/persistence/MongoLongTermAdapter";
 import { RedisShortTermAdapter } from "./adapters/persistence/RedisShortTermAdapter";
 import JwtAuthAdapter from "./adapters/auth/JwtAuthAdapter";
@@ -20,6 +18,7 @@ import RoomController from "./adapters/rest/RoomController";
 import { RoomService } from "./application/RoomService";
 
 
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 const PORT_NUM = process.env.PORT || 3000;
 
 async function startServer() {
@@ -31,7 +30,7 @@ async function startServer() {
   expressApp.use(express.json());
   expressApp.use(
     cors({
-      origin: process.env.CLIENT_ORIGIN,
+      origin: CLIENT_ORIGIN,
       credentials: true,
     })
   );
@@ -55,7 +54,7 @@ async function startServer() {
   const longStorage = new MongoLongTermAdapter(); // InMemoryLongTermStorageAdapter();
   const authAdapter = new JwtAuthAdapter();
 
-  const wsController = new WebSocketController(wss, authAdapter, new GameService(shortStorage, longStorage, wsPublisher));
+  new WebSocketController(wss, authAdapter, new GameService(shortStorage, wsPublisher));
   const userController = new UserController(new UserService(longStorage), authAdapter);
   const roomController = new RoomController(new RoomService(shortStorage, longStorage, wsPublisher), authAdapter);
   expressApp.use("/api", createRouter(userController, roomController));

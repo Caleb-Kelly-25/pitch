@@ -1,11 +1,14 @@
-import "./PlayerSeat.css";
+import "./PlayerSeat.css"
 
-function PlayerSeat({ position, children }) {
+interface PlayerSeatProps {
+  position: "top" | "bottom" | "left" | "right"
+  children: React.ReactNode
+}
+
+export default function PlayerSeat({ position, children }: PlayerSeatProps) {
   return (
     <div className={`player-seat ${position}`}>
       {children}
     </div>
-  );
+  )
 }
-
-export default PlayerSeat;

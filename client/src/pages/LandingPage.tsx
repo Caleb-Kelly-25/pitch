@@ -1,11 +1,9 @@
-import { useEffect } from "react";
-import { useAuth } from "../features/auth/useAuth";
-import { connectSocket } from "../sockets/socket";
-import { useNavigate } from "react-router";
-import cardsLogo from "../assets/5_card_logo.png";
-// import { Home } from "lucide-react";
-import TopBar from "../components/TopBar";
-
+import { useEffect } from "react"
+import { useNavigate } from "react-router"
+import { useAuth } from "../features/auth/useAuth"
+import { connectSocket } from "../lib/socket"
+import cardsLogo from "../assets/5_card_logo.png"
+import TopBar from "../components/TopBar"
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
@@ -17,7 +15,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: 0,
     fontFamily: "'Georgia', serif",
     backgroundColor: "#f0ebe5",
-    position: "fixed" as const,
+    position: "fixed",
     top: 0,
     left: 0,
     overflow: "hidden",
@@ -34,7 +32,7 @@ const styles: Record<string, React.CSSProperties> = {
       "radial-gradient(ellipse at 30% 50%, rgba(120,40,40,0.6) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(50,10,10,0.4) 0%, transparent 50%)",
     overflow: "hidden",
   },
-  title:{
+  title: {
     fontSize: "clamp(100px, 8vw, 200px)",
     fontFamily: "'Palatino Linotype', 'Palatino', 'Book Antiqua', serif",
     color: "#f5ede0",
@@ -46,7 +44,7 @@ const styles: Record<string, React.CSSProperties> = {
   cardsImage: {
     width: "clamp(280px, 40vw, 500px)",
     height: "auto",
-    objectFit: "contain" as const,
+    objectFit: "contain",
   },
   leftSection: {
     flex: 1,
@@ -60,7 +58,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: "clamp(300px, 50vw, 400px)",
     flexShrink: 0,
     marginRight: "150px",
-    textAlign: "left"
+    textAlign: "left",
   },
   optionBlock: {
     display: "flex",
@@ -76,7 +74,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "13px 20px",
     borderRadius: "10px",
     border: "none",
-    backgroundColor: "linear-gradient(to bottom, #E05254, #7A2C2E)",
+    backgroundColor: "#8b1a1a",
     color: "#f5ede0",
     fontSize: "24px",
     fontFamily: "'Palatino Linotype', serif",
@@ -84,50 +82,41 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: "0.5px",
     boxShadow: "inset 0 -3px 6px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.3)",
     width: "200px",
-  }
-};
+  },
+}
 
-export default function Game() {
-  const { token } = useAuth();
-
-  const navigate = useNavigate();
+export default function LandingPage() {
+  const { token } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    if (!token) return;
-    connectSocket(token);
-  }, [token]);
+    if (!token) return
+    connectSocket(token)
+  }, [token])
 
   return (
     <div style={styles.wrapper}>
-       <TopBar varient="withoutBackBtn"></TopBar>
-          {/* Main Content */}
-      <div style={(styles.main)}>
-        {/* Left: Game title and logo */}
+      <TopBar variant="withoutBackBtn" />
+      <div style={styles.main}>
         <div style={styles.leftSection}>
           <h1 style={styles.title}>Pitch</h1>
-          <img
-            src={cardsLogo}
-            alt="Playing cards"
-            style={styles.cardsImage}
-            />
+          <img src={cardsLogo} alt="Playing cards" style={styles.cardsImage} />
+        </div>
+        <div style={styles.rightSection}>
+          <div style={styles.optionBlock}>
+            <h1 style={styles.optionTitle}>Host</h1>
+            <button style={styles.button} onClick={() => navigate("/host")}>
+              Create Game
+            </button>
           </div>
-
-          {/* Right: Buttons to choose how to start game */}
-           <div style={styles.rightSection}>
-            <div style={styles.optionBlock}>
-              <h1 style={styles.optionTitle}>Host</h1>
-              <button style={styles.button} onClick={() => navigate("/host")}>
-                Create Game
-              </button>
-            </div>
-            <div style={styles.optionBlock}>
-              <h1 style={styles.optionTitle}>Join</h1>
-              <button style={styles.button} onClick={() => navigate("/joinGame")}>
-                Find Game
-              </button>
-            </div>
+          <div style={styles.optionBlock}>
+            <h1 style={styles.optionTitle}>Join</h1>
+            <button style={styles.button} onClick={() => navigate("/join")}>
+              Find Game
+            </button>
+          </div>
         </div>
       </div>
-    </div>  
-  );
+    </div>
+  )
 }

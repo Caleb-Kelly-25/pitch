@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit"
-import gameReducer from "../features/game/gameSlice.ts"
-import authReducer from "../features/auth/authSlice.ts"
+import gameReducer from "../features/game/gameSlice"
+import authReducer from "../features/auth/authSlice"
 
 export const store = configureStore({
   reducer: {
     game: gameReducer,
-    auth: authReducer
-  }
+    auth: authReducer,
+  },
 })
 
 export type RootState = ReturnType<typeof store.getState>

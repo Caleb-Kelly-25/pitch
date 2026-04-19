@@ -1,12 +1,12 @@
-import { useGame } from "../features/game/useGame";
-import TopBar from "../components/TopBar";
-import { useState } from "react";
-import { createGame } from "../features/game/gameService";
-import { useAuth } from "../features/auth/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useGame } from "../features/game/useGame"
+import { useAuth } from "../features/auth/useAuth"
+import { createGame } from "../features/game/gameService"
+import TopBar from "../components/TopBar"
 
 const styles: Record<string, React.CSSProperties> = {
-    wrapper: {
+  wrapper: {
     display: "flex",
     flexDirection: "column",
     height: "100vh",
@@ -15,12 +15,12 @@ const styles: Record<string, React.CSSProperties> = {
     padding: 0,
     fontFamily: "'Georgia', serif",
     backgroundColor: "#f0ebe5",
-    position: "fixed" as const,
+    position: "fixed",
     top: 0,
     left: 0,
     overflow: "hidden",
   },
-   main: {
+  main: {
     flex: 1,
     backgroundColor: "#7d2a2a",
     display: "flex",
@@ -34,38 +34,40 @@ const styles: Record<string, React.CSSProperties> = {
   },
 }
 
-
-
-/* function getGameCode() generates a random place holder game code. Later this fucnction will be updated to actually call the backend for a functioning game code.*/
-function getGameCode(){
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
+function generateGameCode() {
+  return Math.random().toString(36).substring(2, 8).toUpperCase()
 }
 
 export default function Host() {
-    const [gameCode, setGameCode] = useState("");
-    const [gameId, setGameId] = useState("");
-    const gameState = useGame();
-    const auth = useAuth();
-    const navigate = useNavigate();
+  const [gameCode, setGameCode] = useState("")
+  const [gameId, setGameId] = useState("")
+  const gameState = useGame()
+  const auth = useAuth()
+  const navigate = useNavigate()
 
-    if (gameState.gameId === "" || gameState.phase == "WAITING" || gameState.players.length < 4) {
-    return(
-        <div style={styles.wrapper}>
-            {/* Top Nav Bar */}
-            <TopBar varient="withBackBtn"></TopBar>
-            {/* Main Content */}
-                <div style={(styles.main)}>
-                        <h1>Host Game</h1>
-                        <button onClick={async () => {setGameCode(getGameCode()); setGameId(await createGame(gameCode, auth.token || ""))}}>Create Game</button>
-                        <h2>Game Code: {gameCode}</h2>
-                        <h2>Game Id: {gameId}</h2>
-                        {/* <h3>Waiting for players...</h3> */}
-                        {<h3>Waiting for {4-gameState.players.length} players</h3>}
-                </div>
-        </div>
-    );
-  } else {
-    
-    return(<>{navigate("/gameplay")}</>);
+  if (gameState.phase !== "WAITING" && gameState.players.length >= 4) {
+    navigate("/gameplay")
+    return null
   }
+
+  return (
+    <div style={styles.wrapper}>
+      <TopBar variant="withBackBtn" />
+      <div style={styles.main}>
+        <h1>Host Game</h1>
+        <button
+          onClick={async () => {
+            const code = generateGameCode()
+            setGameCode(code)
+            setGameId(await createGame(code, auth.token ?? ""))
+          }}
+        >
+          Create Game
+        </button>
+        <h2>Game Code: {gameCode}</h2>
+        <h2>Game Id: {gameId}</h2>
+        <h3>Waiting for {Math.max(0, 4 - gameState.players.length)} more players</h3>
+      </div>
+    </div>
+  )
 }

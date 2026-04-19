@@ -1,106 +1,84 @@
-import { BiddingCycle } from "../domain/entities/BiddingCycle";
 import { Card } from "../domain/entities/Card";
 import GameState from "../domain/entities/GameState";
 import { Hand } from "../domain/entities/Hand";
-import { HandCycle } from "../domain/entities/HandCycle";
 import { Player } from "../domain/entities/Player";
-import { Trick } from "../domain/entities/Trick";
-import { HandCycleStatus } from "../domain/enums/HandCycleStatus";
-import { Suit } from "../domain/enums/Suit";
+import { createWaitingHand, startBidding } from "../domain/entities/HandCycle";
 import IUserRepository from "../domain/repositories/IUserRepository";
-import GamePublisherPort from "../ports/IGamePublisherPort";
+import IGamePublisherPort from "../ports/IGamePublisherPort";
 import IShortTermStoragePort from "../ports/IShortTermStoragePort";
 import { GameId, PlayerId, UserId } from "../types/id-declarations";
-import { GameService } from "./GameService";
-import UserService from "./UserService";
+
+const CARDS_PER_PLAYER = 9;
 
 export class RoomService {
-    
-    shortTermStorage: IShortTermStoragePort;
-    userRepository: IUserRepository;
-    publisher: GamePublisherPort;
+    private shortTermStorage: IShortTermStoragePort;
+    private userRepository: IUserRepository;
+    private publisher: IGamePublisherPort;
 
-    constructor(shortTermStorage: IShortTermStoragePort, userRepository: IUserRepository, publisher: GamePublisherPort) {
+    constructor(shortTermStorage: IShortTermStoragePort, userRepository: IUserRepository, publisher: IGamePublisherPort) {
         this.shortTermStorage = shortTermStorage;
         this.userRepository = userRepository;
         this.publisher = publisher;
     }
 
-    async createRoom(gameCode: string, userId: string) {
-
-        console.log(`Creating room with gameCode: ${gameCode} and userId: ${userId}`);
-        const username = (await this.userRepository.findById(userId as UserId))?.username;
-        if (!username) {
-            throw new Error("User not found");
-        }
-        const newRoom = new GameState(gameCode as GameId,
-            [new Player(userId as PlayerId, username, userId as UserId, new Hand([]), false, false, false, 0, 0)],
-            gameCode,
-            new HandCycle(userId as PlayerId,
-                "" as PlayerId, 0, Suit.HEARTS,
-                [],
-                HandCycleStatus.WAITING,
-                0,
-                0,
-                new BiddingCycle(userId as PlayerId, null, 0, {}),
-                new Trick(0, userId as PlayerId, {} as Record<PlayerId, Card | null>, userId as PlayerId)),
-            0,
-            0);
-        await this.shortTermStorage.createGameState(newRoom);
+    async createRoom(gameCode: string, userId: string): Promise<void> {
         const user = await this.userRepository.findById(userId as UserId);
-        if(!user) {
-            throw new Error("User not found");
-        }
-        await this.userRepository.updateUser(user);
+        if (!user) throw new Error('User not found');
+
+        const player = new Player(userId as PlayerId, user.username, userId as UserId, new Hand([]), false, true, false, 0, 1);
+        // gameCode serves as the gameId so clients can look up their game by the code they joined with
+        const newGame = new GameState(
+            gameCode as GameId,
+            [player],
+            gameCode,
+            createWaitingHand(userId as PlayerId),
+            0,
+            0,
+        );
+        await this.shortTermStorage.createGameState(newGame);
     }
 
-    async joinRoom(gameCode: string, userId: string) {
-        console.log(`Joining room with code ${gameCode} and user id ${userId}`)
-        const room = (await this.shortTermStorage.getGameStateById(gameCode as GameId)) as GameState | null;
-        if (!room) {
-            console.log(await this.shortTermStorage.getAllGameStates());
-            throw new Error("Room not found");
+    async joinRoom(gameCode: string, userId: string): Promise<void> {
+        const game = await this.shortTermStorage.getGameStateById(gameCode as GameId);
+        if (!game) throw new Error('Room not found');
+
+        // Reconnecting player — just re-broadcast state
+        if (game.players.some(p => p.id === userId)) {
+            this.publisher.publishGameStateToRoom(game.id, game);
+            return;
         }
-        if (room.players.length >= 4 && !room.players.some(p => p.id === userId)) {
-            throw new Error("Room is full");
-        } else {
-            const username = (await this.userRepository.findById(userId as UserId))?.username;
-            if (!username) {
-                throw new Error("User not found");
-            }
-            const newPlayer = new Player(userId as PlayerId, username, userId as UserId, new Hand([]), false, false, false, 0, 0);
-            if (!room.players.some(p => p.id === userId)) {
-                    room.players.push(newPlayer);
-                
-                    await this.shortTermStorage.updateGameState(room);
-                
-                // If the room is now full, we can initialize the hand cycle and start the game
-                if (room.players.length === 4) {
-                    room.handCycle.dealerId = room.players[Math.floor(Math.random() * room.players.length)].id;
-                    room.handCycle.bidWinner = "" as PlayerId;
-                    room.handCycle.bidAmount = 0;
-                    room.handCycle.trumpSuit = Suit.HEARTS;
-                    room.handCycle.blindCards = [];
-                    room.handCycle.nextStatus(room); // WAITING → BIDDING, calls startBidding which initialises playerBids for all 4 players
-                    await this.shortTermStorage.updateGameState(room);
-                    await this.initializeGame(room);
-                }
-            }
-            
-            this.publisher.publishGameStateToRoom(room.id, room);
+
+        if (game.players.length >= 4) throw new Error('Room is full');
+
+        const user = await this.userRepository.findById(userId as UserId);
+        if (!user) throw new Error('User not found');
+
+        const seatNumber = game.players.length + 1;
+        game.players.push(new Player(userId as PlayerId, user.username, userId as UserId, new Hand([]), false, true, false, 0, seatNumber));
+
+        if (game.players.length === 4) {
+            this.startGame(game);
         }
+
+        await this.shortTermStorage.updateGameState(game);
+        this.publisher.publishGameStateToRoom(game.id, game);
     }
 
-    async initializeGame(game: GameState){
+    private startGame(game: GameState): void {
+        const dealerIndex = Math.floor(Math.random() * game.players.length);
+        game.players[dealerIndex].isDealer = true;
+        const dealerId = game.players[dealerIndex].id;
+
+        const newHand = startBidding(createWaitingHand(dealerId), game.players);
+
         const deck = Card.createFullDeck();
         for (const player of game.players) {
-            for (var i = 0; i < 9; i++) {
+            for (let i = 0; i < CARDS_PER_PLAYER; i++) {
                 player.hand.cards.push(deck.pop() as Card);
             }
         }
+        newHand.blindCards = deck;
 
-        game.handCycle.blindCards = deck as Card[];
-
-        await this.shortTermStorage.updateGameState(game);
+        game.handCycle = newHand;
     }
 }

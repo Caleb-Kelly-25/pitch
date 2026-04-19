@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">38.46% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>13/13</span>
+                <span class='fraction'>5/13</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>1/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">41.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/12</span>
+                <span class='fraction'>5/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -90,13 +90,11 @@
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -105,26 +103,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { GameId } from "../../types/id-declarations";
-import { HandCycle } from "./HandCycle";
+import { HandCycle, handCycleFromJSON } from "./HandCycle";
 import { Player } from "./Player";
 &nbsp;
 export default class GameState {
-    
     id: GameId;
     players: Player[];
     gameCode: string;
@@ -132,19 +129,19 @@ export default class GameState {
     teamOneScore: number;
     teamTwoScore: number;
 &nbsp;
-    constructor(id: GameId, players: Player[], gameCode: string, handCycle: HandCycle, teamOneScore: number, teamTwoScore: number) {
-        this.id = id;
-        this.players = players;
-        this.gameCode = gameCode;
-        this.handCycle = handCycle;
-        this.teamOneScore = teamOneScore;
-        this.teamTwoScore = teamTwoScore;
+<span class="fstat-no" title="function not covered" >    constructor(i</span>d: GameId, players: Player[], gameCode: string, handCycle: HandCycle, teamOneScore: number, teamTwoScore: number) {
+<span class="cstat-no" title="statement not covered" >        this.id = id;</span>
+<span class="cstat-no" title="statement not covered" >        this.players = players;</span>
+<span class="cstat-no" title="statement not covered" >        this.gameCode = gameCode;</span>
+<span class="cstat-no" title="statement not covered" >        this.handCycle = handCycle;</span>
+<span class="cstat-no" title="statement not covered" >        this.teamOneScore = teamOneScore;</span>
+<span class="cstat-no" title="statement not covered" >        this.teamTwoScore = teamTwoScore;</span>
     }
 &nbsp;
-    static fromJSONObject(json: GameState): GameState {
-        const players: Player[] = json.players.map(p =&gt; Player.fromJSONObject(p));
-        const handCycle: HandCycle = HandCycle.fromJSONObject(json.handCycle);
-        return new GameState(json.id, players, json.gameCode, handCycle, json.teamOneScore, json.teamTwoScore);
+    static fromJSONObject(json: any): GameState {
+        const players = json.players.map(<span class="fstat-no" title="function not covered" >(p</span>: any) =&gt; <span class="cstat-no" title="statement not covered" >Player.fromJSONObject(p))</span>;
+        const handCycle = handCycleFromJSON(json.handCycle);
+<span class="cstat-no" title="statement not covered" >        return new GameState(json.id, players, json.gameCode, handCycle, json.teamOneScore, json.teamTwoScore);</span>
     }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -154,7 +151,7 @@ export default class GameState {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-17T21:01:49.655Z
+                at 2026-04-19T02:55:15.626Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

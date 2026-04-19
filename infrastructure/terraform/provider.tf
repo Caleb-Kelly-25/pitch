@@ -1,14 +1,18 @@
-required_providers {
-    aws = {
-        source = "hashicorp/aws"
-        version = "~> 6.0"
+terraform{
+    required_providers {
+        aws = {
+            source = "hashicorp/aws"
+            version = "~> 6.0"
+        }
     }
 }
 
+data "aws_caller_identity" "current" {}
+
 provider "aws" {
-    region = "us-east-1"
+    region = "us-east-2"
     assume_role {
-        role_arn = "arn:aws:iam::123456789012:role/ROLE_NAME"
-        session_name = "SESSION_NAME"
+        role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ROLE_NAME"
+        session_name = "GitHub-Infra-Deploy"
     }
 }

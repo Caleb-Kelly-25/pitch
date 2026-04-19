@@ -11,6 +11,8 @@ export interface CardProps {
   suit?: Suit;
   value?: number; // 1=A, 2-10, 11=Joker, 12=J, 13=Q, 14=K
   faceDown?: boolean;
+  highlighted?: boolean;
+  dimmed?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -35,21 +37,25 @@ function resolveCard(value: number): { display: string; isJoker: boolean; } {
   }
 }
 
-export default function Card({ suit, value, faceDown = false, onClick }: CardProps) {
+export default function Card({ suit, value, faceDown = false, highlighted = false, dimmed = false, onClick }: CardProps) {
   const baseStyle: React.CSSProperties = {
     width: "120px",
     height: "170px",
     borderRadius: "12px",
-    border: "2px solid #222",
+    border: highlighted ? "2px solid gold" : "2px solid #222",
     backgroundColor: "white",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
     padding: "10px",
-    cursor: "pointer",
-    boxShadow: "2px 4px 8px rgba(0,0,0,0.2)",
+    cursor: onClick ? "pointer" : "default",
+    boxShadow: highlighted
+      ? "0 0 10px 3px gold, 2px 4px 8px rgba(0,0,0,0.2)"
+      : "2px 4px 8px rgba(0,0,0,0.2)",
     fontFamily: "serif",
     position: "relative",
+    opacity: dimmed ? 0.4 : 1,
+    transition: "opacity 0.15s, box-shadow 0.15s",
   };
 
     if (faceDown) {

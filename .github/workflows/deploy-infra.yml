@@ -1,48 +1,52 @@
-name: Deploy infrastructure
+name: Deploy Infrastructure
 
-on: 
+on:
   workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-2
+  TF_WORKING_DIR: infrastructure/terraform
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_docdb_username: ${{secrets.DOCDB_USERNAME}}
+
+      TF_VAR_docdb_password: ${{secrets.DOCDB_PASSWORD}}
+
+      TF_VAR_client_origin: ${{vars.CLIENT_ORIGIN}}
+
+      TF_VAR_ecs_task_family: ${{vars.ECS_TASK_FAMILY}}
     permissions:
       contents: read
       id-token: write
-    
-    env:
-      AWS_REGION: ${{ vars.AWS_REGION }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ vars.AWS_REGION }}
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub-deploy-role
+          aws-region: ${{ env.AWS_REGION }}
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: 1.9
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9
 
-    - name: Terraform Init
-      working-directory: ./infrastructure/terraform
-      run: |
-        cd infrastructure/terraform
-        terraform init -upgrade
-    
-    - name: Terraform Plan
-      id: terraform-plan-shared
-      working-directory: infrastructure/terraform
-      run: |
-        terraform plan -lock-timeout=2m -out=tfplan
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init -upgrade
 
-    - name: Terraform Apply
-      working-directory: ./infrastructure/terraform
-      run: |
-        cd infrastructure/terraform
-        terraform apply -auto-approve tfplan.binary
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          terraform plan -lock-timeout=2m -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform apply -auto-approve tfplan

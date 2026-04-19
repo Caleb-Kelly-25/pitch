@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../features/auth/useAuth";
-import cardsLogo from "../assets/5_card_logo.png";
-import TopBar from "../components/TopBar";
-// import { Home } from "lucide-react";
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../features/auth/useAuth"
+import cardsLogo from "../assets/5_card_logo.png"
+import TopBar from "../components/TopBar"
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
@@ -15,7 +14,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: 0,
     fontFamily: "'Georgia', serif",
     backgroundColor: "#f0ebe5",
-    position: "fixed" as const,
+    position: "fixed",
     top: 0,
     left: 0,
     overflow: "hidden",
@@ -52,7 +51,7 @@ const styles: Record<string, React.CSSProperties> = {
   cardsImage: {
     width: "clamp(280px, 40vw, 500px)",
     height: "auto",
-    objectFit: "contain" as const,
+    objectFit: "contain",
   },
   rightSection: {
     width: "clamp(320px, 50vw, 440px)",
@@ -72,7 +71,7 @@ const styles: Record<string, React.CSSProperties> = {
   loginTitle: {
     color: "#f5ede0",
     fontSize: "22px",
-    textAlign: "center" as const,
+    textAlign: "center",
     margin: 0,
     fontFamily: "'Palatino Linotype', serif",
     fontWeight: "normal",
@@ -88,8 +87,8 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "16px",
     fontFamily: "'Georgia', serif",
     outline: "none",
-    boxSizing: "border-box" as const,
-    textAlign: "center" as const,
+    boxSizing: "border-box",
+    textAlign: "center",
     letterSpacing: "0.3px",
   },
   enterBtn: {
@@ -103,7 +102,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
     letterSpacing: "0.5px",
     boxShadow: "inset 0 -3px 6px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.3)",
-    alignSelf: "center" as const,
+    alignSelf: "center",
     width: "200px",
   },
   divider: {
@@ -126,67 +125,56 @@ const styles: Record<string, React.CSSProperties> = {
   error: {
     color: "#ffcccc",
     fontSize: "14px",
-    textAlign: "center" as const,
+    textAlign: "center",
     margin: 0,
   },
-};
+}
 
 export default function Signup() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
 
-  const { signup: submitSignup } = useAuth();
-  const navigate = useNavigate();
+  const { signup: submitSignup } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const prev = {
       margin: document.body.style.margin,
       padding: document.body.style.padding,
       overflow: document.body.style.overflow,
-    };
-    document.body.style.margin = "0";
-    document.body.style.padding = "0";
-    document.body.style.overflow = "hidden";
+    }
+    document.body.style.margin = "0"
+    document.body.style.padding = "0"
+    document.body.style.overflow = "hidden"
     return () => {
-      document.body.style.margin = prev.margin;
-      document.body.style.padding = prev.padding;
-      document.body.style.overflow = prev.overflow;
-    };
-  }, []);
+      document.body.style.margin = prev.margin
+      document.body.style.padding = prev.padding
+      document.body.style.overflow = prev.overflow
+    }
+  }, [])
 
   async function handleSubmit() {
-    setError(null);
+    setError(null)
     try {
-      await submitSignup(username, password);
-      navigate("/LandingPage");
-    } catch (err: any) {
-      setError(err.message);
+      await submitSignup(username, password)
+      navigate("/")
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Signup failed")
     }
   }
 
   return (
     <div style={styles.wrapper}>
-      {/* Top nav bar */}
-      <TopBar varient="empty"></TopBar>
-
-      {/* Main content */}
+      <TopBar variant="empty" />
       <div style={styles.main}>
-        {/* Left: Title + Cards */}
         <div style={styles.leftSection}>
           <h1 style={styles.title}>Pitch</h1>
-          <img
-            src={cardsLogo}
-            alt="Playing cards"
-            style={styles.cardsImage}
-          />
+          <img src={cardsLogo} alt="Playing cards" style={styles.cardsImage} />
         </div>
-
-        {/* Right: Signup form */}
         <div style={styles.rightSection}>
           <div style={styles.loginBox}>
             <h2 style={styles.loginTitle}>Sign Up</h2>
-
             <input
               style={styles.input}
               placeholder="Username"
@@ -194,7 +182,6 @@ export default function Signup() {
               onChange={(e) => setUsername(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             />
-
             <input
               type="password"
               style={styles.input}
@@ -203,15 +190,11 @@ export default function Signup() {
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             />
-
             <button style={styles.enterBtn} onClick={handleSubmit}>
               Create Account
             </button>
-
             {error && <p style={styles.error}>{error}</p>}
-
             <hr style={styles.divider} />
-
             <button style={styles.loginBtn} onClick={() => navigate("/login")}>
               Already have an account? Log in
             </button>
@@ -219,5 +202,5 @@ export default function Signup() {
         </div>
       </div>
     </div>
-  );
+  )
 }
