@@ -13,3 +13,7 @@ variable "docdb_password" {
 variable "client_origin" {
     type = string
 }
+
+variable "ECS_TASK_FAMILY" {
+    type = string
+}

@@ -52,7 +52,7 @@ resource "aws_iam_role_policy" "ssm_secrets" {
 
 resource "aws_ecs_task_definition" "app" {
   depends_on = [aws_elasticache_cluster.redis]
-  family                   = "app-task"
+  family                   = "${env.ECS_TASK_FAMILY}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "512"

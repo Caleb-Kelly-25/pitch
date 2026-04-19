@@ -10,6 +10,14 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_docdb_username: ${{secrets.docdb_username}}
+
+      TF_VAR_docdb_password: ${{secrets.docdb_password}}
+
+      TF_VAR_client_origin: ${{env.client_origin}}
+
+      TF_VAR_ecs_task_family: ${{env.ecs_task_family}}
     permissions:
       contents: read
       id-token: write
@@ -21,7 +29,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/github-deploy-role
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-deploy-role
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
