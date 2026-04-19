@@ -83,8 +83,8 @@ export class RoomService {
                     const randomDealerId = room.players[Math.floor(Math.random() * room.players.length)].id;
                     room.initializeHandCycle(randomDealerId);
 
+                    room.handCycle.nextStatus(room); //this will transition the hand cycle from waiting to dealing and deal the cards to players
                     await this.shortTermStorage.updateGameState(room);
-                    await this.initializeGame(room);
                 }
             }
             
@@ -92,16 +92,4 @@ export class RoomService {
         }
     }
 
-    async initializeGame(game: GameState){
-        const deck = Card.createFullDeck();
-        for (const player of game.players) {
-            for (var i = 0; i < 9; i++) {
-                player.hand.cards.push(deck.pop() as Card);
-            }
-        }
-
-        game.handCycle.blindCards = deck;
-
-        await this.shortTermStorage.updateGameState(game);
-    }
 }

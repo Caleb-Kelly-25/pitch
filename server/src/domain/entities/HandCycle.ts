@@ -41,6 +41,10 @@ export class HandCycle {
     public nextStatus(gameState: GameState) {
         switch(this.handCycleStatus) {
             case HandCycleStatus.WAITING:
+                this.handCycleStatus = HandCycleStatus.DEALING;
+                this.dealCards(gameState.players);
+                break;
+            case HandCycleStatus.DEALING:
                 this.startBidding(gameState.players); 
                 this.handCycleStatus = HandCycleStatus.BIDDING;
                 break;
@@ -71,6 +75,18 @@ export class HandCycle {
             default:
                 throw new Error(`Invalid hand cycle status: ${this.handCycleStatus}`);
         }
+    }
+
+    public dealCards(players: Player[]) {
+        const deck = Card.createFullDeck();
+
+        for (const player of players) {
+            for (var i = 0; i < 9; i++) {
+                player.hand.cards.push(deck.pop() as Card);
+            }
+        }
+
+        this.blindCards = deck; 
     }
 
     //I wonder if this should be in the PlayCard file instead of the HandCycle file, since it is closely related to the logic of playing a card
