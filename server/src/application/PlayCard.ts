@@ -1,222 +1,204 @@
 import assert from "assert";
 import { Card } from "../domain/entities/Card";
 import GameState from "../domain/entities/GameState";
+import { Hand } from "../domain/entities/Hand";
 import { Player } from "../domain/entities/Player";
+import { PlayingHand, completeHand, createWaitingHand, startBidding } from "../domain/entities/HandCycle";
+import { Trick } from "../domain/entities/Trick";
 import { Suit } from "../domain/enums/Suit";
 import { Value } from "../domain/enums/Value";
+import { InvalidPlayError, WrongPhaseError } from "../domain/errors/GameErrors";
 import { PlayerId } from "../types/id-declarations";
-import { Trick } from "../domain/entities/Trick";
-import { HandCycle } from "../domain/entities/HandCycle";
-import { HandCycleStatus } from "../domain/enums/HandCycleStatus";
 
-export class PlayCard {
-    static cardPointMap: Record<Value, number> = {
-        [Value.ACE]: 1,
-        [Value.TWO]: 1,
-        [Value.THREE]: 3,
-        [Value.FOUR]: 0,
-        [Value.FIVE]: 0,
-        [Value.SIX]: 0,
-        [Value.SEVEN]: 0,
-        [Value.EIGHT]: 0,
-        [Value.NINE]: 0,
-        [Value.TEN]: 1,
-        [Value.JOKER]: 1,
-        [Value.JACK]: 1,
-        [Value.QUEEN]: 0,
-        [Value.KING]: 0
-    };
+const CARD_POINTS: Record<Value, number> = {
+    [Value.ACE]: 1,
+    [Value.TWO]: 1,
+    [Value.THREE]: 3,
+    [Value.FOUR]: 0,
+    [Value.FIVE]: 0,
+    [Value.SIX]: 0,
+    [Value.SEVEN]: 0,
+    [Value.EIGHT]: 0,
+    [Value.NINE]: 0,
+    [Value.TEN]: 1,
+    [Value.JOKER]: 1,
+    [Value.JACK]: 1,
+    [Value.QUEEN]: 0,
+    [Value.KING]: 0,
+};
 
-    static playCard(gameState: GameState, playerId: PlayerId, card: Card): GameState | null {
-        // Make sure the player exists in this game and it's their turn
-        console.log(`Player ${playerId} is attempting to play card ${card.value} of ${card.suit} in game ${gameState.id}`);
+const CARDS_PER_PLAYER = 9;
+const GAME_WIN_THRESHOLD = 52;
 
+export function playCard(gameState: GameState, playerId: PlayerId, card: Card): void {
+    if (gameState.handCycle.phase !== 'playing') {
+        throw new WrongPhaseError('playing', gameState.handCycle.phase);
+    }
+    const hand = gameState.handCycle; // narrowed to PlayingHand
 
-        //Validates if the card can be played in the current HandCycle (is it the PLAYING phase)
-        if (gameState.handCycle.handCycleStatus !== HandCycleStatus.PLAYING) {
-            console.log(`Illegal play attempt by player ${playerId}. (Not PLAYING phase)`);
-            return null;
+    const player = gameState.players.find(p => p.id === playerId);
+    if (!player) throw new InvalidPlayError(`Player ${playerId} not found in game`);
+
+    if (hand.trick.playerTurn !== playerId) {
+        throw new InvalidPlayError(`Not player ${playerId}'s turn`);
+    }
+
+    if (isPlayerOutOfTrump(player, hand.trumpSuit)) {
+        // Player has no trump — auto-pass this trick slot
+        hand.trick.cardsPlayed[playerId] = null;
+    } else {
+        if (!player.hand.hasCard(card)) {
+            throw new InvalidPlayError(`Player ${playerId} does not have ${card.suit} ${card.value}`);
         }
 
-        const player = gameState.players.find(p => p.id === playerId);
-        if (!player || !PlayCard.validateTurn(gameState, playerId)) {
-            console.log(`Invalid play attempt by player ${playerId}. Either player not found or not player's turn.`);
-            console.log("Player turn: ", gameState.handCycle.trick!.playerTurn); //the ! after trick is safe because if PLAYING then trick is guaranteed
-            console.log(player);
-            return null;
+        if (!isCardTrump(card, hand.trumpSuit)) {
+            throw new InvalidPlayError(`Player ${playerId} can't play ${card.suit} ${card.value} because the trump suit is ${hand.trumpSuit}`);
         }
 
-        // If the player has no cards to play, update the game state and take next turn
-        if (PlayCard.isOutOfCards(gameState, player)){
-            console.log(`Player ${player.id} has no cards to play, moving to next turn.`);
-            PlayCard.updateGameStateForNoCardPlayed(gameState, player);
+        player.hand.removeCard(card);
+        hand.trick.cardsPlayed[playerId] = card;
+    }
+
+    hand.trick.playerTurn = getNextPlayerId(playerId, gameState.players) as PlayerId;
+    autoAdvanceOutOfTrump(hand, gameState.players);
+
+    if (isTrickOver(hand.trick)) {
+        const winnerId = calcTrickWinner(hand);
+        tallyTrickPoints(hand, winnerId, gameState.players);
+        advanceTrick(hand, winnerId);
+        // Auto-pass any out-of-trump players at the start of the new trick
+        // (handles the case where the trick winner themselves has no trump left)
+        autoAdvanceOutOfTrump(hand, gameState.players);
+    }
+
+    if (isHandOver(gameState)) {
+        tallyHandPoints(gameState, hand);
+        if (isGameOver(gameState, hand)) {
+            gameState.handCycle = completeHand(hand);
         } else {
-            // Validate the player has the card in their hand and that it's a valid play
-            if (!PlayCard.validateCardInHand(player, card) /*|| !gameState.handCycle.canPlayCard(card)*/) {
-                console.log(`Invalid play attempt by player ${playerId}. Card not in hand or not a valid play.`);
-                return null;
-            }
-
-            // If all checks pass, update the game state for the played card and move to the next turn
-            console.log("Updating game state for played card...");
-            PlayCard.updateGameStateForPlayedCard(gameState, player, card);
-        }
-
-        // If the trick is over, tally points and start the next trick
-        if (PlayCard.isTrickOver(gameState.handCycle.trick!)) {
-            PlayCard.tallyTrickPoints(gameState, gameState.handCycle.trick!);
-            PlayCard.nextTrick(gameState);
-        }
-
-        //TODO: Maybe move this to HandCycle
-        // If the hand cycle is over, tally points and start a new hand cycle
-        if (PlayCard.isHandCycleOver(gameState)) {
-            PlayCard.tallyPointsHandCycle(gameState);
-            PlayCard.nextHandCycle(gameState);
-        }
-
-        //TODO: Maybe move this to GameState or HandCycle
-        if (PlayCard.isGameOver(gameState)) {
-            gameState.handCycle.handCycleStatus = HandCycleStatus.COMPLETE;
-        }
-        console.log("Returning game state after play card: ", JSON.stringify(gameState));
-        return gameState;
-    }
-
-
-// PlayCard function is called when a player plays a card, it updates the game state accordingly and moves the turn forward
-static updateGameStateForPlayedCard(gameState: GameState, player: Player, card: Card) {
-    const cardSuit = card.suit;
-    const cardValue = card.value;
-    player.hand.removeCard({suit: cardSuit, value: cardValue} as Card);
-    gameState.handCycle.trick!.cardsPlayed[player.id as PlayerId] = {suit: cardSuit, value: cardValue} as Card;
-    gameState.handCycle.trick!.playerTurn = PlayCard.getNextPlayerId(player.id, gameState.players, gameState.handCycle.trick!.startingPlayerId) as PlayerId;
-    console.log("New game state after playing card:", JSON.stringify(gameState));
-}
-
-// PlayCard function is called when a player has no cards to play, it updates the game state accordingly and moves the turn forward
-static updateGameStateForNoCardPlayed(gameState: GameState, player: Player) {
-    console.log(`Player ${player.id} has no cards to play, moving to next turn.`);
-    gameState.handCycle.trick!.cardsPlayed[player.id as PlayerId] = null;
-    gameState.handCycle.trick!.playerTurn = PlayCard.getNextPlayerId(player.id, gameState.players, gameState.handCycle.trick!.startingPlayerId) as PlayerId;
-}
-
-// Returns the next player id or null if there are no more players in the trick
-static getNextPlayerId(currentPlayerId: string, players: Player[], startingPlayerId: string): string | null {
-    const currentIndex = players.findIndex(p => p.id === currentPlayerId);
-    const nextIndex = (currentIndex + 1) % players.length;
-    return /*players[nextIndex].id===startingPlayerId ? null : */players[nextIndex].id;
-}
-
-// Validates that it's the player's turn
-static validateTurn (gameState: GameState, playerId: PlayerId): boolean {
-    return gameState.handCycle.trick!.playerTurn === playerId;
-}
-
-// Validates that a player has the card
-static validateCardInHand(player: Player, card: Card): boolean {
-    const hand = player.hand;
-    return hand.hasCard(card);
-}
-
-// Determines if a player has a playable card in PlayCard cycle
-static isOutOfCards(gameState: GameState, player: Player): boolean {
-    return !player.hand.hasSuit(gameState.handCycle.trumpSuit);
-}
-
-
-
-static calcTrickWinner(gameState: GameState): PlayerId {
-    const cardsPlayed = gameState.handCycle.trick!.cardsPlayed;
-    let winningPlayerId: PlayerId = gameState.handCycle.trick!.startingPlayerId;
-    for (const [playerId, card] of Object.entries(cardsPlayed)) {
-        if (PlayCard.compareCards(card as Card, cardsPlayed[winningPlayerId] as Card, gameState.handCycle.trumpSuit)) {
-            winningPlayerId = playerId as PlayerId;
+            resetForNextHand(gameState, hand);
         }
     }
-    return winningPlayerId;
 }
 
-static compareCards(cardA: Card, cardB: Card, trumpSuit: Suit): boolean {
-    // There is definitely a better way to do PlayCard but I want to move on for now and come back to it later
-    if (cardB === null){
-        return true;
-    } else if (cardA === null){
-        return false;
-    } else if (cardA.value === Value.ACE) {
-        return true;
-    } else if (cardB.value === Value.ACE) {
-        return false;
-    } else if (cardA.value === Value.JOKER){
-        return cardB.value <= Value.JOKER;
-    } else if (cardA.suit === trumpSuit && cardB.suit === trumpSuit) {
-        return cardA.value >= cardB.value;
-    } else if (cardA.equals(Card.jick(trumpSuit))) {
-        return cardB.value < Value.JACK;
-    } else if (cardB.equals(Card.jick(trumpSuit))) {
-        return cardA.value >= Value.JACK;
-    }
-    console.log(`WARNING: compareCards called when cards are equal. PlayCard should not happen. Cards: ${JSON.stringify(cardA)}, ${JSON.stringify(cardB)}`);
-    
-    return true;
+function isPlayerOutOfTrump(player: Player, trumpSuit: Suit): boolean {
+    return !player.hand.hasSuit(trumpSuit);
 }
 
-static isTrickOver(trick: Trick) {
+function getNextPlayerId(currentId: PlayerId, players: Player[]): string {
+    const idx = players.findIndex(p => p.id === currentId);
+    return players[(idx + 1) % players.length].id;
+}
+
+function isTrickOver(trick: Trick): boolean {
     return Object.keys(trick.cardsPlayed).length === 4;
 }
 
-// PlayCard function starts the next trick, call after tallying points
-static nextTrick(gameState: GameState) {
-    const winningPlayerId = PlayCard.calcTrickWinner(gameState);
-    gameState.handCycle.trick = new Trick(gameState.handCycle.trick!.roundNumber+1, winningPlayerId, {} as Record<PlayerId, Card | null>, winningPlayerId);
-}
-
-// PlayCard function is called at the end of a trick to tally points
-// Updates team scores on 
-static tallyTrickPoints(gameState: GameState, trick: Trick) {
-    const winningPlayerId = PlayCard.calcTrickWinner(gameState);
-    if (gameState.players.findIndex(p => p.id === winningPlayerId) % 2 === 0) {
-        gameState.handCycle.teamOnePoints += Array.from(Object.values(trick.cardsPlayed)).reduce((acc, card) => acc + (PlayCard.cardPointMap[card?.value as Value] || 0), 0);
-    } else {
-        gameState.handCycle.teamTwoPoints += Array.from(Object.values(trick.cardsPlayed)).reduce((acc, card) => acc + (PlayCard.cardPointMap[card?.value as Value] || 0), 0);
-    }
-    assert(gameState.handCycle.teamOnePoints <= 10 && gameState.handCycle.teamTwoPoints <= 10, "Scores should never exceed 10");
-}
-
-//This function might be better placed in a different file once bidding is implemented etc. but for now it will stay here since it's closely related to play card and the hand cycle logic
-static isHandCycleOver(gameState: GameState): boolean {
-    return gameState.players.every(p => PlayCard.isOutOfCards(gameState, p));
-}
-
-static tallyPointsHandCycle(gameState: GameState) {
-    if (gameState.players.findIndex(p => p.id === gameState.handCycle.bidWinner)%2 === 0) {
-        if (gameState.handCycle.teamOnePoints >= gameState.handCycle.bidAmount) {
-            gameState.teamOneScore += gameState.handCycle.teamOnePoints;
-        } else {
-            gameState.teamOneScore -= gameState.handCycle.bidAmount;
+function calcTrickWinner(hand: PlayingHand): PlayerId {
+    const { cardsPlayed, startingPlayerId } = hand.trick;
+    let winnerId = startingPlayerId;
+    for (const [playerId, card] of Object.entries(cardsPlayed)) {
+        if (card && beats(card, cardsPlayed[winnerId as PlayerId] ?? null, hand.trumpSuit)) {
+            winnerId = playerId as PlayerId;
         }
-        gameState.teamTwoScore += gameState.handCycle.teamTwoPoints;
+    }
+    return winnerId;
+}
+
+// Returns true if cardA beats cardB. cardB may be null (player passed).
+function beats(cardA: Card, cardB: Card | null, trumpSuit: Suit): boolean {
+    if (!cardB) return true;
+    if (cardA.value === Value.ACE) return true;
+    if (cardB.value === Value.ACE) return false;
+    if (cardA.value === Value.JOKER) return cardB.value <= Value.JOKER;
+    if (cardA.equals(Card.jick(trumpSuit))) return cardB.value < Value.JACK;
+    if (cardB.equals(Card.jick(trumpSuit))) return cardA.value >= Value.JACK;
+    if (cardA.suit === trumpSuit && cardB.suit === trumpSuit) return cardA.value >= cardB.value;
+    return false;
+}
+
+function tallyTrickPoints(hand: PlayingHand, winnerId: PlayerId, players: Player[]): void {
+    const winnerIndex = players.findIndex(p => p.id === winnerId);
+    const points = Object.values(hand.trick.cardsPlayed)
+        .reduce((sum, card) => sum + (card ? (CARD_POINTS[card.value] ?? 0) : 0), 0);
+
+    if (winnerIndex % 2 === 0) {
+        hand.teamOneHandPoints += points;
     } else {
-        if (gameState.handCycle.teamTwoPoints >= gameState.handCycle.bidAmount) {
-            gameState.teamTwoScore += gameState.handCycle.teamTwoPoints;
-        } else {
-            gameState.teamTwoScore -= gameState.handCycle.bidAmount;
-        }
-        gameState.teamOneScore += gameState.handCycle.teamOnePoints;
+        hand.teamTwoHandPoints += points;
+    }
+    assert(hand.teamOneHandPoints <= 10 && hand.teamTwoHandPoints <= 10, 'Hand points exceeded maximum');
+}
+
+function advanceTrick(hand: PlayingHand, winnerId: PlayerId): void {
+    hand.trick = new Trick(
+        hand.trick.roundNumber + 1,
+        winnerId,
+        {} as Record<PlayerId, Card | null>,
+        winnerId,
+    );
+}
+
+function autoAdvanceOutOfTrump(hand: PlayingHand, players: Player[]): void {
+    while (!isTrickOver(hand.trick)) {
+        const current = players.find(p => p.id === hand.trick.playerTurn);
+        if (!current || !isPlayerOutOfTrump(current, hand.trumpSuit)) break;
+        hand.trick.cardsPlayed[hand.trick.playerTurn] = null;
+        hand.trick.playerTurn = getNextPlayerId(hand.trick.playerTurn, players) as PlayerId;
     }
 }
 
-//NOTE: nextHandCycle should probabaly be in a different file once bidding is implemented etc.
-static nextHandCycle(gameState: GameState) {
-    const nextDealerIndex = (gameState.players.findIndex(p => p.id === gameState.handCycle.dealerId) + 1) % gameState.players.length;
+function isHandOver(gameState: GameState): boolean {
+    const hand = gameState.handCycle as PlayingHand;
+    return gameState.players.every(p => isPlayerOutOfTrump(p, hand.trumpSuit));
+}
+
+function isGameOver(gameState: GameState, hand: PlayingHand): boolean {
+    const bidWinnerIndex = gameState.players.findIndex(p => p.id === hand.bidWinnerId);
+    const biddingTeamIsOne = bidWinnerIndex % 2 === 0;
+
+    if (biddingTeamIsOne) {
+        return hand.teamOneHandPoints >= hand.bidAmount &&
+               gameState.teamOneScore >= GAME_WIN_THRESHOLD;
+    } else {
+        return hand.teamTwoHandPoints >= hand.bidAmount &&
+               gameState.teamTwoScore >= GAME_WIN_THRESHOLD;
+    }
+}
+
+function isCardTrump(card: Card, trumpSuit: Suit): boolean {
+    return (card.suit == trumpSuit || card.value == Value.JOKER || Card.jick(trumpSuit).equals(card));
+}
+
+function tallyHandPoints(gameState: GameState, hand: PlayingHand): void {
+    const bidWinnerIndex = gameState.players.findIndex(p => p.id === hand.bidWinnerId);
+    if (bidWinnerIndex % 2 === 0) {
+        gameState.teamOneScore += hand.teamOneHandPoints >= hand.bidAmount
+            ? hand.teamOneHandPoints
+            : -hand.bidAmount;
+        gameState.teamTwoScore += hand.teamTwoHandPoints;
+    } else {
+        gameState.teamTwoScore += hand.teamTwoHandPoints >= hand.bidAmount
+            ? hand.teamTwoHandPoints
+            : -hand.bidAmount;
+        gameState.teamOneScore += hand.teamOneHandPoints;
+    }
+}
+
+function resetForNextHand(gameState: GameState, currentHand: PlayingHand): void {
+    const nextDealerIndex = (gameState.players.findIndex(p => p.id === currentHand.dealerId) + 1) % gameState.players.length;
     const nextDealerId = gameState.players[nextDealerIndex].id;
-    gameState.handCycle = new HandCycle(nextDealerId, "undefined" as PlayerId, 0, Suit.HEARTS, [], HandCycleStatus.WAITING, 0, 0, null, null);
-    gameState.handCycle.nextStatus(gameState);
-}
 
-//NOTE: isGameOver should also be in a different file
-static isGameOver(gameState: GameState): boolean {
-    return gameState.teamOneScore >= 52 || gameState.teamTwoScore >= 52;
-}
+    // Deal fresh cards for the new hand
+    const deck = Card.createFullDeck();
+    gameState.players.forEach(p => {
+        p.hand = new Hand([]);
+        for (let i = 0; i < CARDS_PER_PLAYER; i++) {
+            p.hand.cards.push(deck.pop() as Card);
+        }
+    });
 
+    const newHand = startBidding(createWaitingHand(nextDealerId), gameState.players);
+    newHand.blindCards = deck;
+    gameState.handCycle = newHand;
 }

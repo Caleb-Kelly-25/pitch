@@ -1,35 +1,27 @@
-//import type { PayloadAction } from "@reduxjs/toolkit"
-import type { RootState } from "../../application/store"
-import type { AuthState } from "./authTypes";
+import type { RootState } from "../../app/store"
+import type { AuthState } from "./authTypes"
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import * as authApi from "./authApi"
 
 const initialState: AuthState = {
-  user: {
-    id: "playerId1",
-    username: "Player1Name",
-    email: "player1@site.com"
-  },
+  user: null,
   token: null,
   loading: false,
   error: null,
-  isAuthenticated: false
+  isAuthenticated: false,
 }
 
 export const login = createAsyncThunk(
   "auth/login",
   async ({ username, password }: { username: string; password: string }) => {
-    const data = await authApi.login(username, password)
-
-    return data
+    return authApi.login(username, password)
   }
 )
 
 export const signup = createAsyncThunk(
   "auth/signup",
   async ({ username, password }: { username: string; password: string }) => {
-    const data = await authApi.signup(username, password)
-    return data
+    return authApi.signup(username, password)
   }
 )
 
@@ -40,7 +32,8 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null
       state.token = null
-    }
+      state.isAuthenticated = false
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -52,12 +45,27 @@ const authSlice = createSlice({
         state.loading = false
         state.user = action.payload.user
         state.token = action.payload.token
+        state.isAuthenticated = true
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false
         state.error = action.error.message ?? "Login failed"
       })
-  }
+      .addCase(signup.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(signup.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload.user
+        state.token = action.payload.token
+        state.isAuthenticated = true
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message ?? "Signup failed"
+      })
+  },
 })
 
 export const { logout } = authSlice.actions

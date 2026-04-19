@@ -1,13 +1,20 @@
 export interface GameState {
     gameId: string;
-    phase: "BIDDING" | "PLAYING"| "WAITING" | "COMPLETE";
+    phase: "WAITING" | "BIDDING" | "TRUMP_SELECTION" | "BLIND_CARDS" | "PLAYING" | "COMPLETE";
     players: Player[];
     hand: CardModel[];
 
     trick: {
         leadPlayerId: string;
+        playerTurn: string;
         playedCards:{playerId:string, card: CardModel | undefined}[];
     }
+
+    trickResult: {
+        trick: { leadPlayerId: string; playerTurn: string; playedCards: {playerId: string; card: CardModel | undefined}[] };
+        winnerId: string;
+    } | null;
+    pendingGameState: any | null;
 
     bidding: {
         currentBidderId: string;
@@ -19,6 +26,9 @@ export interface GameState {
     leadSuit: "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES" | null;
     ourScore: number;
     theirScore: number;
+    bidWinnerId: string;
+    trumpSuit: "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES" | null;
+    currentBlindCard: CardModel | null;
 }
 
 export interface Player {

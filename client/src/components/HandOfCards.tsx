@@ -15,7 +15,7 @@ export default function HandOfCards({cards, count, overlap = 40}: { cards?: Card
             left: `${index * overlap}px`,
             }}
         >
-            <Card suit={card?.suit} value={card?.value} faceDown={card?.faceDown} onClick={card?.onClick} />
+            <Card suit={card?.suit} value={card?.value} faceDown={card?.faceDown} highlighted={card?.highlighted} dimmed={card?.dimmed} onClick={card?.onClick} />
         </div>
         ))}
     </div>)
