@@ -17,3 +17,8 @@ variable "client_origin" {
 variable "ECS_TASK_FAMILY" {
     type = string
 }
+
+variable "account_id" {
+  type = number
+  sensitive = true
+}
