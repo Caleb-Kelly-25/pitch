@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: us-east-2
   ECR_REPOSITORY: app-backend          # Must match your ECR repo name
   ECS_CLUSTER: app-cluster
   ECS_SERVICE: app-service
