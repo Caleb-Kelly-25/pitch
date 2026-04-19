@@ -8,7 +8,7 @@ env:
   ECR_REPOSITORY: app-backend          # Must match your ECR repo name
   ECS_CLUSTER: app-cluster
   ECS_SERVICE: app-service
-  ECS_TASK_FAMILY: ${{env.ecs_task_family}}
+  ECS_TASK_FAMILY: ${{vars.ecs_task_family}}
 
 jobs:
   deploy:

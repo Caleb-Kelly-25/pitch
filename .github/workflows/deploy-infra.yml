@@ -6,8 +6,6 @@ on:
 env:
   AWS_REGION: us-east-1
   TF_WORKING_DIR: infrastructure/terraform
-  CLIENT_ORIGIN: ${{env.client_origin}}
-  ECS_TASK_FAMILY: ${{env.ecs_task_family}}
 
 jobs:
   deploy:
@@ -17,9 +15,9 @@ jobs:
 
       TF_VAR_docdb_password: ${{secrets.docdb_password}}
 
-      TF_VAR_client_origin: ${{env.CLIENT_ORIGIN}}
+      TF_VAR_client_origin: ${{vars.CLIENT_ORIGIN}}
 
-      TF_VAR_ecs_task_family: ${{env.ECS_TASK_FAMILY}}
+      TF_VAR_ecs_task_family: ${{vars.ECS_TASK_FAMILY}}
     permissions:
       contents: read
       id-token: write
