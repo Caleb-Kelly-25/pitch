@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 
-import { MongoLongTermAdapter } from "../../../src/adapters/persistence/MongoLongTermAdapter";
-import { User } from "../../../src/domain/entities/User";
+import { MongoLongTermAdapter } from "../../src/adapters/persistence/MongoLongTermAdapter";
+import { User } from "../../src/domain/entities/User";
 
 let mongoServer: MongoMemoryServer;
 let adapter: MongoLongTermAdapter;

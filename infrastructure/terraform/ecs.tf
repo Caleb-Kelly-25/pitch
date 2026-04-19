@@ -21,6 +21,7 @@ resource "aws_iam_role_policy_attachment" "ecs_exec" {
 }
 
 resource "aws_ecs_task_definition" "app" {
+  depends_on = [aws_elasticache_cluster.redis]
   family                   = "app-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
@@ -30,15 +31,20 @@ resource "aws_ecs_task_definition" "app" {
 
   container_definitions = jsonencode([{
     name      = "app"
-    image     = "YOUR_ECR_IMAGE"
+    image = "${aws_ecr_repository.app.repository_url}:latest"
     essential = true
+    
     portMappings = [{
       containerPort = 3000
     }]
+
     environment = [
-      { name = "REDIS_URL", value = "redis://${aws_elasticache_cluster.redis.cache_nodes[0].address}" }
+      { name = "REDIS_URL",    value = "redis://${aws_elasticache_cluster.redis.cache_nodes[0].address}" },
+      { name = "MONGO_URI",    value = "mongodb://${var.docdb_username}:${var.docdb_password}@${aws_docdb_cluster.main.endpoint}:27017/pitch?tls=true&retryWrites=false" },
+      { name = "CLIENT_ORIGIN", value = var.client_origin }
     ]
   }])
+
 }
 
 resource "aws_ecs_service" "app" {

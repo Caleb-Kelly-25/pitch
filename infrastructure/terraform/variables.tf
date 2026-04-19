@@ -1,0 +1,15 @@
+variable "docdb_username" {
+  description = "DocumentDB master username"
+  type        = string
+  sensitive   = true
+}
+
+variable "docdb_password" {
+  description = "DocumentDB master password"
+  type        = string
+  sensitive   = true
+}
+
+variable "client_origin" {
+    type = string
+}

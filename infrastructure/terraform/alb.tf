@@ -15,6 +15,17 @@ resource "aws_lb_target_group" "app" {
     enabled = true
     type    = "lb_cookie"
   }
+
+  health_check {
+    enabled             = true
+    path                = "/health"
+    protocol            = "HTTP"
+    matcher             = "200"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
 }
 
 resource "aws_lb_listener" "http" {

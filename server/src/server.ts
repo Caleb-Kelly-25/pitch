@@ -18,6 +18,7 @@ import RoomController from "./adapters/rest/RoomController";
 import { RoomService } from "./application/RoomService";
 
 
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 const PORT_NUM = process.env.PORT || 3000;
 
 async function startServer() {
@@ -29,7 +30,7 @@ async function startServer() {
   expressApp.use(express.json());
   expressApp.use(
     cors({
-      origin: process.env.CLIENT_ORIGIN,
+      origin: CLIENT_ORIGIN,
       credentials: true,
     })
   );

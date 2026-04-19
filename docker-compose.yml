@@ -6,6 +6,9 @@ services:
       - "3000:3000"
     env_file:
       - ./server/.env
+    depends_on:
+      - redis
+      - mongo
 
   # REDIS: used for "Hot" data caching (Live game state, current turn, bidding)
   # This is memory-based and extremely fast for real-time play.
