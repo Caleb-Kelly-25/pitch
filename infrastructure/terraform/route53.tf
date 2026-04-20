@@ -1,5 +1,5 @@
 data "aws_route53_zone" "main" {
-  name = "pitchgame.app"   # The base domain you own
+  name = "pitch-game.com"   # The base domain you own
 }
 
 resource "aws_route53_record" "frontend" {
