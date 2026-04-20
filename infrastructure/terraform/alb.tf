@@ -10,7 +10,7 @@ resource "aws_lb_target_group" "app" {
   port     = 3000
   protocol = "HTTP"
   vpc_id   = module.vpc.vpc_id
-  # target_type = "ip"
+  target_type = "ip"
 
   stickiness {
     enabled = true
