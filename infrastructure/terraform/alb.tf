@@ -6,7 +6,7 @@ resource "aws_lb" "app" {
 }
 
 resource "aws_lb_target_group" "app" {
-  name     = "app-tg"
+  name     = "pitch-app-tg"
   port     = 3000
   protocol = "HTTP"
   vpc_id   = module.vpc.vpc_id
