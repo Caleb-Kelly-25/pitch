@@ -1,4 +1,15 @@
 import "dotenv/config";
+
+const fmtArg = (a: unknown): string => {
+  if (a instanceof Error) return (a.stack ?? a.message).replace(/\n/g, " | ");
+  if (typeof a === "object" && a !== null) return JSON.stringify(a);
+  return String(a);
+};
+for (const level of ["log", "error", "warn", "info"] as const) {
+  const orig = console[level].bind(console);
+  console[level] = (...args: unknown[]) => orig(args.map(fmtArg).join(" "));
+}
+
 import express from "express"
 import http from "http"
 import cors from "cors"
