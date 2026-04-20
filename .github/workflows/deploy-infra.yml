@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-2
+  AWS_REGION: ${{vars.AWS_REGION}}
   TF_WORKING_DIR: infrastructure/terraform
 
 jobs:
@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TF_VAR_docdb_username: ${{secrets.DOCDB_USERNAME}}
-
       TF_VAR_docdb_password: ${{secrets.DOCDB_PASSWORD}}
-
       TF_VAR_client_origin: ${{vars.CLIENT_ORIGIN}}
-
       TF_VAR_ecs_task_family: ${{vars.ECS_TASK_FAMILY}}
+      TF_VAR_account_id: ${{secrets.AWS_ACCOUNT_ID}}
+      TF_VAR_cloudfront_header_secret: ${{secrets.CLOUDFRONT_HEADER_SECRET}}
+      TF_VAR_frontend_domain: ${{vars.FRONTEND_DOMAIN}}
     permissions:
       contents: read
       id-token: write
@@ -29,7 +29,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub-deploy-role
+          role-to-assume: ${{secrets.DEPLOY_ROLE}}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
@@ -39,7 +39,9 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -upgrade
+        run: | 
+          terraform init -upgrade
+          export TF_LOG="TRACE"
 
       - name: Terraform Plan
         id: plan

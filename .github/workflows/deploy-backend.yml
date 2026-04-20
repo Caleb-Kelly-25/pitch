@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-2
+  AWS_REGION: us-east-1
   ECR_REPOSITORY: app-backend          # Must match your ECR repo name
   ECS_CLUSTER: app-cluster
   ECS_SERVICE: app-service
@@ -23,7 +23,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub-deploy-role
+          role-to-assume: ${{secrets.DEPLOY_ROLE}}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to ECR
@@ -32,6 +32,7 @@ jobs:
 
       - name: Build, tag, and push image
         id: build-image
+        working-directory: ./server
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}

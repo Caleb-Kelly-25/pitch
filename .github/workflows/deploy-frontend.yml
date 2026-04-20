@@ -1,0 +1,41 @@
+name: Deploy Frontend
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: Build
+        working-directory: ./client
+        run: npm run build
+        env:
+          VITE_API_URL: https://${{ vars.FRONTEND_DOMAIN }}  # Adjust env var name as needed
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-deploy-role
+          aws-region: us-east-1
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync ./client/dist s3://pitch-frontend-${{ secrets.AWS_ACCOUNT_ID }} --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"

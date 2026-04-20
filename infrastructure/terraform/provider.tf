@@ -10,9 +10,10 @@ terraform{
 data "aws_caller_identity" "current" {}
 
 provider "aws" {
-    region = "us-east-2"
-    assume_role {
-        role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ROLE_NAME"
-        session_name = "GitHub-Infra-Deploy"
-    }
+    region = "us-east-1"
+    # This should be unnecessary
+    # assume_role {
+    #     role_arn = "arn:aws:iam::${var.account_id}:role/GitHub-deploy-role"
+    #     session_name = "GitHub-Infra-Deploy"
+    # }
 }
