@@ -17,7 +17,7 @@ jobs:
       TF_VAR_ecs_task_family: ${{vars.ECS_TASK_FAMILY}}
       TF_VAR_account_id: ${{secrets.AWS_ACCOUNT_ID}}
       TF_VAR_cloudfront_header_secret: ${{secrets.CLOUDFRONT_HEADER_SECRET}}
-      TF_VAR_frontend_domain: ${{vards.FRONTEND_DOMAIN}}
+      TF_VAR_frontend_domain: ${{vars.FRONTEND_DOMAIN}}
     permissions:
       contents: read
       id-token: write
