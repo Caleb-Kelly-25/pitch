@@ -37,7 +37,9 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -upgrade
+        run: | 
+          terraform init -upgrade
+          export TF_LOG="TRACE"
 
       - name: Terraform Plan
         id: plan
