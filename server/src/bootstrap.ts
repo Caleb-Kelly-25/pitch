@@ -12,10 +12,22 @@ export const storageClient = pubClient.duplicate(); //stores game state data in 
 
 
 export async function bootstrap() {
-  mongoose
-  .connect(MONGO_URI, { dbName: "pitch", tls: true })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  if (process.env.MONGO_URI) {
+    await mongoose
+      .connect(MONGO_URI, {
+        dbName: "pitch",
+        tls: true,
+        tlsCAFile: "/app/rds-ca-bundle.pem",   // Ensure this file exists in the container
+        authSource: "admin",                    // DocumentDB authenticates against the admin db
+        authMechanism: "SCRAM-SHA-1"            // Force SCRAM-SHA-1
+      })
+      .then(() => console.log("MongoDB connected"))
+      .catch((err) => { console.error("MongoDB connection error:", err); throw err; });
+  } else {
+    await mongoose.connect(MONGO_URI, { dbName: "pitch", tls: true, tlsCAFile: "/app/rds-ca-bundle.pem" })
+      .then(() => console.log("MongoDB connected"))
+      .catch((err) => { console.error("MongoDB connection error:", err); throw err; });
+  }
 
   await pubClient.connect();
   await subClient.connect();
