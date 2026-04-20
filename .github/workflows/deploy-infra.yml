@@ -15,7 +15,7 @@ jobs:
       TF_VAR_docdb_password: ${{secrets.DOCDB_PASSWORD}}
       TF_VAR_client_origin: ${{vars.CLIENT_ORIGIN}}
       TF_VAR_ecs_task_family: ${{vars.ECS_TASK_FAMILY}}
-      TF_VAR_account_id: ${{vars.account_id}}
+      TF_VAR_account_id: ${{secrets.account_id}}
     permissions:
       contents: read
       id-token: write
