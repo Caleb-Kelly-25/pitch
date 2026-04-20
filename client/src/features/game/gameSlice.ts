@@ -54,6 +54,9 @@ const initialState: GameState = {
         leadSuit: "HEARTS",
         ourScore: 0,
         theirScore: 1
+
+        ourCurrentHandScore: 2,
+        theirCurrentHandScore: 1
 }
 
 export const gameSlice = createSlice({

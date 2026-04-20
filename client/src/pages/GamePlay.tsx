@@ -6,6 +6,8 @@ import { useGame } from "../features/game/useGame";
 import type { CardProps } from "../components/Card";
 import { playCard } from "../features/game/gameService";
 import { useAuth } from "../features/auth/useAuth";
+import Scoreboard from "../components/Scoreboard";
+
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
@@ -61,7 +63,7 @@ export function determinePhase() {
     return(
       <>
         {displayTable()}
-        {/* {displayScore()} */}
+        {displayScore()}
         {biddingPhase()}
       </>
     );
@@ -111,9 +113,7 @@ export function displayScore() {
   //TODO: implement score display
   //Score for Us vs. Them
   //Score for this round and whole game
-
-  
-
+  return <Scoreboard/>;
 }
 
 export function biddingPhase(){
