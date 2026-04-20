@@ -2,6 +2,11 @@ resource "aws_ecs_cluster" "main" {
   name = "app-cluster"
 }
 
+resource "aws_cloudwatch_log_group" "ecs_app" {
+  name              = "/ecs/app"
+  retention_in_days = 7
+}
+
 resource "aws_iam_role" "ecs_task_execution" {
   name = "ecsTaskExecutionRole"
 
@@ -54,6 +59,15 @@ resource "aws_ecs_task_definition" "app" {
         valueFrom = aws_ssm_parameter.jwt_secret.arn
       }
     ]
+
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        "awslogs-group"         = aws_cloudwatch_log_group.ecs_app.name
+        "awslogs-region"        = "us-east-1"
+        "awslogs-stream-prefix" = "app"
+      }
+    }
   }])
 
 }
