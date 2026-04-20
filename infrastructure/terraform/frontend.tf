@@ -94,7 +94,7 @@ resource "aws_cloudfront_distribution" "frontend" {
     # WebSocket connections should not be cached
     forwarded_values {
       query_string = true
-      headers      = ["Upgrade", "Origin"]
+      
       cookies { forward = "all" }
     }
   }
