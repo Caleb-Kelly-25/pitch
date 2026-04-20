@@ -28,7 +28,7 @@ resource "aws_security_group" "docdb" {
 
 # DocumentDB cluster
 resource "aws_docdb_cluster" "main" {
-  cluster_identifier      = "app-docdb"
+  cluster_identifier      = "pitch-app-docdb"
   engine                  = "docdb"
   master_username         = var.docdb_username
   master_password         = var.docdb_password
@@ -39,6 +39,10 @@ resource "aws_docdb_cluster" "main" {
 
   # Enable deletion protection in production
   deletion_protection = false
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # DocumentDB instance (primary)
