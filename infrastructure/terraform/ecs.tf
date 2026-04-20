@@ -20,36 +20,6 @@ resource "aws_iam_role_policy_attachment" "ecs_exec" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_ssm_parameter" "mongo_uri" {
-  name  = "/pitch/prod/MONGO_URI"
-  type  = "SecureString"
-  value = "placeholder"   # Actual value managed outside Terraform
-  lifecycle { ignore_changes = [value] }
-}
-
-resource "aws_ssm_parameter" "jwt_secret" {
-  name  = "/pitch/prod/JWT_SECRET"
-  type  = "SecureString"
-  value = "placeholder"
-  lifecycle { ignore_changes = [value] }
-}
-
-resource "aws_iam_role_policy" "ssm_secrets" {
-  name = "ssm-secrets"
-  role = aws_iam_role.ecs_task_execution.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect   = "Allow"
-      Action   = ["ssm:GetParameters"]
-      Resource = [
-        aws_ssm_parameter.mongo_uri.arn,
-        aws_ssm_parameter.jwt_secret.arn
-      ]
-    }]
-  })
-}
-
 resource "aws_ecs_task_definition" "app" {
   depends_on = [aws_elasticache_cluster.redis]
   family                   = var.ecs_task_family

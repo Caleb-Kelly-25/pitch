@@ -22,3 +22,12 @@ variable "account_id" {
   type = number
   sensitive = true
 }
+
+variable "frontend_domain" {
+  type = string
+}
+
+variable "cloudfront_header_secret" {
+  type = string
+  sensitive = true
+}
