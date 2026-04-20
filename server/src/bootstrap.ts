@@ -13,7 +13,13 @@ export const storageClient = pubClient.duplicate(); //stores game state data in 
 
 export async function bootstrap() {
   await mongoose
-    .connect(MONGO_URI, { dbName: "pitch", tls: true, tlsCAFile: "/app/rds-ca-bundle.pem" })
+    .connect(MONGO_URI, {
+      dbName: "pitch",
+      tls: true,
+      tlsCAFile: "/app/rds-ca-bundle.pem",   // Ensure this file exists in the container
+      authSource: "admin",                    // DocumentDB authenticates against the admin db
+      authMechanism: "SCRAM-SHA-1"            // Force SCRAM-SHA-1
+    })
     .then(() => console.log("MongoDB connected"))
     .catch((err) => { console.error("MongoDB connection error:", err); throw err; });
 
