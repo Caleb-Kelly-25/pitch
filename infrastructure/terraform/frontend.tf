@@ -110,8 +110,7 @@ resource "aws_cloudfront_distribution" "frontend" {
       restriction_type = "none"
     }
   }
-
-  depends_on = [aws_s3_bucket.frontend]
+  depends_on = [aws_s3_bucket.frontend, aws_acm_certificate_validation.frontend]
 }
 
 # S3 bucket policy allowing CloudFront only
