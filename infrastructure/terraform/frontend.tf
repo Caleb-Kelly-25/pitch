@@ -73,8 +73,8 @@ resource "aws_cloudfront_distribution" "frontend" {
     path_pattern           = "/api/*"
     target_origin_id       = "ALB"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods         = ["GET", "HEAD"]
+    allowed_methods = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
+    cached_methods  = ["HEAD", "GET", "OPTIONS"]
     compress               = true
 
     forwarded_values {
@@ -89,8 +89,8 @@ resource "aws_cloudfront_distribution" "frontend" {
     path_pattern           = "/socket.io/*"
     target_origin_id       = "ALB"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD", "OPTIONS", "POST"]
-    cached_methods         = ["GET", "HEAD"]
+    allowed_methods = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
+    cached_methods  = ["HEAD", "GET", "OPTIONS"]
     # WebSocket connections should not be cached
     forwarded_values {
       query_string = true
