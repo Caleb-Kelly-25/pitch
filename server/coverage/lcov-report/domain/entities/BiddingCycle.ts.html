@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">10% </span>
+                <span class="strong">90% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/10</span>
+                <span class='fraction'>9/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>3/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">10% </span>
+                <span class="strong">90% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/10</span>
+                <span class='fraction'>9/10</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -101,33 +101,33 @@
 <a name='L36'></a><a href='#L36'>36</a>
 <a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43x</span>
+<span class="cline-any cline-yes">43x</span>
+<span class="cline-any cline-yes">43x</span>
+<span class="cline-any cline-yes">43x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -144,26 +144,26 @@ export class BiddingCycle {
     // undefined = player has not yet bid; number = their bid (0 = pass)
     playerBids: Record&lt;PlayerId, number | undefined&gt;;
 &nbsp;
-<span class="fstat-no" title="function not covered" >    constructor(</span>
+    constructor(
         currentBidderId: PlayerId,
         highestBidderId: PlayerId | null,
         highestBid: number,
         playerBids: Record&lt;PlayerId, number | undefined&gt;,
     ) {
-<span class="cstat-no" title="statement not covered" >        this.currentBidderId = currentBidderId;</span>
-<span class="cstat-no" title="statement not covered" >        this.highestBidderId = highestBidderId;</span>
-<span class="cstat-no" title="statement not covered" >        this.highestBid = highestBid;</span>
-<span class="cstat-no" title="statement not covered" >        this.playerBids = playerBids;</span>
+        this.currentBidderId = currentBidderId;
+        this.highestBidderId = highestBidderId;
+        this.highestBid = highestBid;
+        this.playerBids = playerBids;
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    static </span>fromJSONObject(data: any): BiddingCycle {
-        const playerBids: Record&lt;PlayerId, number | undefined&gt; = <span class="cstat-no" title="statement not covered" >{} as Record&lt;PlayerId, number | undefined&gt;;</span>
-<span class="cstat-no" title="statement not covered" >        if (data.playerBids) {</span>
-<span class="cstat-no" title="statement not covered" >            for (const [id, bid] of Object.entries(data.playerBids)) {</span>
+    static fromJSONObject(data: any): BiddingCycle {
+        const playerBids: Record&lt;PlayerId, number | undefined&gt; = {} as Record&lt;PlayerId, number | undefined&gt;;
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (data.playerBids) {
+            for (const [id, bid] of Object.entries(data.playerBids)) {
 <span class="cstat-no" title="statement not covered" >                playerBids[id as PlayerId] = bid as number | undefined;</span>
             }
         }
-<span class="cstat-no" title="statement not covered" >        return new BiddingCycle(</span>
+        return new BiddingCycle(
             data.currentBidderId,
             data.highestBidderId ?? null,
             data.highestBid,
@@ -178,7 +178,7 @@ export class BiddingCycle {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-19T02:55:15.626Z
+                at 2026-04-20T20:57:48.851Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
