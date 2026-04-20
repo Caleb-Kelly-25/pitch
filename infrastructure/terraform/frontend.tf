@@ -138,7 +138,6 @@ data "aws_iam_policy_document" "cloudfront_s3_access" {
 
 # ACM certificate for custom domain (must be in us-east-1 for CloudFront)
 resource "aws_acm_certificate" "frontend" {
-  provider          = aws.us_east_1
   domain_name       = var.frontend_domain
   validation_method = "DNS"
 
