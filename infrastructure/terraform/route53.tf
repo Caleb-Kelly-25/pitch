@@ -1,9 +1,19 @@
-data "aws_route53_zone" "main" {
-  name = "pitch-game.com"   # The base domain you own
+# Create the hosted zone (instead of looking it up)
+resource "aws_route53_zone" "main" {
+  name = "pitch-game.com"
+
+  tags = {
+    Environment = "production"
+  }
+}
+
+# Optional: Output the nameservers so you can configure Squarespace
+output "route53_nameservers" {
+  value = aws_route53_zone.main.name_servers
 }
 
 resource "aws_route53_record" "frontend" {
-  zone_id = data.aws_route53_zone.main.zone_id
+  zone_id = aws_route53_zone.main.zone_id
   name    = "play"   # Subdomain part (full becomes pitch.game.app)
   type    = "A"
 
