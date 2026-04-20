@@ -24,7 +24,7 @@ export async function bootstrap() {
       .then(() => console.log("MongoDB connected"))
       .catch((err) => { console.error("MongoDB connection error:", err); throw err; });
   } else {
-    await mongoose.connect(MONGO_URI, { dbName: "pitch", tls: true, tlsCAFile: "/app/rds-ca-bundle.pem" })
+    await mongoose.connect(MONGO_URI, { dbName: "pitch"})
       .then(() => console.log("MongoDB connected"))
       .catch((err) => { console.error("MongoDB connection error:", err); throw err; });
   }
