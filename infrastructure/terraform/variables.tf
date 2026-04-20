@@ -14,7 +14,7 @@ variable "client_origin" {
     type = string
 }
 
-variable "ECS_TASK_FAMILY" {
+variable "ecs_task_family" {
     type = string
 }
 
