@@ -1,10 +1,10 @@
 import { RedisMemoryServer } from "redis-memory-server";
 import { createClient } from "redis";
 
-import { RedisShortTermAdapter } from "../../src/adapters/persistence/RedisShortTermAdapter";
-import GameState from "../../src/domain/entities/GameState";
-import { HandCycle } from "../../src/domain/entities/HandCycle";
-import { GameId } from "../../src/types/id-declarations";
+import { RedisShortTermAdapter } from "../../adapters/persistence/RedisShortTermAdapter";
+import GameState from "../../domain/entities/GameState";
+import { HandCycle } from "../../domain/entities/HandCycle";
+import { GameId } from "../../types/id-declarations";
 
 let redisServer: RedisMemoryServer;
 let client: any;

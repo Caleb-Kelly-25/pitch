@@ -105,7 +105,7 @@ describe("Card class", () => {
       const deck1 = Card.createFullDeck();
       const deck2 = Card.createFullDeck();
 
-      const sameOrder = deck1.every((card, i) =>
+      const sameOrder = deck1.every((card, i: number) =>
         card.equals(deck2[i])
       );
 

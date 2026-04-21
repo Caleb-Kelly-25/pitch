@@ -12,7 +12,7 @@ export default class WSPublisherAdapter implements GamePublisherPort {
   }
   
   publishGameStateToPlayer(playerId: string, playerView: PlayerViewResponseDTO) {
-    console.log(`Publishing game state update to player ${playerId}:`, playerView);
+    //console.log(`Publishing game state update to player ${playerId}:`, playerView);
     this.wss.to(`player:${playerId}`).emit("gameStateUpdate",playerView);
   }
   
@@ -20,7 +20,7 @@ export default class WSPublisherAdapter implements GamePublisherPort {
     for (const playerId of gameState.players.map((p:Player) => p.id)) {
         this.publishGameStateToPlayer(playerId, PlayerViewResponseDTO.fromGameState(gameState, playerId));
     }
-    console.log("Publishing game state: "+JSON.stringify(gameState));
+    //console.log("Publishing game state: "+JSON.stringify(gameState));
   }
   
 }

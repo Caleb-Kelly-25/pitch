@@ -1,9 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1776567315754" clover="3.2.0">
-  <project timestamp="1776567315754" name="All files">
-    <metrics statements="355" coveredstatements="237" conditionals="146" coveredconditionals="71" methods="86" coveredmethods="57" elements="587" coveredelements="365" complexity="0" loc="355" ncloc="355" packages="7" files="20" classes="20"/>
+<coverage generated="1776718668998" clover="3.2.0">
+  <project timestamp="1776718668999" name="All files">
+    <metrics statements="778" coveredstatements="718" conditionals="335" coveredconditionals="272" methods="197" coveredmethods="180" elements="1310" coveredelements="1170" complexity="0" loc="778" ncloc="778" packages="10" files="36" classes="36"/>
+    <package name="adapters.auth">
+      <metrics statements="10" coveredstatements="10" conditionals="5" coveredconditionals="4" methods="3" coveredmethods="2"/>
+      <file name="JwtAuthAdapter.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\auth\JwtAuthAdapter.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="5" coveredconditionals="4" methods="3" coveredmethods="2"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="9" count="4" type="stmt"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="14" count="8" type="stmt"/>
+        <line num="15" count="8" type="stmt"/>
+        <line num="16" count="8" type="stmt"/>
+        <line num="17" count="8" type="stmt"/>
+        <line num="18" count="8" type="cond" truecount="4" falsecount="1"/>
+      </file>
+    </package>
     <package name="adapters.persistence">
-      <metrics statements="50" coveredstatements="50" conditionals="30" coveredconditionals="21" methods="15" coveredmethods="15"/>
+      <metrics statements="74" coveredstatements="66" conditionals="36" coveredconditionals="25" methods="28" coveredmethods="23"/>
+      <file name="InMemoryLongTerm.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\persistence\InMemoryLongTerm.ts">
+        <metrics statements="14" coveredstatements="9" conditionals="4" coveredconditionals="3" methods="7" coveredmethods="4"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="10" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="15" count="4" type="stmt"/>
+        <line num="16" count="4" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="29" count="8" type="stmt"/>
+        <line num="30" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="4" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+      </file>
+      <file name="InMemoryShortTerm.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\persistence\InMemoryShortTerm.ts">
+        <metrics statements="10" coveredstatements="7" conditionals="2" coveredconditionals="1" methods="6" coveredmethods="4"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="12" count="420" type="cond" truecount="1" falsecount="1"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="26" count="419" type="stmt"/>
+        <line num="27" count="419" type="stmt"/>
+      </file>
       <file name="MongoLongTermAdapter.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\persistence\MongoLongTermAdapter.ts">
         <metrics statements="15" coveredstatements="15" conditionals="24" coveredconditionals="15" methods="7" coveredmethods="7"/>
         <line num="2" count="1" type="stmt"/>
@@ -77,102 +123,158 @@
       </file>
     </package>
     <package name="adapters.rest">
-      <metrics statements="27" coveredstatements="27" conditionals="8" coveredconditionals="8" methods="3" coveredmethods="3"/>
+      <metrics statements="68" coveredstatements="67" conditionals="24" coveredconditionals="24" methods="12" coveredmethods="10"/>
+      <file name="CreateRouter.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\rest\CreateRouter.ts">
+        <metrics statements="10" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="4"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="4" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+      </file>
       <file name="RoomController.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\rest\RoomController.ts">
         <metrics statements="27" coveredstatements="27" conditionals="8" coveredconditionals="8" methods="3" coveredmethods="3"/>
-        <line num="10" count="1" type="stmt"/>
-        <line num="16" count="6" type="stmt"/>
-        <line num="17" count="6" type="stmt"/>
-        <line num="21" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="22" count="3" type="stmt"/>
-        <line num="23" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="16" count="7" type="stmt"/>
+        <line num="17" count="7" type="stmt"/>
+        <line num="21" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="4" type="stmt"/>
+        <line num="23" count="4" type="cond" truecount="2" falsecount="0"/>
         <line num="24" count="1" type="stmt"/>
         <line num="25" count="1" type="stmt"/>
-        <line num="27" count="2" type="stmt"/>
-        <line num="28" count="2" type="stmt"/>
-        <line num="29" count="2" type="stmt"/>
-        <line num="30" count="2" type="stmt"/>
-        <line num="31" count="1" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="28" count="3" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
         <line num="33" count="1" type="stmt"/>
         <line num="34" count="1" type="stmt"/>
-        <line num="39" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="40" count="3" type="stmt"/>
-        <line num="42" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="6" type="stmt"/>
+        <line num="42" count="6" type="cond" truecount="2" falsecount="0"/>
         <line num="43" count="1" type="stmt"/>
         <line num="44" count="1" type="stmt"/>
-        <line num="47" count="2" type="stmt"/>
-        <line num="48" count="2" type="stmt"/>
-        <line num="49" count="2" type="stmt"/>
-        <line num="50" count="2" type="stmt"/>
-        <line num="51" count="1" type="stmt"/>
-        <line num="53" count="1" type="stmt"/>
-        <line num="54" count="1" type="stmt"/>
-      </file>
-    </package>
-    <package name="adapters.websockets">
-      <metrics statements="85" coveredstatements="40" conditionals="40" coveredconditionals="9" methods="16" coveredmethods="10"/>
-      <file name="WebSocketController.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\websockets\WebSocketController.ts">
-        <metrics statements="85" coveredstatements="40" conditionals="40" coveredconditionals="9" methods="16" coveredmethods="10"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
-        <line num="10" count="2" type="stmt"/>
-        <line num="13" count="2" type="stmt"/>
-        <line num="19" count="8" type="stmt"/>
-        <line num="20" count="8" type="stmt"/>
-        <line num="21" count="8" type="stmt"/>
-        <line num="23" count="8" type="stmt"/>
-        <line num="25" count="8" type="stmt"/>
-        <line num="26" count="4" type="stmt"/>
-        <line num="27" count="4" type="stmt"/>
-        <line num="32" count="7" type="stmt"/>
-        <line num="33" count="7" type="cond" truecount="1" falsecount="1"/>
-        <line num="35" count="7" type="stmt"/>
-        <line num="36" count="7" type="stmt"/>
-        <line num="37" count="5" type="stmt"/>
-        <line num="39" count="2" type="stmt"/>
-        <line num="44" count="5" type="stmt"/>
-        <line num="45" count="5" type="stmt"/>
-        <line num="46" count="5" type="stmt"/>
         <line num="47" count="5" type="stmt"/>
         <line num="48" count="5" type="stmt"/>
         <line num="49" count="5" type="stmt"/>
         <line num="50" count="5" type="stmt"/>
-        <line num="55" count="4" type="stmt"/>
-        <line num="56" count="4" type="stmt"/>
+        <line num="51" count="4" type="stmt"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+      </file>
+      <file name="UserController.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\rest\UserController.ts">
+        <metrics statements="31" coveredstatements="31" conditionals="16" coveredconditionals="16" methods="3" coveredmethods="3"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="12" count="9" type="stmt"/>
+        <line num="13" count="9" type="stmt"/>
+        <line num="17" count="4" type="stmt"/>
+        <line num="18" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="23" count="3" type="stmt"/>
+        <line num="24" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="30" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="42" count="8" type="stmt"/>
+        <line num="43" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="48" count="7" type="stmt"/>
+        <line num="49" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="54" count="6" type="stmt"/>
+        <line num="55" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="60" count="5" type="stmt"/>
+      </file>
+    </package>
+    <package name="adapters.websockets">
+      <metrics statements="91" coveredstatements="61" conditionals="40" coveredconditionals="18" methods="20" coveredmethods="18"/>
+      <file name="WSPublisherAdapter.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\websockets\WSPublisherAdapter.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="16" count="1673" type="stmt"/>
+        <line num="20" count="1673" type="stmt"/>
+        <line num="21" count="1673" type="stmt"/>
+      </file>
+      <file name="WebSocketController.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\adapters\websockets\WebSocketController.ts">
+        <metrics statements="85" coveredstatements="55" conditionals="40" coveredconditionals="18" methods="16" coveredmethods="14"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="19" count="12" type="stmt"/>
+        <line num="20" count="12" type="stmt"/>
+        <line num="21" count="12" type="stmt"/>
+        <line num="23" count="12" type="stmt"/>
+        <line num="25" count="12" type="stmt"/>
+        <line num="26" count="10" type="stmt"/>
+        <line num="27" count="10" type="stmt"/>
+        <line num="32" count="13" type="stmt"/>
+        <line num="33" count="13" type="cond" truecount="1" falsecount="1"/>
+        <line num="35" count="13" type="stmt"/>
+        <line num="36" count="13" type="stmt"/>
+        <line num="37" count="11" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="44" count="11" type="stmt"/>
+        <line num="45" count="75" type="stmt"/>
+        <line num="46" count="268" type="stmt"/>
+        <line num="47" count="19" type="stmt"/>
+        <line num="48" count="60" type="stmt"/>
+        <line num="49" count="11" type="stmt"/>
+        <line num="50" count="11" type="stmt"/>
+        <line num="55" count="77" type="stmt"/>
+        <line num="56" count="77" type="stmt"/>
         <line num="58" count="0" type="stmt"/>
         <line num="59" count="0" type="stmt"/>
-        <line num="62" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="62" count="77" type="cond" truecount="4" falsecount="0"/>
         <line num="63" count="2" type="stmt"/>
         <line num="64" count="2" type="stmt"/>
-        <line num="67" count="2" type="stmt"/>
-        <line num="68" count="2" type="stmt"/>
-        <line num="70" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="76" count="2" type="stmt"/>
-        <line num="77" count="2" type="stmt"/>
+        <line num="67" count="75" type="stmt"/>
+        <line num="68" count="75" type="stmt"/>
+        <line num="70" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="76" count="269" type="stmt"/>
+        <line num="77" count="269" type="stmt"/>
         <line num="79" count="0" type="stmt"/>
         <line num="80" count="0" type="stmt"/>
-        <line num="83" count="2" type="cond" truecount="4" falsecount="1"/>
+        <line num="83" count="269" type="cond" truecount="4" falsecount="1"/>
         <line num="84" count="0" type="stmt"/>
         <line num="85" count="0" type="stmt"/>
-        <line num="88" count="2" type="stmt"/>
-        <line num="89" count="2" type="stmt"/>
+        <line num="88" count="269" type="stmt"/>
+        <line num="89" count="269" type="stmt"/>
         <line num="91" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="97" count="0" type="stmt"/>
-        <line num="98" count="0" type="stmt"/>
+        <line num="97" count="21" type="stmt"/>
+        <line num="98" count="21" type="stmt"/>
         <line num="100" count="0" type="stmt"/>
         <line num="101" count="0" type="stmt"/>
-        <line num="104" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="104" count="21" type="cond" truecount="3" falsecount="1"/>
         <line num="105" count="0" type="stmt"/>
         <line num="106" count="0" type="stmt"/>
-        <line num="109" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="110" count="0" type="stmt"/>
-        <line num="111" count="0" type="stmt"/>
-        <line num="114" count="0" type="stmt"/>
-        <line num="115" count="0" type="stmt"/>
+        <line num="109" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="110" count="1" type="stmt"/>
+        <line num="111" count="1" type="stmt"/>
+        <line num="114" count="20" type="stmt"/>
+        <line num="115" count="20" type="stmt"/>
         <line num="117" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="123" count="0" type="stmt"/>
         <line num="124" count="0" type="stmt"/>
@@ -187,255 +289,633 @@
         <line num="140" count="0" type="stmt"/>
         <line num="141" count="0" type="stmt"/>
         <line num="143" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="149" count="0" type="stmt"/>
-        <line num="150" count="0" type="stmt"/>
+        <line num="149" count="61" type="stmt"/>
+        <line num="150" count="61" type="stmt"/>
         <line num="152" count="0" type="stmt"/>
         <line num="153" count="0" type="stmt"/>
-        <line num="156" count="0" type="stmt"/>
-        <line num="157" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="156" count="61" type="stmt"/>
+        <line num="157" count="61" type="cond" truecount="3" falsecount="1"/>
         <line num="158" count="0" type="stmt"/>
         <line num="159" count="0" type="stmt"/>
-        <line num="162" count="0" type="stmt"/>
-        <line num="163" count="0" type="stmt"/>
+        <line num="162" count="61" type="stmt"/>
+        <line num="163" count="61" type="stmt"/>
         <line num="171" count="0" type="cond" truecount="0" falsecount="2"/>
       </file>
     </package>
+    <package name="application">
+      <metrics statements="272" coveredstatements="265" conditionals="144" coveredconditionals="132" methods="54" coveredmethods="53"/>
+      <file name="BlindCard.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\BlindCard.ts">
+        <metrics statements="29" coveredstatements="29" conditionals="22" coveredconditionals="22" methods="3" coveredmethods="3"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="16" count="70" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="19" count="69" type="stmt"/>
+        <line num="21" count="69" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="25" count="68" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="29" count="142" type="stmt"/>
+        <line num="31" count="67" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="62" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="35" count="61" type="stmt"/>
+        <line num="36" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="41" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="49" count="64" type="stmt"/>
+        <line num="57" count="64" type="stmt"/>
+        <line num="59" count="64" type="cond" truecount="4" falsecount="0"/>
+        <line num="60" count="22" type="stmt"/>
+        <line num="62" count="42" type="stmt"/>
+      </file>
+      <file name="DiscardHandCard.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\DiscardHandCard.ts">
+        <metrics statements="13" coveredstatements="13" conditionals="6" coveredconditionals="6" methods="2" coveredmethods="2"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="9" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="14" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="19" count="3" type="stmt"/>
+        <line num="21" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+      </file>
+      <file name="GameService.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\GameService.ts">
+        <metrics statements="40" coveredstatements="34" conditionals="10" coveredconditionals="4" methods="6" coveredmethods="5"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="27" count="73" type="stmt"/>
+        <line num="29" count="73" type="stmt"/>
+        <line num="30" count="73" type="cond" truecount="1" falsecount="1"/>
+        <line num="32" count="73" type="stmt"/>
+        <line num="34" count="72" type="stmt"/>
+        <line num="35" count="72" type="stmt"/>
+        <line num="39" count="267" type="stmt"/>
+        <line num="41" count="267" type="stmt"/>
+        <line num="42" count="267" type="cond" truecount="1" falsecount="1"/>
+        <line num="44" count="267" type="stmt"/>
+        <line num="46" count="267" type="stmt"/>
+        <line num="47" count="267" type="stmt"/>
+        <line num="51" count="18" type="stmt"/>
+        <line num="53" count="18" type="stmt"/>
+        <line num="54" count="18" type="cond" truecount="1" falsecount="1"/>
+        <line num="56" count="18" type="stmt"/>
+        <line num="58" count="18" type="stmt"/>
+        <line num="59" count="18" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="75" count="59" type="stmt"/>
+        <line num="77" count="59" type="stmt"/>
+        <line num="78" count="59" type="cond" truecount="1" falsecount="1"/>
+        <line num="80" count="59" type="stmt"/>
+        <line num="82" count="59" type="stmt"/>
+        <line num="83" count="59" type="stmt"/>
+      </file>
+      <file name="PickSuit.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\PickSuit.ts">
+        <metrics statements="12" coveredstatements="12" conditionals="6" coveredconditionals="6" methods="1" coveredmethods="1"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="8" count="26" type="cond" truecount="2" falsecount="0"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="11" count="25" type="stmt"/>
+        <line num="13" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="17" count="24" type="stmt"/>
+        <line num="20" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="6" type="stmt"/>
+        <line num="23" count="18" type="stmt"/>
+      </file>
+      <file name="PlaceBid.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\PlaceBid.ts">
+        <metrics statements="39" coveredstatements="39" conditionals="21" coveredconditionals="19" methods="8" coveredmethods="8"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="15" count="103" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="18" count="101" type="stmt"/>
+        <line num="19" count="101" type="stmt"/>
+        <line num="21" count="101" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="24" count="99" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="28" count="97" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="31" count="95" type="stmt"/>
+        <line num="34" count="97" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="25" type="stmt"/>
+        <line num="40" count="99" type="cond" truecount="2" falsecount="0"/>
+        <line num="41" count="31" type="cond" truecount="1" falsecount="1"/>
+        <line num="42" count="31" type="cond" truecount="3" falsecount="0"/>
+        <line num="46" count="95" type="stmt"/>
+        <line num="47" count="95" type="stmt"/>
+        <line num="48" count="95" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="27" type="stmt"/>
+        <line num="50" count="27" type="stmt"/>
+        <line num="52" count="95" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="58" count="2" type="stmt"/>
+        <line num="59" count="2" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="64" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="65" count="6" type="stmt"/>
+        <line num="67" count="6" type="stmt"/>
+        <line num="69" count="2" type="stmt"/>
+        <line num="73" count="412" type="stmt"/>
+        <line num="74" count="103" type="stmt"/>
+        <line num="75" count="103" type="stmt"/>
+        <line num="79" count="213" type="stmt"/>
+      </file>
+      <file name="PlayCard.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\PlayCard.ts">
+        <metrics statements="93" coveredstatements="92" conditionals="67" coveredconditionals="64" methods="24" coveredmethods="24"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="31" count="3" type="stmt"/>
+        <line num="33" count="3" type="stmt"/>
+        <line num="34" count="306" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="37" count="305" type="stmt"/>
+        <line num="39" count="749" type="stmt"/>
+        <line num="40" count="305" type="cond" truecount="1" falsecount="1"/>
+        <line num="42" count="305" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="46" count="304" type="cond" truecount="2" falsecount="0"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="50" count="302" type="cond" truecount="2" falsecount="0"/>
+        <line num="51" count="2" type="stmt"/>
+        <line num="54" count="300" type="cond" truecount="1" falsecount="1"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="58" count="300" type="stmt"/>
+        <line num="59" count="300" type="stmt"/>
+        <line num="62" count="302" type="stmt"/>
+        <line num="63" count="302" type="stmt"/>
+        <line num="65" count="302" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="102" type="stmt"/>
+        <line num="67" count="102" type="stmt"/>
+        <line num="68" count="102" type="stmt"/>
+        <line num="71" count="102" type="stmt"/>
+        <line num="74" count="302" type="cond" truecount="2" falsecount="0"/>
+        <line num="75" count="25" type="stmt"/>
+        <line num="76" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="77" count="3" type="stmt"/>
+        <line num="79" count="22" type="stmt"/>
+        <line num="85" count="1290" type="stmt"/>
+        <line num="89" count="1275" type="stmt"/>
+        <line num="90" count="512" type="stmt"/>
+        <line num="94" count="916" type="stmt"/>
+        <line num="98" count="102" type="stmt"/>
+        <line num="99" count="102" type="stmt"/>
+        <line num="100" count="102" type="stmt"/>
+        <line num="101" count="408" type="cond" truecount="6" falsecount="0"/>
+        <line num="102" count="158" type="stmt"/>
+        <line num="105" count="102" type="stmt"/>
+        <line num="110" count="299" type="cond" truecount="2" falsecount="0"/>
+        <line num="111" count="284" type="cond" truecount="2" falsecount="0"/>
+        <line num="112" count="261" type="cond" truecount="2" falsecount="0"/>
+        <line num="113" count="218" type="cond" truecount="2" falsecount="0"/>
+        <line num="114" count="189" type="cond" truecount="2" falsecount="0"/>
+        <line num="115" count="173" type="cond" truecount="2" falsecount="0"/>
+        <line num="116" count="161" type="cond" truecount="4" falsecount="0"/>
+        <line num="117" count="9" type="stmt"/>
+        <line num="121" count="243" type="stmt"/>
+        <line num="122" count="102" type="stmt"/>
+        <line num="123" count="408" type="cond" truecount="3" falsecount="1"/>
+        <line num="125" count="102" type="cond" truecount="2" falsecount="0"/>
+        <line num="126" count="53" type="stmt"/>
+        <line num="128" count="49" type="stmt"/>
+        <line num="130" count="102" type="cond" truecount="2" falsecount="0"/>
+        <line num="134" count="102" type="stmt"/>
+        <line num="143" count="404" type="stmt"/>
+        <line num="144" count="1226" type="stmt"/>
+        <line num="145" count="487" type="cond" truecount="4" falsecount="0"/>
+        <line num="146" count="210" type="stmt"/>
+        <line num="147" count="210" type="stmt"/>
+        <line num="152" count="302" type="stmt"/>
+        <line num="153" count="499" type="stmt"/>
+        <line num="157" count="54" type="stmt"/>
+        <line num="158" count="25" type="stmt"/>
+        <line num="160" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="161" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="164" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="170" count="300" type="cond" truecount="3" falsecount="0"/>
+        <line num="174" count="54" type="stmt"/>
+        <line num="175" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="176" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="179" count="14" type="stmt"/>
+        <line num="181" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="184" count="11" type="stmt"/>
+        <line num="189" count="46" type="stmt"/>
+        <line num="190" count="22" type="stmt"/>
+        <line num="193" count="22" type="stmt"/>
+        <line num="194" count="22" type="stmt"/>
+        <line num="195" count="88" type="stmt"/>
+        <line num="196" count="88" type="stmt"/>
+        <line num="197" count="792" type="stmt"/>
+        <line num="201" count="22" type="stmt"/>
+        <line num="202" count="22" type="stmt"/>
+        <line num="203" count="22" type="stmt"/>
+      </file>
+      <file name="RoomService.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\RoomService.ts">
+        <metrics statements="39" coveredstatements="39" conditionals="12" coveredconditionals="11" methods="5" coveredmethods="5"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="19" count="8" type="stmt"/>
+        <line num="20" count="8" type="stmt"/>
+        <line num="21" count="8" type="stmt"/>
+        <line num="25" count="3" type="stmt"/>
+        <line num="26" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="42" count="8" type="stmt"/>
+        <line num="43" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="51" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="53" count="5" type="stmt"/>
+        <line num="54" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="56" count="5" type="stmt"/>
+        <line num="57" count="5" type="stmt"/>
+        <line num="59" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="63" count="5" type="stmt"/>
+        <line num="64" count="5" type="stmt"/>
+        <line num="68" count="2" type="stmt"/>
+        <line num="69" count="2" type="stmt"/>
+        <line num="70" count="2" type="stmt"/>
+        <line num="72" count="2" type="stmt"/>
+        <line num="74" count="2" type="stmt"/>
+        <line num="75" count="2" type="stmt"/>
+        <line num="76" count="8" type="stmt"/>
+        <line num="77" count="72" type="stmt"/>
+        <line num="80" count="2" type="stmt"/>
+        <line num="82" count="2" type="stmt"/>
+      </file>
+      <file name="UserService.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\UserService.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="5"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="8" count="7" type="stmt"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="16" count="6" type="stmt"/>
+        <line num="17" count="6" type="stmt"/>
+        <line num="21" count="5" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+      </file>
+    </package>
     <package name="application.dto">
-      <metrics statements="24" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="2"/>
+      <metrics statements="79" coveredstatements="75" conditionals="18" coveredconditionals="16" methods="28" coveredmethods="27"/>
       <file name="BidDTO.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\dto\BidDTO.ts">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="7" count="75" type="stmt"/>
+        <line num="8" count="75" type="stmt"/>
+        <line num="9" count="75" type="stmt"/>
       </file>
       <file name="BlindCardDTO.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\dto\BlindCardDTO.ts">
-        <metrics statements="6" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="12" count="0" type="stmt"/>
-        <line num="13" count="0" type="stmt"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="16" count="0" type="stmt"/>
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="12" count="61" type="stmt"/>
+        <line num="13" count="61" type="stmt"/>
+        <line num="14" count="61" type="stmt"/>
+        <line num="15" count="61" type="stmt"/>
+        <line num="16" count="61" type="stmt"/>
       </file>
       <file name="DiscardHandCardDTO.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\dto\DiscardHandCardDTO.ts">
         <metrics statements="5" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="4" count="2" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
       </file>
       <file name="PickSuitDTO.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\dto\PickSuitDTO.ts">
-        <metrics statements="4" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="9" count="0" type="stmt"/>
-        <line num="10" count="0" type="stmt"/>
-        <line num="11" count="0" type="stmt"/>
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="9" count="20" type="stmt"/>
+        <line num="10" count="20" type="stmt"/>
+        <line num="11" count="20" type="stmt"/>
       </file>
       <file name="PlayCardDTO.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\dto\PlayCardDTO.ts">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="11" count="2" type="stmt"/>
-        <line num="12" count="2" type="stmt"/>
-        <line num="13" count="2" type="stmt"/>
-        <line num="14" count="2" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="11" count="269" type="stmt"/>
+        <line num="12" count="269" type="stmt"/>
+        <line num="13" count="269" type="stmt"/>
+        <line num="14" count="269" type="stmt"/>
+      </file>
+      <file name="PlayerViewResponseDTO.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\application\dto\PlayerViewResponseDTO.ts">
+        <metrics statements="55" coveredstatements="55" conditionals="18" coveredconditionals="16" methods="23" coveredmethods="23"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="33" count="1673" type="stmt"/>
+        <line num="34" count="1673" type="stmt"/>
+        <line num="35" count="1673" type="stmt"/>
+        <line num="36" count="1673" type="stmt"/>
+        <line num="37" count="1673" type="stmt"/>
+        <line num="38" count="1673" type="stmt"/>
+        <line num="43" count="1673" type="stmt"/>
+        <line num="44" count="1673" type="stmt"/>
+        <line num="45" count="1673" type="stmt"/>
+        <line num="46" count="1673" type="stmt"/>
+        <line num="47" count="1673" type="stmt"/>
+        <line num="48" count="1673" type="stmt"/>
+        <line num="52" count="1673" type="stmt"/>
+        <line num="53" count="1673" type="stmt"/>
+        <line num="54" count="1673" type="stmt"/>
+        <line num="55" count="1673" type="stmt"/>
+        <line num="56" count="1068" type="stmt"/>
+        <line num="57" count="288" type="stmt"/>
+        <line num="58" count="1068" type="stmt"/>
+        <line num="59" count="1068" type="stmt"/>
+        <line num="60" count="1673" type="stmt"/>
+        <line num="61" count="312" type="stmt"/>
+        <line num="62" count="236" type="stmt"/>
+        <line num="63" count="236" type="stmt"/>
+        <line num="66" count="1673" type="stmt"/>
+        <line num="67" count="1673" type="stmt"/>
+        <line num="69" count="4179" type="stmt"/>
+        <line num="70" count="1673" type="cond" truecount="1" falsecount="1"/>
+        <line num="72" count="1673" type="stmt"/>
+        <line num="74" count="6685" type="stmt"/>
+        <line num="86" count="1673" type="cond" truecount="6" falsecount="0"/>
+        <line num="88" count="288" type="stmt"/>
+        <line num="91" count="1152" type="cond" truecount="2" falsecount="0"/>
+        <line num="93" count="288" type="stmt"/>
+        <line num="96" count="72" type="stmt"/>
+        <line num="97" count="72" type="stmt"/>
+        <line num="100" count="236" type="stmt"/>
+        <line num="107" count="236" type="stmt"/>
+        <line num="110" count="1068" type="stmt"/>
+        <line num="113" count="1068" type="stmt"/>
+        <line num="116" count="4" type="stmt"/>
+        <line num="117" count="4" type="stmt"/>
+        <line num="120" count="5" type="stmt"/>
+        <line num="123" count="1673" type="stmt"/>
+        <line num="128" count="1673" type="stmt"/>
+        <line num="136" count="1673" type="stmt"/>
+        <line num="140" count="11669" type="stmt"/>
+        <line num="146" count="11669" type="cond" truecount="1" falsecount="1"/>
+        <line num="150" count="10365" type="stmt"/>
+        <line num="154" count="1068" type="stmt"/>
+        <line num="155" count="1512" type="stmt"/>
+        <line num="156" count="1236" type="stmt"/>
+        <line num="158" count="1068" type="stmt"/>
       </file>
     </package>
     <package name="domain.entities">
-      <metrics statements="140" coveredstatements="80" conditionals="62" coveredconditionals="28" methods="43" coveredmethods="24"/>
+      <metrics statements="140" coveredstatements="133" conditionals="62" coveredconditionals="48" methods="43" coveredmethods="40"/>
       <file name="BiddingCycle.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\entities\BiddingCycle.ts">
-        <metrics statements="10" coveredstatements="1" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="16" count="0" type="stmt"/>
-        <line num="17" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="23" count="0" type="stmt"/>
-        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="25" count="0" type="stmt"/>
+        <metrics statements="10" coveredstatements="9" conditionals="4" coveredconditionals="3" methods="2" coveredmethods="2"/>
+        <line num="3" count="11" type="stmt"/>
+        <line num="16" count="43" type="stmt"/>
+        <line num="17" count="43" type="stmt"/>
+        <line num="18" count="43" type="stmt"/>
+        <line num="19" count="43" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="1" type="stmt"/>
         <line num="26" count="0" type="stmt"/>
-        <line num="29" count="0" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
       </file>
       <file name="Card.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\entities\Card.ts">
         <metrics statements="23" coveredstatements="23" conditionals="10" coveredconditionals="10" methods="5" coveredmethods="5"/>
-        <line num="1" count="4" type="stmt"/>
-        <line num="2" count="4" type="stmt"/>
-        <line num="3" count="4" type="stmt"/>
-        <line num="8" count="870" type="stmt"/>
-        <line num="9" count="870" type="stmt"/>
-        <line num="13" count="570" type="cond" truecount="2" falsecount="0"/>
-        <line num="17" count="7" type="cond" truecount="4" falsecount="0"/>
+        <line num="1" count="14" type="stmt"/>
+        <line num="2" count="14" type="stmt"/>
+        <line num="3" count="14" type="stmt"/>
+        <line num="8" count="6704" type="stmt"/>
+        <line num="9" count="6704" type="stmt"/>
+        <line num="13" count="6293" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="1411" type="cond" truecount="4" falsecount="0"/>
         <line num="19" count="1" type="stmt"/>
-        <line num="21" count="1" type="stmt"/>
-        <line num="23" count="4" type="stmt"/>
+        <line num="21" count="21" type="stmt"/>
+        <line num="23" count="1388" type="stmt"/>
         <line num="25" count="1" type="stmt"/>
-        <line num="30" count="5" type="stmt"/>
-        <line num="33" count="5" type="stmt"/>
-        <line num="34" count="5" type="stmt"/>
-        <line num="37" count="5" type="stmt"/>
-        <line num="38" count="20" type="stmt"/>
-        <line num="40" count="560" type="cond" truecount="2" falsecount="0"/>
-        <line num="41" count="280" type="stmt"/>
-        <line num="46" count="280" type="cond" truecount="2" falsecount="0"/>
-        <line num="49" count="5" type="stmt"/>
-        <line num="50" count="265" type="stmt"/>
-        <line num="51" count="265" type="stmt"/>
-        <line num="54" count="5" type="stmt"/>
+        <line num="30" count="29" type="stmt"/>
+        <line num="33" count="29" type="stmt"/>
+        <line num="34" count="29" type="stmt"/>
+        <line num="37" count="29" type="stmt"/>
+        <line num="38" count="116" type="stmt"/>
+        <line num="40" count="3248" type="cond" truecount="2" falsecount="0"/>
+        <line num="41" count="1624" type="stmt"/>
+        <line num="46" count="1624" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="29" type="stmt"/>
+        <line num="50" count="1537" type="stmt"/>
+        <line num="51" count="1537" type="stmt"/>
+        <line num="54" count="29" type="stmt"/>
       </file>
       <file name="GameState.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\entities\GameState.ts">
-        <metrics statements="12" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="1"/>
-        <line num="2" count="1" type="stmt"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="5" count="1" type="stmt"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="16" count="0" type="stmt"/>
-        <line num="17" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="23" count="2" type="stmt"/>
-        <line num="24" count="2" type="stmt"/>
-        <line num="25" count="0" type="stmt"/>
+        <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <line num="2" count="10" type="stmt"/>
+        <line num="3" count="10" type="stmt"/>
+        <line num="5" count="10" type="stmt"/>
+        <line num="14" count="54" type="stmt"/>
+        <line num="15" count="54" type="stmt"/>
+        <line num="16" count="54" type="stmt"/>
+        <line num="17" count="54" type="stmt"/>
+        <line num="18" count="54" type="stmt"/>
+        <line num="19" count="54" type="stmt"/>
+        <line num="23" count="4" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
       </file>
       <file name="Hand.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\entities\Hand.ts">
         <metrics statements="17" coveredstatements="17" conditionals="14" coveredconditionals="12" methods="13" coveredmethods="13"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="11" count="12" type="stmt"/>
-        <line num="15" count="3" type="stmt"/>
-        <line num="16" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="17" count="2" type="stmt"/>
+        <line num="1" count="12" type="stmt"/>
+        <line num="2" count="12" type="stmt"/>
+        <line num="3" count="12" type="stmt"/>
+        <line num="6" count="12" type="stmt"/>
+        <line num="11" count="328" type="stmt"/>
+        <line num="15" count="67" type="stmt"/>
+        <line num="16" count="67" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="66" type="stmt"/>
         <line num="22" count="6" type="stmt"/>
-        <line num="26" count="8" type="stmt"/>
-        <line num="30" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="989" type="stmt"/>
+        <line num="30" count="305" type="cond" truecount="2" falsecount="0"/>
         <line num="31" count="1" type="stmt"/>
-        <line num="33" count="1" type="stmt"/>
-        <line num="34" count="1" type="stmt"/>
-        <line num="39" count="4" type="cond" truecount="5" falsecount="0"/>
-        <line num="43" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="44" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="33" count="1221" type="stmt"/>
+        <line num="34" count="304" type="stmt"/>
+        <line num="39" count="2223" type="cond" truecount="5" falsecount="0"/>
+        <line num="43" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="44" count="4" type="cond" truecount="1" falsecount="1"/>
       </file>
       <file name="HandCycle.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\entities\HandCycle.ts">
-        <metrics statements="47" coveredstatements="13" conditionals="28" coveredconditionals="1" methods="14" coveredmethods="1"/>
-        <line num="2" count="1" type="stmt"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="6" count="1" type="stmt"/>
-        <line num="7" count="1" type="stmt"/>
-        <line num="67" count="1" type="stmt"/>
-        <line num="68" count="0" type="stmt"/>
-        <line num="71" count="1" type="stmt"/>
-        <line num="72" count="0" type="stmt"/>
-        <line num="73" count="0" type="stmt"/>
-        <line num="78" count="0" type="stmt"/>
-        <line num="79" count="0" type="stmt"/>
-        <line num="81" count="0" type="stmt"/>
-        <line num="89" count="1" type="stmt"/>
-        <line num="90" count="0" type="stmt"/>
-        <line num="91" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="93" count="0" type="stmt"/>
-        <line num="102" count="1" type="stmt"/>
-        <line num="103" count="0" type="stmt"/>
-        <line num="106" count="0" type="stmt"/>
-        <line num="107" count="0" type="stmt"/>
-        <line num="108" count="0" type="cond" truecount="0" falsecount="3"/>
-        <line num="115" count="0" type="stmt"/>
-        <line num="116" count="0" type="stmt"/>
-        <line num="117" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="118" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="119" count="0" type="stmt"/>
-        <line num="124" count="0" type="stmt"/>
-        <line num="125" count="0" type="stmt"/>
-        <line num="126" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="127" count="0" type="stmt"/>
-        <line num="130" count="0" type="stmt"/>
-        <line num="141" count="1" type="stmt"/>
-        <line num="142" count="0" type="stmt"/>
-        <line num="154" count="1" type="stmt"/>
-        <line num="155" count="0" type="stmt"/>
-        <line num="168" count="1" type="stmt"/>
-        <line num="169" count="2" type="cond" truecount="1" falsecount="6"/>
-        <line num="171" count="0" type="stmt"/>
-        <line num="174" count="0" type="stmt"/>
-        <line num="177" count="0" type="cond" truecount="0" falsecount="2"/>
+        <metrics statements="47" coveredstatements="41" conditionals="28" coveredconditionals="18" methods="14" coveredmethods="11"/>
+        <line num="2" count="11" type="stmt"/>
+        <line num="3" count="11" type="stmt"/>
+        <line num="6" count="11" type="stmt"/>
+        <line num="7" count="11" type="stmt"/>
+        <line num="67" count="11" type="stmt"/>
+        <line num="68" count="50" type="stmt"/>
+        <line num="71" count="11" type="stmt"/>
+        <line num="72" count="73" type="stmt"/>
+        <line num="73" count="42" type="stmt"/>
+        <line num="78" count="42" type="stmt"/>
+        <line num="79" count="162" type="stmt"/>
+        <line num="81" count="42" type="stmt"/>
+        <line num="89" count="11" type="stmt"/>
+        <line num="90" count="27" type="stmt"/>
+        <line num="91" count="27" type="cond" truecount="2" falsecount="0"/>
+        <line num="93" count="26" type="stmt"/>
+        <line num="102" count="11" type="stmt"/>
+        <line num="103" count="26" type="stmt"/>
+        <line num="106" count="26" type="stmt"/>
+        <line num="107" count="100" type="stmt"/>
+        <line num="108" count="680" type="cond" truecount="3" falsecount="0"/>
+        <line num="115" count="26" type="stmt"/>
+        <line num="116" count="26" type="stmt"/>
+        <line num="117" count="100" type="cond" truecount="2" falsecount="0"/>
+        <line num="118" count="74" type="cond" truecount="2" falsecount="0"/>
+        <line num="119" count="191" type="stmt"/>
+        <line num="124" count="56" type="stmt"/>
+        <line num="125" count="26" type="stmt"/>
+        <line num="126" count="26" type="cond" truecount="4" falsecount="0"/>
+        <line num="127" count="18" type="stmt"/>
+        <line num="130" count="26" type="stmt"/>
+        <line num="141" count="11" type="stmt"/>
+        <line num="142" count="29" type="stmt"/>
+        <line num="154" count="11" type="stmt"/>
+        <line num="155" count="4" type="stmt"/>
+        <line num="168" count="11" type="stmt"/>
+        <line num="169" count="8" type="cond" truecount="4" falsecount="3"/>
+        <line num="171" count="3" type="stmt"/>
+        <line num="174" count="1" type="stmt"/>
+        <line num="177" count="0" type="cond" truecount="1" falsecount="1"/>
         <line num="182" count="0" type="stmt"/>
         <line num="187" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="191" count="0" type="stmt"/>
         <line num="197" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="204" count="0" type="stmt"/>
+        <line num="204" count="1" type="stmt"/>
         <line num="216" count="0" type="stmt"/>
-        <line num="227" count="2" type="stmt"/>
+        <line num="227" count="3" type="stmt"/>
       </file>
       <file name="Player.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\entities\Player.ts">
-        <metrics statements="12" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
-        <line num="2" count="1" type="stmt"/>
-        <line num="4" count="1" type="stmt"/>
-        <line num="17" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="20" count="0" type="stmt"/>
-        <line num="21" count="0" type="stmt"/>
-        <line num="22" count="0" type="stmt"/>
-        <line num="23" count="0" type="stmt"/>
-        <line num="24" count="0" type="stmt"/>
-        <line num="25" count="0" type="stmt"/>
-        <line num="29" count="0" type="stmt"/>
+        <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="2" count="11" type="stmt"/>
+        <line num="4" count="11" type="stmt"/>
+        <line num="17" count="228" type="stmt"/>
+        <line num="18" count="228" type="stmt"/>
+        <line num="19" count="228" type="stmt"/>
+        <line num="20" count="228" type="stmt"/>
+        <line num="21" count="228" type="stmt"/>
+        <line num="22" count="228" type="stmt"/>
+        <line num="23" count="228" type="stmt"/>
+        <line num="24" count="228" type="stmt"/>
+        <line num="25" count="228" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
       </file>
       <file name="Trick.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\entities\Trick.ts">
         <metrics statements="12" coveredstatements="12" conditionals="4" coveredconditionals="4" methods="3" coveredmethods="3"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="12" count="4" type="stmt"/>
-        <line num="13" count="4" type="stmt"/>
-        <line num="14" count="4" type="stmt"/>
-        <line num="15" count="4" type="stmt"/>
-        <line num="20" count="3" type="stmt"/>
-        <line num="22" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="23" count="1" type="stmt"/>
+        <line num="2" count="12" type="stmt"/>
+        <line num="4" count="12" type="stmt"/>
+        <line num="12" count="150" type="stmt"/>
+        <line num="13" count="150" type="stmt"/>
+        <line num="14" count="150" type="stmt"/>
+        <line num="15" count="150" type="stmt"/>
+        <line num="20" count="4" type="stmt"/>
+        <line num="22" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="2" type="stmt"/>
         <line num="24" count="2" type="stmt"/>
         <line num="25" count="2" type="cond" truecount="2" falsecount="0"/>
-        <line num="33" count="3" type="stmt"/>
+        <line num="33" count="4" type="stmt"/>
       </file>
       <file name="User.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\entities\User.ts">
         <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="13" count="16" type="stmt"/>
-        <line num="14" count="16" type="stmt"/>
-        <line num="15" count="16" type="stmt"/>
-        <line num="16" count="16" type="stmt"/>
-        <line num="17" count="16" type="stmt"/>
-        <line num="18" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="13" count="32" type="stmt"/>
+        <line num="14" count="32" type="stmt"/>
+        <line num="15" count="32" type="stmt"/>
+        <line num="16" count="32" type="stmt"/>
+        <line num="17" count="32" type="stmt"/>
+        <line num="18" count="32" type="cond" truecount="1" falsecount="1"/>
       </file>
     </package>
     <package name="domain.enums">
       <metrics statements="20" coveredstatements="20" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
       <file name="Suit.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\enums\Suit.ts">
         <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
-        <line num="1" count="6" type="cond" truecount="2" falsecount="0"/>
-        <line num="2" count="6" type="stmt"/>
-        <line num="3" count="6" type="stmt"/>
-        <line num="4" count="6" type="stmt"/>
-        <line num="5" count="6" type="stmt"/>
+        <line num="1" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="2" count="16" type="stmt"/>
+        <line num="3" count="16" type="stmt"/>
+        <line num="4" count="16" type="stmt"/>
+        <line num="5" count="16" type="stmt"/>
       </file>
       <file name="Value.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\enums\Value.ts">
         <metrics statements="15" coveredstatements="15" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
-        <line num="1" count="6" type="cond" truecount="2" falsecount="0"/>
-        <line num="2" count="6" type="stmt"/>
-        <line num="3" count="6" type="stmt"/>
-        <line num="4" count="6" type="stmt"/>
-        <line num="5" count="6" type="stmt"/>
-        <line num="6" count="6" type="stmt"/>
-        <line num="7" count="6" type="stmt"/>
-        <line num="8" count="6" type="stmt"/>
-        <line num="9" count="6" type="stmt"/>
-        <line num="10" count="6" type="stmt"/>
-        <line num="11" count="6" type="stmt"/>
-        <line num="12" count="6" type="stmt"/>
-        <line num="13" count="6" type="stmt"/>
-        <line num="14" count="6" type="stmt"/>
-        <line num="15" count="6" type="stmt"/>
+        <line num="1" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="2" count="16" type="stmt"/>
+        <line num="3" count="16" type="stmt"/>
+        <line num="4" count="16" type="stmt"/>
+        <line num="5" count="16" type="stmt"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="7" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="10" count="16" type="stmt"/>
+        <line num="11" count="16" type="stmt"/>
+        <line num="12" count="16" type="stmt"/>
+        <line num="13" count="16" type="stmt"/>
+        <line num="14" count="16" type="stmt"/>
+        <line num="15" count="16" type="stmt"/>
+      </file>
+    </package>
+    <package name="domain.errors">
+      <metrics statements="15" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="4"/>
+      <file name="GameErrors.ts" path="C:\Users\GoldP\OneDrive\Documents\GitHub\pitch\server\src\domain\errors\GameErrors.ts">
+        <metrics statements="15" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="4"/>
+        <line num="1" count="7" type="stmt"/>
+        <line num="3" count="21" type="stmt"/>
+        <line num="4" count="21" type="stmt"/>
+        <line num="8" count="7" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="7" type="stmt"/>
+        <line num="17" count="6" type="stmt"/>
+        <line num="18" count="6" type="stmt"/>
+        <line num="22" count="7" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="29" count="7" type="stmt"/>
+        <line num="31" count="11" type="stmt"/>
+        <line num="32" count="11" type="stmt"/>
       </file>
     </package>
   </project>

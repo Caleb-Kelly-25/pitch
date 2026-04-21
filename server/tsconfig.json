@@ -13,5 +13,5 @@
 
     "types":["node","jest"],
   },
-  "include": ["src/**/*.ts", "src/types/**/*.d.ts", "src/types/socket", "src/tests/**/**/*.ts"],
+  "include": ["src/**/*.ts", "src/types/**/*.d.ts", "src/types/socket", "src/tests/**/**/*.ts", "src/tests/**/*.ts"],
 }
