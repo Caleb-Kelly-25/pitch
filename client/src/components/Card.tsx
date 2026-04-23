@@ -8,7 +8,6 @@ import KD_IMG from "../assets/KD.PNG";
 import KH_IMG from "../assets/KH.PNG";
 import QD_IMG from "../assets/QD.PNG";
 import QH_IMG from "../assets/QH.PNG";
-import RJo_IMG from "../assets/RJo.PNG";
 
 type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
 
@@ -38,11 +37,6 @@ const suitData: Record<
   SPADES:   { Icon: Spade,   color: "black" },
 };
 
-/**
- * Map of (value, suit) → custom PNG.
- * Key format: `${value}-${suit}` e.g. "14-HEARTS", "11-SPADES"
- * For jokers (value 11): HEARTS/DIAMONDS → red joker, CLUBS/SPADES → black joker.
- */
 const IMAGE_MAP: Record<string, string> = {
   // Aces
   "1-HEARTS":    AH_IMG,
@@ -55,11 +49,9 @@ const IMAGE_MAP: Record<string, string> = {
   "14-HEARTS":   KH_IMG,
   "14-DIAMONDS": KD_IMG,
 
-  // Jokers — red
+  // Jokers
   "11-HEARTS":   BJo_IMG,
   "11-DIAMONDS": BJo_IMG,
-
-  // Jokers — black
   "11-CLUBS":    BJo_IMG,
   "11-SPADES":   BJo_IMG,
 };
