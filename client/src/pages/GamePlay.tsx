@@ -63,7 +63,7 @@ export function determinePhase() {
     return(
       <>
         {displayTable()}
-        {displayScore()}
+        {/* {displayScore()} */}
         {biddingPhase()}
       </>
     );
