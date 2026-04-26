@@ -83,15 +83,16 @@ describe("Full Use Case Integration", () => {
         // Play order: p2, p3, p4, p1 (bid winner leads)
         // Cards: ACE(p2), TWO(p3), THREE(p4), FOUR(p1)
         // ACE wins → p2 (index 1, team two)
-        // Trick pts: ACE(1)+TWO(1)+THREE(3)+FOUR(0) = 5
-        // teamTwoHandPoints=5 ≥ bid(4) → teamTwoScore += 5; teamOneScore += 0
+        // TWO played by p3 (index 2, team one) → Two rule: 1 pt → team one
+        // ACE(1)+THREE(3) → team two; TWO(1) → team one; FOUR(0) → 0
+        // teamTwoHandPoints=4 ≥ bid(4) → teamTwoScore += 4; teamOneScore += 1
         playCard(game, "p2" as PlayerId, new Card(Suit.SPADES, Value.ACE));
         playCard(game, "p3" as PlayerId, new Card(Suit.SPADES, Value.TWO));
         playCard(game, "p4" as PlayerId, new Card(Suit.SPADES, Value.THREE));
         playCard(game, "p1" as PlayerId, new Card(Suit.SPADES, Value.FOUR));
 
-        expect(game.teamTwoScore).toBe(5);
-        expect(game.teamOneScore).toBe(0);
+        expect(game.teamTwoScore).toBe(4);
+        expect(game.teamOneScore).toBe(1);
         expect(game.handCycle.phase).toBe("bidding"); // game not over → new hand
     });
 
@@ -110,8 +111,9 @@ describe("Full Use Case Integration", () => {
         playCard(game, "p4" as PlayerId, new Card(Suit.SPADES, Value.THREE));
         playCard(game, "p1" as PlayerId, new Card(Suit.SPADES, Value.FOUR));
 
+        // teamTwoHandPoints=4 ≥ bid(4) → teamTwoScore = 50 + 4 = 54 ≥ 52 → complete
         expect(game.handCycle.phase).toBe("complete");
-        expect(game.teamTwoScore).toBe(55);
+        expect(game.teamTwoScore).toBe(54);
     });
 
     it("no card appears in more than one player's hand", () => {

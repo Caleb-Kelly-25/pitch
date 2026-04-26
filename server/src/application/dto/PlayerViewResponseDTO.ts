@@ -1,5 +1,5 @@
 import { PlayerId } from "../../types/id-declarations";
-import GameState from "../../domain/entities/GameState";
+import GameState, { LastHandResult } from "../../domain/entities/GameState";
 import { HandCycle } from "../../domain/entities/HandCycle";
 import { Suit } from "../../domain/enums/Suit";
 import { Trick } from "../../domain/entities/Trick";
@@ -46,6 +46,12 @@ export class PlayerViewResponseDTO {
     bidWinnerId: string = "";
     trumpSuit: ModelSuit | null = null;
     currentBlindCard: CardModel | null = null;
+    blindCardRecipientId: string = "";
+    teamOneCardsWon: CardModel[] = [];
+    teamTwoCardsWon: CardModel[] = [];
+    bidAmount: number = 0;
+    lastCompletedTrick: { playerId: string; card: CardModel | null }[] | null = null;
+    lastHandResult: { teamOneCardsWon: CardModel[]; teamTwoCardsWon: CardModel[]; bidWinnerId: string; bidAmount: number } | null = null;
 
     constructor() {}
 
@@ -61,6 +67,20 @@ export class PlayerViewResponseDTO {
     setBidWinnerId(id: string) { this.bidWinnerId = id; return this; }
     setTrumpSuit(suit: ModelSuit | null) { this.trumpSuit = suit; return this; }
     setCurrentBlindCard(card: CardModel | null) { this.currentBlindCard = card; return this; }
+    setBlindCardRecipientId(id: string) { this.blindCardRecipientId = id; return this; }
+    setTeamOneCardsWon(cards: CardModel[]) { this.teamOneCardsWon = cards; return this; }
+    setTeamTwoCardsWon(cards: CardModel[]) { this.teamTwoCardsWon = cards; return this; }
+    setBidAmount(n: number) { this.bidAmount = n; return this; }
+    setLastCompletedTrick(t: { playerId: string; card: CardModel | null }[] | null) { this.lastCompletedTrick = t; return this; }
+    setLastHandResult(r: LastHandResult | null) {
+        this.lastHandResult = r ? {
+            teamOneCardsWon: r.teamOneCardsWon.map(dtoFromCard),
+            teamTwoCardsWon: r.teamTwoCardsWon.map(dtoFromCard),
+            bidWinnerId: r.bidWinnerId,
+            bidAmount: r.bidAmount,
+        } : null;
+        return this;
+    }
 
     static fromGameState(gameState: GameState, playerId: PlayerId): PlayerViewResponseDTO {
         const dto = new PlayerViewResponseDTO();
@@ -89,7 +109,7 @@ export class PlayerViewResponseDTO {
                     currentBidderId: hand.biddingCycle.currentBidderId,
                     highestBidderId: hand.biddingCycle.highestBidderId ?? '',
                     bids: gameState.players.map(p => hand.biddingCycle.playerBids[p.id] ?? undefined),
-                });
+                }).setLastHandResult(gameState.lastHandResult);
                 break;
 
             case 'trumpselection':
@@ -99,8 +119,9 @@ export class PlayerViewResponseDTO {
             case 'blindcards':
                 dto.setBidWinnerId(hand.bidWinnerId)
                     .setTrumpSuit(domainSuitToModel(hand.trumpSuit))
+                    .setBlindCardRecipientId(hand.currentRecipientId)
                     .setCurrentBlindCard(
-                        viewingPlayer?.id === hand.bidWinnerId && hand.currentBlindCard
+                        viewingPlayer?.id === hand.currentRecipientId && hand.currentBlindCard
                             ? dtoFromCard(hand.currentBlindCard)
                             : null
                     );
@@ -109,11 +130,16 @@ export class PlayerViewResponseDTO {
             case 'playing':
                 dto.setTrick(dtoFromTrick(hand.trick))
                     .setTrickNumber(hand.trick.roundNumber)
-                    .setLeadSuit(domainSuitToModel(hand.trumpSuit));
+                    .setLeadSuit(domainSuitToModel(hand.trumpSuit))
+                    .setTeamOneCardsWon(hand.teamOneCardsWon.map(dtoFromCard))
+                    .setTeamTwoCardsWon(hand.teamTwoCardsWon.map(dtoFromCard))
+                    .setBidAmount(hand.bidAmount)
+                    .setLastCompletedTrick(lastCompletedTrickDto(hand.lastCompletedTrick));
                 break;
 
             case 'complete':
-                dto.setBidWinnerId(hand.bidWinnerId);
+                dto.setBidWinnerId(hand.bidWinnerId)
+                    .setLastHandResult(gameState.lastHandResult);
                 break;
 
             case 'waiting':
@@ -148,6 +174,16 @@ function domainSuitToModel(suit: Suit): ModelSuit | null {
 
 function dtoFromCard(card: Card): CardModel {
     return { suit: domainSuitToModel(card.suit) as ModelSuit, value: Number(card.value) };
+}
+
+function lastCompletedTrickDto(
+    cardsPlayed: Record<string, Card | null> | null
+): { playerId: string; card: CardModel | null }[] | null {
+    if (!cardsPlayed) return null;
+    return Object.entries(cardsPlayed).map(([pid, card]) => ({
+        playerId: pid,
+        card: card ? dtoFromCard(card) : null,
+    }));
 }
 
 function dtoFromTrick(trick: Trick): TrickDTO {

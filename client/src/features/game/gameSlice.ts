@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../app/store"
-import type { GameState } from "./gameTypes"
+import type { GameState, TrickResult, HandResult } from "./gameTypes"
 
 const initialState: GameState = {
   gameId: "initialId",
@@ -31,6 +31,7 @@ const initialState: GameState = {
     ],
   },
   trickResult: null,
+  handResult: null,
   pendingGameState: null,
   bidding: {
     currentBidderId: "playerId1",
@@ -44,6 +45,12 @@ const initialState: GameState = {
   bidWinnerId: "",
   trumpSuit: null,
   currentBlindCard: null,
+  blindCardRecipientId: "",
+  teamOneCardsWon: [],
+  teamTwoCardsWon: [],
+  bidAmount: 0,
+  lastCompletedTrick: null,
+  lastHandResult: null,
 }
 
 function dtoToGameState(dto: any) {
@@ -59,7 +66,14 @@ function dtoToGameState(dto: any) {
     bidWinnerId: dto.bidWinnerId ?? "",
     trumpSuit: dto.trumpSuit ?? null,
     currentBlindCard: dto.currentBlindCard ?? null,
+    blindCardRecipientId: dto.blindCardRecipientId ?? "",
+    teamOneCardsWon: dto.teamOneCardsWon ?? [],
+    teamTwoCardsWon: dto.teamTwoCardsWon ?? [],
+    bidAmount: dto.bidAmount ?? 0,
+    lastCompletedTrick: dto.lastCompletedTrick ?? null,
+    lastHandResult: dto.lastHandResult ?? null,
     trickResult: null,
+    handResult: null,
     pendingGameState: null,
   };
 }
@@ -73,20 +87,23 @@ export const gameSlice = createSlice({
       console.log(dto);
       return dtoToGameState(dto);
     },
-    setTrickResult(state, action: PayloadAction<{ trick: any; winnerId: string }>) {
+    setTrickResult(state, action: PayloadAction<TrickResult>) {
       state.trickResult = action.payload;
+    },
+    setHandResult(state, action: PayloadAction<HandResult>) {
+      state.handResult = action.payload;
+      state.trickResult = null;
     },
     setPendingGameState(state, action: PayloadAction<any>) {
       state.pendingGameState = action.payload;
     },
-    confirmTrickResult(state) {
+    confirmOverlay(state) {
       const pending = state.pendingGameState;
       if (pending) {
-        // Return a brand-new value — do NOT also mutate the draft
-        return { ...dtoToGameState(pending), trickResult: null, pendingGameState: null };
+        return { ...dtoToGameState(pending), trickResult: null, handResult: null, pendingGameState: null };
       }
-      // No pending state: just clear the overlay via draft mutation
       state.trickResult = null;
+      state.handResult = null;
       state.pendingGameState = null;
     },
   },

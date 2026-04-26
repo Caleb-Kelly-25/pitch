@@ -153,7 +153,7 @@ export default class WebSocketController {
             return;
         }
 
-        const validActions = ['keep', 'discard', 'swap'];
+        const validActions = ['keep', 'discard', 'swap', 'done'];
         if (!parsedData.gameId || !validActions.includes(parsedData.action)) {
             console.error("BlindCardEvent: missing or invalid fields", parsedData);
             return;

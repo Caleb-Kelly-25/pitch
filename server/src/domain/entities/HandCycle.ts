@@ -33,6 +33,7 @@ export interface BlindCardsHand {
     phase: 'blindcards';
     dealerId: PlayerId;
     bidWinnerId: PlayerId;
+    currentRecipientId: PlayerId;
     bidAmount: number;
     trumpSuit: Suit;
     blindCards: Card[];
@@ -48,6 +49,9 @@ export interface PlayingHand {
     trick: Trick;
     teamOneHandPoints: number;
     teamTwoHandPoints: number;
+    teamOneCardsWon: Card[];
+    teamTwoCardsWon: Card[];
+    lastCompletedTrick: Record<PlayerId, Card | null> | null;
 }
 
 export interface CompleteHand {
@@ -131,6 +135,7 @@ export function startBlindCards(hand: TrumpSelectHand, trumpSuit: Suit, players:
         phase: 'blindcards',
         dealerId: hand.dealerId,
         bidWinnerId: hand.bidWinnerId,
+        currentRecipientId: hand.bidWinnerId,
         bidAmount: hand.bidAmount,
         trumpSuit,
         blindCards: blindDeck,
@@ -148,6 +153,9 @@ export function startPlayingFromBlindCards(hand: BlindCardsHand): PlayingHand {
         trick: new Trick(0, hand.bidWinnerId, {} as Record<PlayerId, Card | null>, hand.bidWinnerId),
         teamOneHandPoints: 0,
         teamTwoHandPoints: 0,
+        teamOneCardsWon: [],
+        teamTwoCardsWon: [],
+        lastCompletedTrick: null,
     };
 }
 
@@ -192,6 +200,7 @@ export function handCycleFromJSON(data: any): HandCycle {
                 phase: 'blindcards',
                 dealerId: data.dealerId,
                 bidWinnerId: data.bidWinnerId,
+                currentRecipientId: data.currentRecipientId ?? data.bidWinnerId,
                 bidAmount: data.bidAmount,
                 trumpSuit: data.trumpSuit,
                 blindCards: (data.blindCards ?? []).map((c: any) => new Card(c.suit, c.value)),
@@ -210,6 +219,15 @@ export function handCycleFromJSON(data: any): HandCycle {
                 trick: Trick.fromJSONObject(data.trick),
                 teamOneHandPoints: data.teamOneHandPoints,
                 teamTwoHandPoints: data.teamTwoHandPoints,
+                teamOneCardsWon: (data.teamOneCardsWon ?? []).map((c: any) => new Card(c.suit, c.value)),
+                teamTwoCardsWon: (data.teamTwoCardsWon ?? []).map((c: any) => new Card(c.suit, c.value)),
+                lastCompletedTrick: data.lastCompletedTrick
+                    ? Object.fromEntries(
+                        Object.entries(data.lastCompletedTrick).map(([pid, c]: [string, any]) =>
+                            [pid, c ? new Card(c.suit, c.value) : null]
+                        )
+                    ) as Record<PlayerId, Card | null>
+                    : null,
             };
 
         case 'complete':

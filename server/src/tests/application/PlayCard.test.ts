@@ -43,6 +43,9 @@ function makeGame(opts: {
         trick,
         teamOneHandPoints: 0,
         teamTwoHandPoints: 0,
+        teamOneCardsWon: [],
+        teamTwoCardsWon: [],
+        lastCompletedTrick: null,
     };
     return new GameState("g1" as GameId, players, "g1", hand, teamOneScore, teamTwoScore);
 }
@@ -135,8 +138,8 @@ describe("playCard — card play mechanics", () => {
         expect(hand.trick.roundNumber).toBe(1);
     });
 
-    it("awards trick points to the correct team (p1 wins ACE trick → team one)", () => {
-        // ACE(1) + TWO(1) + THREE(3) + FOUR(0) = 5 pts; p1 (index 0, team one) wins with ACE
+    it("awards trick points to the correct team (p1 wins ACE trick → team one, Two stays with p2)", () => {
+        // p1 wins with ACE: ACE(1)→team1, THREE(3)→team1; TWO(1)→team2 (p2 played it — special rule)
         const game = makeGame({
             cards: [[s(Value.ACE)], [s(Value.TWO)], [s(Value.THREE)], [s(Value.FOUR)]],
         });
@@ -144,9 +147,10 @@ describe("playCard — card play mechanics", () => {
         playCard(game, "p2" as PlayerId, s(Value.TWO));
         playCard(game, "p3" as PlayerId, s(Value.THREE));
         playCard(game, "p4" as PlayerId, s(Value.FOUR));
-        // Hand ends (all out of trump); bid made (5 ≥ 4); teamOneScore += 5
-        expect(game.teamOneScore).toBe(5);
-        expect(game.teamTwoScore).toBe(0);
+        // teamOne: ACE(1) + THREE(3) = 4, bid made (4 ≥ 4) → teamOneScore = 4
+        // teamTwo: TWO(1) → teamTwoScore = 1
+        expect(game.teamOneScore).toBe(4);
+        expect(game.teamTwoScore).toBe(1);
     });
 
     it("subtracts the bid from the team's score when they fail to make their bid", () => {
@@ -171,7 +175,7 @@ describe("playCard — card play mechanics", () => {
         playCard(game, "p2" as PlayerId, s(Value.TWO));
         playCard(game, "p3" as PlayerId, s(Value.THREE));
         playCard(game, "p4" as PlayerId, s(Value.FOUR));
-        // teamOneScore = 30 + 5 = 35 < 52 → new hand
+        // teamOneScore = 30 + 4 = 34 < 52 → new hand (Two goes to team two)
         expect(game.handCycle.phase).toBe("bidding");
     });
 

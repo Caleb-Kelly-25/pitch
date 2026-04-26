@@ -24,6 +24,7 @@ function makeBlindGame(bidWinnerCards: Card[] = [], bidWinnerId = "p1"): GameSta
         phase: "blindcards",
         dealerId: "p1" as PlayerId,
         bidWinnerId: bidWinnerId as PlayerId,
+        currentRecipientId: bidWinnerId as PlayerId,
         bidAmount: 4,
         trumpSuit: Suit.HEARTS,
         blindCards: [],

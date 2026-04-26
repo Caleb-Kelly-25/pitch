@@ -83,6 +83,11 @@ const styles: Record<string, React.CSSProperties> = {
     border: "none",
     transition: "background-color 0.2s",
   },
+  buttonDisabled: {
+    backgroundColor: "rgba(80,60,60,0.35)",
+    color: "rgba(245,237,224,0.3)",
+    cursor: "not-allowed",
+  },
   scoreStrip: {
     display: "flex",
     alignItems: "center",
@@ -157,6 +162,66 @@ function ScoreStrip() {
   )
 }
 
+// ── Taken point-cards strip ──────────────────────────────────────────────────
+const SUIT_COLORS: Record<string, string> = {
+  HEARTS: "#e05555", DIAMONDS: "#e05555", CLUBS: "#f5ede0", SPADES: "#f5ede0",
+}
+
+function cardLabel(value: number): string {
+  if (value === 1)  return "A"
+  if (value === 10) return "10"
+  if (value === 11) return "★"
+  if (value === 12) return "J"
+  return String(value)
+}
+
+function CardChip({ suit, value }: { suit: string; value: number }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 1,
+      backgroundColor: "rgba(0,0,0,0.3)", borderRadius: 5,
+      padding: "1px 5px", fontSize: 12, fontWeight: 700,
+      color: SUIT_COLORS[suit] ?? "#f5ede0",
+    }}>
+      {SUIT_SYMBOLS[suit]}{cardLabel(value)}
+    </span>
+  )
+}
+
+function TakenCardsStrip() {
+  const game = useGame()
+  const auth = useAuth()
+  if (game.phase !== "PLAYING") return null
+
+  const myIndex = game.players.findIndex(p => p.id === auth.user?.id)
+  const ourCards  = myIndex % 2 === 0 ? game.teamOneCardsWon : game.teamTwoCardsWon
+  const theirCards = myIndex % 2 === 0 ? game.teamTwoCardsWon : game.teamOneCardsWon
+
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      backgroundColor: "rgba(0,0,0,0.3)", color: "#f5ede0",
+      fontSize: "0.8rem", padding: "3px 16px", flexShrink: 0, gap: 8,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, flexWrap: "wrap" }}>
+        <span style={{ opacity: 0.55, marginRight: 2 }}>Us</span>
+        {ourCards.length === 0
+          ? <span style={{ opacity: 0.3 }}>—</span>
+          : ourCards.map((c, i) => <CardChip key={i} suit={c.suit} value={c.value} />)
+        }
+      </div>
+      <div style={{ width: 1, height: 16, backgroundColor: "rgba(245,237,224,0.2)", flexShrink: 0 }} />
+      <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, justifyContent: "flex-end", flexWrap: "wrap" }}>
+        {theirCards.length === 0
+          ? <span style={{ opacity: 0.3 }}>—</span>
+          : theirCards.map((c, i) => <CardChip key={i} suit={c.suit} value={c.value} />)
+        }
+        <span style={{ opacity: 0.55, marginLeft: 2 }}>Them</span>
+      </div>
+    </div>
+  )
+}
+
 // ── Table with card-play filtering ───────────────────────────────────────────
 function GameTable() {
   const game = useGame()
@@ -208,23 +273,111 @@ function GameTable() {
 // ── Trick result overlay ─────────────────────────────────────────────────────
 function TrickResultOverlay() {
   const game = useGame()
+  const auth = useAuth()
   const { trickResult } = game
   if (!trickResult) return null
 
   const winner = game.players.find(p => p.id === trickResult.winnerId)
-  const winningEntry = trickResult.trick.playedCards.find(e => e.playerId === trickResult.winnerId)
+  const myId = auth.user?.id
 
   return (
     <div style={styles.trickOverlay}>
-      <div style={{ color: "white", fontSize: "1.4rem", fontWeight: "bold" }}>
-        {winner ? `${winner.username} wins the trick!` : "Trick complete"}
+      <div style={{ color: "gold", fontSize: "1.3rem", fontWeight: "bold", marginBottom: 12 }}>
+        {winner ? `${winner.id === myId ? "You win" : `${winner.username} wins`} the trick!` : "Trick complete"}
       </div>
-      {winningEntry?.card && (
-        <div style={{ transform: "scale(1.15)", filter: "drop-shadow(0 0 12px gold)" }}>
-          <Card suit={winningEntry.card.suit} value={winningEntry.card.value} />
+
+      {/* All four played cards */}
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", marginBottom: 12 }}>
+        {trickResult.playedCards.map(entry => {
+          const player = game.players.find(p => p.id === entry.playerId)
+          const isWinner = entry.playerId === trickResult.winnerId
+          return (
+            <div key={entry.playerId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+              <div style={{ transform: isWinner ? "scale(1.12)" : "scale(1)", filter: isWinner ? "drop-shadow(0 0 10px gold)" : "none", opacity: entry.card ? 1 : 0.35 }}>
+                {entry.card
+                  ? <Card suit={entry.card.suit} value={entry.card.value} />
+                  : <div style={{ width: 60, height: 84, borderRadius: 8, border: "2px dashed rgba(255,255,255,0.3)" }} />
+                }
+              </div>
+              <span style={{ color: isWinner ? "gold" : "rgba(255,255,255,0.7)", fontSize: 12 }}>
+                {player?.id === myId ? "You" : (player?.username ?? "?")}
+                {entry.card === null ? " (passed)" : ""}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      <button style={{ ...styles.button, fontSize: "1.1rem", padding: "10px 32px" }} onClick={game.confirmOverlay}>
+        OK
+      </button>
+    </div>
+  )
+}
+
+// ── Hand result overlay ───────────────────────────────────────────────────────
+const HAND_CARD_PTS: Record<number, number> = { 1: 1, 2: 1, 3: 3, 10: 1, 11: 1, 12: 1 }
+function sumPoints(cards: { value: number }[]) {
+  return cards.reduce((s, c) => s + (HAND_CARD_PTS[c.value] ?? 0), 0)
+}
+
+function HandResultOverlay() {
+  const game = useGame()
+  const auth = useAuth()
+  const { handResult } = game
+  if (!handResult) return null
+
+  const myId = auth.user?.id
+  const myIndex = game.players.findIndex(p => p.id === myId)
+  const ourCardsWon  = myIndex % 2 === 0 ? handResult.teamOneCardsWon : handResult.teamTwoCardsWon
+  const theirCardsWon = myIndex % 2 === 0 ? handResult.teamTwoCardsWon : handResult.teamOneCardsWon
+  const ourPts   = sumPoints(ourCardsWon)
+  const theirPts = sumPoints(theirCardsWon)
+
+  const bidWinnerIndex = game.players.findIndex(p => p.id === handResult.bidWinnerId)
+  const bidderOnOurTeam = myIndex >= 0 && bidWinnerIndex >= 0 && myIndex % 2 === bidWinnerIndex % 2
+  const bidderPts = bidderOnOurTeam ? ourPts : theirPts
+  const bidMade = bidderPts >= handResult.bidAmount
+
+  const teamLabel = (pts: number, isUs: boolean) => {
+    const teamPlayers = game.players.filter((_, i) => isUs ? i % 2 === myIndex % 2 : i % 2 !== myIndex % 2)
+    return `${isUs ? "Us" : "Them"} (${teamPlayers.map(p => p.username).join(" & ")}): ${pts} pt${pts !== 1 ? "s" : ""}`
+  }
+
+  return (
+    <div style={{ ...styles.trickOverlay, gap: 20, padding: "24px 32px" }}>
+      <div style={{ color: "#f5ede0", fontSize: "1.5rem", fontWeight: "bold" }}>Hand Over</div>
+
+      {/* Bid outcome */}
+      <div style={{ fontSize: "0.95rem", color: bidMade ? "#7dcd7d" : "#e07777", fontStyle: "italic" }}>
+        Bid {handResult.bidAmount} — {bidderOnOurTeam ? "Us" : "Them"} {bidMade ? "made it" : "were set"}
+      </div>
+
+      {/* Our team */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, width: "100%" }}>
+        <span style={{ color: "#f5ede0", fontSize: "0.9rem" }}>{teamLabel(ourPts, true)}</span>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+          {ourCardsWon.length === 0
+            ? <span style={{ color: "rgba(245,237,224,0.4)", fontSize: 13 }}>No point cards</span>
+            : ourCardsWon.map((c, i) => <CardChip key={i} suit={c.suit} value={c.value} />)
+          }
         </div>
-      )}
-      <button style={{ ...styles.button, fontSize: "1.2rem", padding: "12px 32px" }} onClick={game.confirmTrickResult}>
+      </div>
+
+      <div style={{ width: "80%", height: 1, backgroundColor: "rgba(245,237,224,0.15)" }} />
+
+      {/* Their team */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, width: "100%" }}>
+        <span style={{ color: "#f5ede0", fontSize: "0.9rem" }}>{teamLabel(theirPts, false)}</span>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+          {theirCardsWon.length === 0
+            ? <span style={{ color: "rgba(245,237,224,0.4)", fontSize: 13 }}>No point cards</span>
+            : theirCardsWon.map((c, i) => <CardChip key={i} suit={c.suit} value={c.value} />)
+          }
+        </div>
+      </div>
+
+      <button style={{ ...styles.button, fontSize: "1.1rem", padding: "10px 32px", marginTop: 4 }} onClick={game.confirmOverlay}>
         OK
       </button>
     </div>
@@ -236,48 +389,100 @@ function WaitingPhase() {
   return <div style={styles.overlay}>Waiting for players to join...</div>
 }
 
+function BidSummary() {
+  const game = useGame()
+  const auth = useAuth()
+  const myId = auth.user?.id
+
+  return (
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", marginBottom: 4 }}>
+      {game.players.map((player, i) => {
+        const bid = game.bidding.bids[i]
+        const isCurrent = player.id === game.bidding.currentBidderId
+        const isMe = player.id === myId
+        let bidLabel: string
+        if (bid === undefined) bidLabel = "—"
+        else if (bid === 0) bidLabel = "Pass"
+        else if (bid === 11) bidLabel = "Moon"
+        else bidLabel = String(bid)
+
+        return (
+          <div
+            key={player.id}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              padding: "6px 14px",
+              borderRadius: 8,
+              backgroundColor: isCurrent ? "rgba(245,237,224,0.18)" : "rgba(0,0,0,0.2)",
+              border: isCurrent ? "1px solid rgba(245,237,224,0.4)" : "1px solid transparent",
+              minWidth: 64,
+            }}
+          >
+            <span style={{ fontSize: 11, color: "rgba(245,237,224,0.55)", marginBottom: 2 }}>
+              {isMe ? "You" : player.username}{isCurrent ? " ●" : ""}
+            </span>
+            <span style={{
+              fontSize: 18,
+              fontWeight: 700,
+              color: bid !== undefined && bid > 0 ? "#f5c06a" : "rgba(245,237,224,0.5)",
+            }}>
+              {bidLabel}
+            </span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function BiddingPhase() {
   const game = useGame()
   const auth = useAuth()
   const myId = auth.user?.id
   const isTurn = game.bidding.currentBidderId === myId
   const isHighestBidder = game.bidding.highestBidderId === myId
-  const isDealersTurn = game.bidding.bids.filter(bid => bid === null).length === 1
+  const isDealersTurn = game.bidding.bids.filter(bid => bid === undefined).length === 1
   const first3PlayersPassed = game.bidding.bids.slice(0, 3).every(bid => bid === 0)
+
+  const highestBid = Math.max(0, ...game.bidding.bids.filter((b): b is number => b !== undefined && b > 0))
+  const bidOptions = [4, 5, 6, 7, 8, 9, 10] as const
+
+  function bidBtn(n: number, label?: string) {
+    const disabled = n <= highestBid
+    return (
+      <button
+        key={n}
+        disabled={disabled}
+        style={disabled ? { ...styles.button, ...styles.buttonDisabled } : styles.button}
+        onClick={disabled ? undefined : () => placeBid(n, game.gameId)}
+      >
+        {label ?? n}
+      </button>
+    )
+  }
 
   if (!isTurn) {
     const msg = isHighestBidder
-      ? "You are the highest bidder. Please wait for other players to bid or pass..."
-      : "Waiting for other players to bid..."
-    return <div style={styles.overlay}>{msg}</div>
-  }
-
-  const bidOptions = [4, 5, 6, 7, 8, 9, 10] as const
-
-  if (!isDealersTurn) {
+      ? "You have the high bid. Waiting for other players…"
+      : "Waiting for other players to bid…"
     return (
       <div style={styles.bidButtons}>
-        <div>It's your turn to bid. Please select a bid or pass.</div>
-        <div style={styles.buttonRow}>
-          <button style={styles.button} onClick={() => placeBid(0, game.gameId)}>Pass</button>
-          {bidOptions.map(n => (
-            <button key={n} style={styles.button} onClick={() => placeBid(n, game.gameId)}>{n}</button>
-          ))}
-          <button style={styles.button} onClick={() => placeBid(11, game.gameId)}>Shoot the Moon</button>
-        </div>
+        <BidSummary />
+        <div style={{ fontSize: "0.95rem", opacity: 0.8 }}>{msg}</div>
       </div>
     )
   }
 
-  if (first3PlayersPassed) {
+  if (first3PlayersPassed && isDealersTurn) {
     return (
       <div style={styles.bidButtons}>
-        <div>You are the dealer and all other players passed. You must bid at least 5.</div>
+        <BidSummary />
+        <div>All others passed — you must bid at least 5.</div>
         <div style={styles.buttonRow}>
-          {bidOptions.map(n => (
-            <button key={n} style={styles.button} onClick={() => placeBid(n, game.gameId)}>{n}</button>
-          ))}
-          <button style={styles.button} onClick={() => placeBid(11, game.gameId)}>Shoot the Moon</button>
+          {bidOptions.map(n => bidBtn(n))}
+          {bidBtn(11, "Shoot the Moon")}
         </div>
       </div>
     )
@@ -285,13 +490,12 @@ function BiddingPhase() {
 
   return (
     <div style={styles.bidButtons}>
-      <div>It's your turn to bid. Please select a bid or pass.</div>
+      <BidSummary />
+      <div>Your turn to bid — select an amount or pass.</div>
       <div style={styles.buttonRow}>
         <button style={styles.button} onClick={() => placeBid(0, game.gameId)}>Pass</button>
-        {bidOptions.map(n => (
-          <button key={n} style={styles.button} onClick={() => placeBid(n, game.gameId)}>{n}</button>
-        ))}
-        <button style={styles.button} onClick={() => placeBid(11, game.gameId)}>Shoot the Moon</button>
+        {bidOptions.map(n => bidBtn(n))}
+        {bidBtn(11, "Shoot the Moon")}
       </div>
     </div>
   )
@@ -325,10 +529,15 @@ function TrumpSelectionPhase() {
 function BlindCardsPhase() {
   const game = useGame()
   const auth = useAuth()
-  const isBidWinner = game.bidWinnerId === auth.user?.id
+  const myId = auth.user?.id
+  const isRecipient = game.blindCardRecipientId === myId
+  const isPartner = isRecipient && game.blindCardRecipientId !== game.bidWinnerId
 
-  if (!isBidWinner) {
-    return <div style={styles.overlay}>Waiting for the bid winner to arrange their hand...</div>
+  if (!isRecipient) {
+    const waitingFor = game.blindCardRecipientId === game.bidWinnerId
+      ? "the bid winner"
+      : "your partner"
+    return <div style={styles.overlay}>Waiting for {waitingFor} to arrange their hand...</div>
   }
 
   if (!game.currentBlindCard) {
@@ -338,7 +547,6 @@ function BlindCardsPhase() {
   const blindCard = game.currentBlindCard
   const handFull = game.hand.length >= 6
 
-  // Hand cards: clicking swaps that card out for the blind card
   const handCards: CardProps[] = game.hand.map(card => ({
     suit: card.suit,
     value: card.value,
@@ -348,9 +556,8 @@ function BlindCardsPhase() {
   return (
     <div style={styles.bidButtons}>
       <div style={{ fontSize: "1rem", marginBottom: "4px" }}>
-        Blind card ({game.hand.length}/6 in hand)
+        {isPartner ? "Blind cards — your partner's leftovers" : "Blind cards"} ({game.hand.length}/6 in hand)
       </div>
-      {/* Visual blind card */}
       <div style={{ transform: "scale(1.1)", marginBottom: "8px" }}>
         <Card suit={blindCard.suit} value={blindCard.value} />
       </div>
@@ -363,14 +570,18 @@ function BlindCardsPhase() {
         <button style={styles.button} onClick={() => game.blindCard('discard')}>
           Skip
         </button>
+        <button
+          style={{ ...styles.button, backgroundColor: "#2a6e2a" }}
+          onClick={() => game.blindCard('done')}
+        >
+          Done
+        </button>
       </div>
       {handFull && (
         <div style={{ fontSize: "0.9rem", color: "#f5c0a0", marginTop: "4px" }}>
-          Hand full — click a card below to swap it out
+          Hand full — click a card below to swap it out, or press Done
         </div>
       )}
-      {/* Current hand — click any card to discard it from hand without taking the blind card,
-          or to swap when hand is full */}
       <div style={{ marginTop: "12px" }}>
         <HandOfCards count={game.hand.length} cards={handCards} overlap={35} />
       </div>
@@ -453,8 +664,10 @@ export default function GamePlay() {
     <div style={styles.wrapper}>
       <TopBar variant="gameplay" />
       <ScoreStrip />
+      <TakenCardsStrip />
       <PhaseDisplay />
       <TrickResultOverlay />
+      <HandResultOverlay />
     </div>
   )
 }
