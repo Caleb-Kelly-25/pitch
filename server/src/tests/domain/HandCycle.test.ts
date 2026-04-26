@@ -116,6 +116,7 @@ describe("startPlayingFromBlindCards", () => {
             phase: "blindcards",
             dealerId: "p1" as PlayerId,
             bidWinnerId: "p2" as PlayerId,
+            currentRecipientId: "p2" as PlayerId,
             bidAmount: 4,
             trumpSuit: Suit.HEARTS,
             blindCards: [],
@@ -128,6 +129,8 @@ describe("startPlayingFromBlindCards", () => {
         expect(ph.trick.playerTurn).toBe("p2");
         expect(ph.teamOneHandPoints).toBe(0);
         expect(ph.teamTwoHandPoints).toBe(0);
+        expect(ph.teamOneCardsWon).toEqual([]);
+        expect(ph.teamTwoCardsWon).toEqual([]);
     });
 });
 
@@ -143,6 +146,9 @@ describe("completeHand", () => {
             trick,
             teamOneHandPoints: 3,
             teamTwoHandPoints: 7,
+            teamOneCardsWon: [],
+            teamTwoCardsWon: [],
+            lastCompletedTrick: null,
         };
 
         const ch = completeHand(ph);

@@ -37,7 +37,8 @@ function createGameState(id: GameId = "game1" as GameId): GameState {
     gameCode: id,
     handCycle: {} as HandCycle,
     teamOneScore: 0,
-    teamTwoScore: 0
+    teamTwoScore: 0,
+    lastHandResult: null,
   } as GameState;
 }
 

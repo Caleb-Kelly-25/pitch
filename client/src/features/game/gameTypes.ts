@@ -1,3 +1,15 @@
+export interface TrickResult {
+    playedCards: { playerId: string; card: CardModel | null }[];
+    winnerId: string;
+}
+
+export interface HandResult {
+    teamOneCardsWon: CardModel[];
+    teamTwoCardsWon: CardModel[];
+    bidWinnerId: string;
+    bidAmount: number;
+}
+
 export interface GameState {
     gameId: string;
     phase: "WAITING" | "BIDDING" | "TRUMP_SELECTION" | "BLIND_CARDS" | "PLAYING" | "COMPLETE";
@@ -10,10 +22,8 @@ export interface GameState {
         playedCards:{playerId:string, card: CardModel | undefined}[];
     }
 
-    trickResult: {
-        trick: { leadPlayerId: string; playerTurn: string; playedCards: {playerId: string; card: CardModel | undefined}[] };
-        winnerId: string;
-    } | null;
+    trickResult: TrickResult | null;
+    handResult: HandResult | null;
     pendingGameState: any | null;
 
     bidding: {
@@ -29,6 +39,12 @@ export interface GameState {
     bidWinnerId: string;
     trumpSuit: "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES" | null;
     currentBlindCard: CardModel | null;
+    blindCardRecipientId: string;
+    teamOneCardsWon: CardModel[];
+    teamTwoCardsWon: CardModel[];
+    bidAmount: number;
+    lastCompletedTrick: { playerId: string; card: CardModel | null }[] | null;
+    lastHandResult: HandResult | null;
 }
 
 export interface Player {

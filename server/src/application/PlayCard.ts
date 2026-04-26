@@ -73,6 +73,12 @@ export function playCard(gameState: GameState, playerId: PlayerId, card: Card): 
 
     if (isHandOver(gameState)) {
         tallyHandPoints(gameState, hand);
+        gameState.lastHandResult = {
+            teamOneCardsWon: [...hand.teamOneCardsWon],
+            teamTwoCardsWon: [...hand.teamTwoCardsWon],
+            bidWinnerId: hand.bidWinnerId,
+            bidAmount: hand.bidAmount,
+        };
         if (isGameOver(gameState, hand)) {
             gameState.handCycle = completeHand(hand);
         } else {
@@ -119,18 +125,31 @@ function beats(cardA: Card, cardB: Card | null, trumpSuit: Suit): boolean {
 
 function tallyTrickPoints(hand: PlayingHand, winnerId: PlayerId, players: Player[]): void {
     const winnerIndex = players.findIndex(p => p.id === winnerId);
-    const points = Object.values(hand.trick.cardsPlayed)
-        .reduce((sum, card) => sum + (card ? (CARD_POINTS[card.value] ?? 0) : 0), 0);
 
-    if (winnerIndex % 2 === 0) {
-        hand.teamOneHandPoints += points;
-    } else {
-        hand.teamTwoHandPoints += points;
+    for (const [playerId, card] of Object.entries(hand.trick.cardsPlayed)) {
+        if (!card) continue;
+        const pts = CARD_POINTS[card.value] ?? 0;
+        if (pts === 0) continue;
+
+        // Special rule: the Two scores for whoever played it, not the trick winner
+        const scoringIndex = card.value === Value.TWO
+            ? players.findIndex(p => p.id === playerId)
+            : winnerIndex;
+
+        if (scoringIndex % 2 === 0) {
+            hand.teamOneHandPoints += pts;
+            hand.teamOneCardsWon.push(card);
+        } else {
+            hand.teamTwoHandPoints += pts;
+            hand.teamTwoCardsWon.push(card);
+        }
     }
+
     assert(hand.teamOneHandPoints <= 10 && hand.teamTwoHandPoints <= 10, 'Hand points exceeded maximum');
 }
 
 function advanceTrick(hand: PlayingHand, winnerId: PlayerId): void {
+    hand.lastCompletedTrick = { ...hand.trick.cardsPlayed };
     hand.trick = new Trick(
         hand.trick.roundNumber + 1,
         winnerId,

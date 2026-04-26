@@ -10,9 +10,9 @@ export function useGame() {
     ...game,
     placeBid: (amount: number) => placeBid(amount, game.gameId),
     pickSuit: (suit: string) => pickSuit(suit, game.gameId),
-    blindCard: (action: 'keep' | 'discard' | 'swap', swapSuit?: string, swapValue?: number) =>
+    blindCard: (action: 'keep' | 'discard' | 'swap' | 'done', swapSuit?: string, swapValue?: number) =>
       blindCard(action, game.gameId, swapSuit, swapValue),
     discardHandCard: (suit: string, value: number) => discardHandCard(suit, value, game.gameId),
-    confirmTrickResult: () => dispatch(gameSlice.actions.confirmTrickResult()),
+    confirmOverlay: () => dispatch(gameSlice.actions.confirmOverlay()),
   }
 }

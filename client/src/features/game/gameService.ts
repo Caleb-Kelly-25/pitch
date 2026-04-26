@@ -26,7 +26,7 @@ export function pickSuit(suit: string, gameId: string) {
   socket.emit("PickSuitEvent", JSON.stringify({ gameId, suit }))
 }
 
-export function blindCard(action: 'keep' | 'discard' | 'swap', gameId: string, swapSuit?: string, swapValue?: number) {
+export function blindCard(action: 'keep' | 'discard' | 'swap' | 'done', gameId: string, swapSuit?: string, swapValue?: number) {
   if (!socket) {
     console.log("Socket not connected, can't submit blind card decision.")
     return

@@ -15,12 +15,14 @@ function makePlayer(id: string, cards: Card[] = []): Player {
 
 function makeBlindGame(opts: {
     bidWinnerId?: string;
+    currentRecipientId?: string;
     bidWinnerCards?: Card[];
     blindCards?: Card[];
     currentBlindCard?: Card | null;
 } = {}): GameState {
     const {
         bidWinnerId = "p1",
+        currentRecipientId,
         bidWinnerCards = [],
         blindCards = [],
         currentBlindCard = new Card(Suit.HEARTS, Value.ACE),
@@ -35,6 +37,7 @@ function makeBlindGame(opts: {
         phase: "blindcards",
         dealerId: "p1" as PlayerId,
         bidWinnerId: bidWinnerId as PlayerId,
+        currentRecipientId: (currentRecipientId ?? bidWinnerId) as PlayerId,
         bidAmount: 4,
         trumpSuit: Suit.HEARTS,
         blindCards,
@@ -52,26 +55,26 @@ describe("processBlindCard — phase validation", () => {
 });
 
 describe("processBlindCard — authorization", () => {
-    it("throws InvalidPlayError when non-bid-winner interacts", () => {
+    it("throws InvalidPlayError when non-recipient interacts", () => {
         const game = makeBlindGame({ bidWinnerId: "p1" });
         expect(() => processBlindCard(game, "p2" as PlayerId, "keep")).toThrow(InvalidPlayError);
     });
 
-    it("throws InvalidPlayError when there is no current blind card", () => {
+    it("throws InvalidPlayError when there is no current blind card (keep/swap/discard)", () => {
         const game = makeBlindGame({ currentBlindCard: null });
         expect(() => processBlindCard(game, "p1" as PlayerId, "keep")).toThrow(InvalidPlayError);
     });
 });
 
 describe("processBlindCard — keep", () => {
-    it("adds the blind card to the bid winner's hand", () => {
+    it("adds the blind card to the recipient's hand", () => {
         const game = makeBlindGame({ bidWinnerCards: [] });
         processBlindCard(game, "p1" as PlayerId, "keep");
         expect(game.players[0].hand.cards).toHaveLength(1);
     });
 
     it("throws when hand is already full (≥6 cards)", () => {
-        const cards = Array.from({ length: 6 }, (_, i) => new Card(Suit.HEARTS, Value.TWO));
+        const cards = Array.from({ length: 6 }, () => new Card(Suit.HEARTS, Value.TWO));
         const game = makeBlindGame({ bidWinnerCards: cards });
         expect(() => processBlindCard(game, "p1" as PlayerId, "keep")).toThrow(InvalidPlayError);
     });
@@ -120,5 +123,44 @@ describe("processBlindCard — swap", () => {
     it("throws when swap parameters are missing", () => {
         const game = makeBlindGame({ bidWinnerCards: [new Card(Suit.HEARTS, Value.TWO)] });
         expect(() => processBlindCard(game, "p1" as PlayerId, "swap")).toThrow(InvalidPlayError);
+    });
+});
+
+describe("processBlindCard — done", () => {
+    it("transitions to playing when bid winner has no remaining cards to pass", () => {
+        const game = makeBlindGame({ blindCards: [], currentBlindCard: null });
+        processBlindCard(game, "p1" as PlayerId, "done");
+        expect(game.handCycle.phase).toBe("playing");
+    });
+
+    it("passes remaining cards to partner (index+2) when bid winner presses done with cards left", () => {
+        const extraCards = [new Card(Suit.HEARTS, Value.TWO), new Card(Suit.HEARTS, Value.THREE)];
+        const game = makeBlindGame({ blindCards: extraCards });
+        processBlindCard(game, "p1" as PlayerId, "done");
+        // p1 is index 0, partner is index 2 (p3)
+        const hand = game.handCycle as BlindCardsHand;
+        expect(hand.phase).toBe("blindcards");
+        expect(hand.currentRecipientId).toBe("p3");
+        expect(hand.currentBlindCard).not.toBeNull();
+    });
+
+    it("includes the currently-shown card in what gets passed to partner", () => {
+        // Only the currentBlindCard exists; no extra blindCards
+        const game = makeBlindGame({
+            blindCards: [],
+            currentBlindCard: new Card(Suit.HEARTS, Value.ACE),
+        });
+        // After done: current card put back → blindCards has 1 → partner should receive it
+        processBlindCard(game, "p1" as PlayerId, "done");
+        const hand = game.handCycle as BlindCardsHand;
+        expect(hand.phase).toBe("blindcards");
+        expect(hand.currentRecipientId).toBe("p3");
+        expect(hand.currentBlindCard?.value).toBe(Value.ACE);
+    });
+
+    it("partner pressing done transitions to playing", () => {
+        const game = makeBlindGame({ currentRecipientId: "p3", blindCards: [] });
+        processBlindCard(game, "p3" as PlayerId, "done");
+        expect(game.handCycle.phase).toBe("playing");
     });
 });
