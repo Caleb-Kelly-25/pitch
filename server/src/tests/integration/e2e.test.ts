@@ -18,8 +18,10 @@ import JwtAuthAdapter                   from "../../adapters/auth/JwtAuthAdapter
 import WebSocketController              from "../../adapters/websockets/WebSocketController";
 import UserController                   from "../../adapters/rest/UserController";
 import UserService                      from "../../application/UserService";
+import UserProfileService               from "../../application/UserProfileService";
 import { GameService }                  from "../../application/GameService";
 import RoomController                   from "../../adapters/rest/RoomController";
+import ProfileController                from "../../adapters/rest/ProfileController";
 import { RoomService }                  from "../../application/RoomService";
 import createRouter                     from "../../adapters/rest/CreateRouter";
 
@@ -53,9 +55,11 @@ function buildServer() {
     new WebSocketController(wss, authAdapter,
         new GameService(shortStorage, publisher));
 
+    const userService = new UserService(longStorage);
     app.use("/api", createRouter(
-        new UserController(new UserService(longStorage), authAdapter),
+        new UserController(userService, authAdapter),
         new RoomController(new RoomService(shortStorage, longStorage, publisher), authAdapter),
+        new ProfileController(new UserProfileService(longStorage), userService, authAdapter),
     ));
 
     return { app, httpServer, wss };

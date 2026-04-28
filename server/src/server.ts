@@ -24,8 +24,10 @@ import JwtAuthAdapter from "./adapters/auth/JwtAuthAdapter";
 import WebSocketController from "./adapters/websockets/WebSocketController";
 import UserController from "./adapters/rest/UserController";
 import UserService from "./application/UserService";
+import UserProfileService from "./application/UserProfileService";
 import {GameService} from "./application/GameService"
 import RoomController from "./adapters/rest/RoomController";
+import ProfileController from "./adapters/rest/ProfileController";
 import { RoomService } from "./application/RoomService";
 
 
@@ -65,10 +67,13 @@ async function startServer() {
   const longStorage = new MongoLongTermAdapter(); // InMemoryLongTermStorageAdapter();
   const authAdapter = new JwtAuthAdapter();
 
-  new WebSocketController(wss, authAdapter, new GameService(shortStorage, wsPublisher));
-  const userController = new UserController(new UserService(longStorage), authAdapter);
+  const userService = new UserService(longStorage);
+  const profileService = new UserProfileService(longStorage);
+  new WebSocketController(wss, authAdapter, new GameService(shortStorage, wsPublisher, profileService));
+  const userController = new UserController(userService, authAdapter);
   const roomController = new RoomController(new RoomService(shortStorage, longStorage, wsPublisher), authAdapter);
-  expressApp.use("/api", createRouter(userController, roomController));
+  const profileController = new ProfileController(profileService, userService, authAdapter);
+  expressApp.use("/api", createRouter(userController, roomController, profileController));
 
   // Start Listening
   httpServer.listen(PORT_NUM, () => {
