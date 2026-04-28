@@ -4,6 +4,21 @@ import UserService from "../../application/UserService";
 import { User } from "../../domain/entities/User";
 import IAuthAdapter from "../auth/IAuthAdapter";
 
+function validateSignupInput(username: string, password: string): string[] {
+    const errors: string[] = [];
+    if (username.length < 8 || username.length > 20)
+        errors.push("Username must be 8–20 characters.");
+    if (password.length < 8 || password.length > 20)
+        errors.push("Password must be 8–20 characters.");
+    if (!/[A-Z]/.test(password))
+        errors.push("Password must contain an uppercase letter.");
+    if (!/[0-9]/.test(password))
+        errors.push("Password must contain a number.");
+    if (!/[^a-zA-Z0-9]/.test(password))
+        errors.push("Password must contain a special character.");
+    return errors;
+}
+
 export default class UserController {
     private userService: UserService;
     private authAdapter: IAuthAdapter;
@@ -42,6 +57,12 @@ export default class UserController {
         const { username, password } = req.body;
         if (!username || !password) {
             res.status(400).json({ error: "Username and password are required" });
+            return;
+        }
+
+        const validationErrors = validateSignupInput(username, password);
+        if (validationErrors.length > 0) {
+            res.status(400).json({ error: validationErrors.join(" ") });
             return;
         }
 

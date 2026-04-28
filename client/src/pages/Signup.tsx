@@ -91,6 +91,9 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: "center",
     letterSpacing: "0.3px",
   },
+  inputError: {
+    outline: "2px solid #ffaaaa",
+  },
   enterBtn: {
     padding: "13px 20px",
     borderRadius: "30px",
@@ -122,18 +125,55 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: "0.3px",
     width: "100%",
   },
-  error: {
+  fieldError: {
     color: "#ffcccc",
-    fontSize: "14px",
-    textAlign: "center",
-    margin: 0,
+    fontSize: "13px",
+    margin: "-8px 0 0 12px",
   },
+  requirementsList: {
+    listStyle: "none",
+    margin: 0,
+    padding: "0 4px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
+  },
+  requirementItem: {
+    fontSize: "12px",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+  },
+}
+
+interface PasswordRequirement {
+  label: string
+  met: (pw: string) => boolean
+}
+
+const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
+  { label: "8–20 characters",          met: pw => pw.length >= 8 && pw.length <= 20 },
+  { label: "One uppercase letter",      met: pw => /[A-Z]/.test(pw) },
+  { label: "One number",                met: pw => /[0-9]/.test(pw) },
+  { label: "One special character",     met: pw => /[^a-zA-Z0-9]/.test(pw) },
+]
+
+function validateUsername(username: string): string | null {
+  if (username.length < 8 || username.length > 20)
+    return "Username must be 8–20 characters."
+  return null
+}
+
+function validatePassword(password: string): boolean {
+  return PASSWORD_REQUIREMENTS.every(r => r.met(password))
 }
 
 export default function Signup() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
+  const [usernameError, setUsernameError] = useState<string | null>(null)
+  const [showRequirements, setShowRequirements] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const { signup: submitSignup } = useAuth()
   const navigate = useNavigate()
@@ -155,12 +195,22 @@ export default function Signup() {
   }, [])
 
   async function handleSubmit() {
-    setError(null)
+    setSubmitError(null)
+
+    const unErr = validateUsername(username)
+    setUsernameError(unErr)
+    if (unErr) return
+
+    if (!validatePassword(password)) {
+      setShowRequirements(true)
+      return
+    }
+
     try {
       await submitSignup(username, password)
       navigate("/")
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Signup failed")
+      setSubmitError(err instanceof Error ? err.message : "Signup failed")
     }
   }
 
@@ -175,25 +225,52 @@ export default function Signup() {
         <div style={styles.rightSection}>
           <div style={styles.loginBox}>
             <h2 style={styles.loginTitle}>Sign Up</h2>
+
             <input
-              style={styles.input}
+              style={{ ...styles.input, ...(usernameError ? styles.inputError : {}) }}
               placeholder="Username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => { setUsername(e.target.value); setUsernameError(null) }}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              maxLength={20}
             />
+            {usernameError && <p style={styles.fieldError}>{usernameError}</p>}
+
             <input
               type="password"
               style={styles.input}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onFocus={() => setShowRequirements(true)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              maxLength={20}
             />
+
+            {showRequirements && (
+              <ul style={styles.requirementsList}>
+                {PASSWORD_REQUIREMENTS.map(req => {
+                  const met = req.met(password)
+                  return (
+                    <li key={req.label} style={styles.requirementItem}>
+                      <span style={{ color: met ? "#7dcd7d" : "#ffaaaa", fontSize: "14px", lineHeight: 1 }}>
+                        {met ? "✓" : "✗"}
+                      </span>
+                      <span style={{ color: met ? "rgba(245,237,224,0.8)" : "#ffcccc" }}>
+                        {req.label}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+
             <button style={styles.enterBtn} onClick={handleSubmit}>
               Create Account
             </button>
-            {error && <p style={styles.error}>{error}</p>}
+
+            {submitError && <p style={styles.fieldError}>{submitError}</p>}
+
             <hr style={styles.divider} />
             <button style={styles.loginBtn} onClick={() => navigate("/login")}>
               Already have an account? Log in
