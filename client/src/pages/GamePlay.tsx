@@ -252,13 +252,13 @@ function GameTable() {
       right={game.trick.playedCards.find(p => p.playerId === game.players[(3 + ourIndex) % 4]?.id)?.card}
     >
       <PlayerSeat position="top">
-        <HandOfCards count={game.players[2]?.cardCount ?? 0} />
+        <HandOfCards count={game.players[(ourIndex + 2) % 4]?.cardCount ?? 0} />
       </PlayerSeat>
       <PlayerSeat position="left">
-        <HandOfCards count={game.players[1]?.cardCount ?? 0} />
+        <HandOfCards count={game.players[(ourIndex + 1) % 4]?.cardCount ?? 0} />
       </PlayerSeat>
       <PlayerSeat position="right">
-        <HandOfCards count={game.players[3]?.cardCount ?? 0} />
+        <HandOfCards count={game.players[(ourIndex + 3) % 4]?.cardCount ?? 0} />
       </PlayerSeat>
       <PlayerSeat position="bottom">
         <HandOfCards
