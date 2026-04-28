@@ -1,10 +1,52 @@
 import { Card } from "../domain/entities/Card";
 import GameState from "../domain/entities/GameState";
-import { startPlayingFromBlindCards } from "../domain/entities/HandCycle";
+import { BlindCardsHand, PlayingHand, startPlayingFromBlindCards } from "../domain/entities/HandCycle";
 import { InvalidPlayError, WrongPhaseError } from "../domain/errors/GameErrors";
 import { Suit } from "../domain/enums/Suit";
 import { Value } from "../domain/enums/Value";
 import { PlayerId } from "../types/id-declarations";
+
+const BLIND_CARD_POINTS: Partial<Record<Value, number>> = {
+    [Value.ACE]: 1,
+    [Value.TWO]: 1,
+    [Value.THREE]: 3,
+    [Value.TEN]: 1,
+    [Value.JOKER]: 1,
+    [Value.JACK]: 1,
+};
+
+function awardPointCardsToOpponents(
+    gameState: GameState,
+    hand: BlindCardsHand,
+    playingHand: PlayingHand,
+    cards: Card[],
+): void {
+    if (cards.length === 0) return;
+    const bidWinnerIndex = gameState.players.findIndex(p => p.id === hand.bidWinnerId);
+    const opponentTeamIsOne = bidWinnerIndex % 2 !== 0;
+
+    for (const card of cards) {
+        const pts = BLIND_CARD_POINTS[card.value] ?? 0;
+        if (pts === 0) continue;
+        if (opponentTeamIsOne) {
+            playingHand.teamOneHandPoints += pts;
+            playingHand.teamOneCardsWon.push(card);
+        } else {
+            playingHand.teamTwoHandPoints += pts;
+            playingHand.teamTwoCardsWon.push(card);
+        }
+    }
+}
+
+function transitionToPlaying(gameState: GameState, hand: BlindCardsHand): void {
+    const playingHand = startPlayingFromBlindCards(hand);
+    // Discarded cards + any cards left in the blind deck all go to opponents as won cards
+    awardPointCardsToOpponents(gameState, hand, playingHand, [
+        ...hand.discardedCards,
+        ...hand.blindCards,
+    ]);
+    gameState.handCycle = playingHand;
+}
 
 export function processBlindCard(
     gameState: GameState,
@@ -23,7 +65,6 @@ export function processBlindCard(
     }
 
     if (action === 'done') {
-        // Return the currently-shown card to the deck so it can pass to the partner
         if (hand.currentBlindCard) {
             hand.blindCards.push(hand.currentBlindCard);
             hand.currentBlindCard = null;
@@ -36,7 +77,7 @@ export function processBlindCard(
             hand.currentRecipientId = gameState.players[partnerIndex].id;
             hand.currentBlindCard = hand.blindCards.pop()!;
         } else {
-            gameState.handCycle = startPlayingFromBlindCards(hand);
+            transitionToPlaying(gameState, hand);
         }
         return;
     }
@@ -62,12 +103,15 @@ export function processBlindCard(
         }
         recipient.hand.removeCard(cardToDiscard);
         recipient.hand.addCard(hand.currentBlindCard);
+    } else {
+        // discard: track it so opponents receive any point value
+        hand.discardedCards.push(hand.currentBlindCard);
     }
-    // 'discard': skip the blind card, no hand change
 
-    // Advance to next card; if deck is empty, transition to playing
+    hand.currentBlindCard = null;
+
     if (hand.blindCards.length === 0) {
-        gameState.handCycle = startPlayingFromBlindCards(hand);
+        transitionToPlaying(gameState, hand);
     } else {
         hand.currentBlindCard = hand.blindCards.pop()!;
     }

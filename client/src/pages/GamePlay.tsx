@@ -152,6 +152,8 @@ function ScoreStrip() {
           <span>Trick {game.trickNumber + 1}</span>
         )}
         <span>Trump: {suitLabel}</span>
+        {(game.phase === "PLAYING") && (
+        <span>Bid Winner: {game.players.find(p => p.id === game.bidWinnerId)?.username}</span>)}
       </div>
 
       <div style={styles.scoreTeam}>

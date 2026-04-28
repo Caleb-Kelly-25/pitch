@@ -29,6 +29,7 @@ function makeBlindGame(bidWinnerCards: Card[] = [], bidWinnerId = "p1"): GameSta
         trumpSuit: Suit.HEARTS,
         blindCards: [],
         currentBlindCard: null,
+        discardedCards: [],
     };
     return new GameState("g1" as GameId, players, "g1", hand, 0, 0);
 }

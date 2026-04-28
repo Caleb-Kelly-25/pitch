@@ -42,6 +42,7 @@ function makeBlindGame(opts: {
         trumpSuit: Suit.HEARTS,
         blindCards,
         currentBlindCard,
+        discardedCards: [],
     };
     return new GameState("g1" as GameId, players, "g1", hand, 0, 0);
 }
@@ -123,6 +124,73 @@ describe("processBlindCard — swap", () => {
     it("throws when swap parameters are missing", () => {
         const game = makeBlindGame({ bidWinnerCards: [new Card(Suit.HEARTS, Value.TWO)] });
         expect(() => processBlindCard(game, "p1" as PlayerId, "swap")).toThrow(InvalidPlayError);
+    });
+});
+
+describe("processBlindCard — point card awards to opponents on discard/leftover", () => {
+    it("awards a discarded point card to the opposing team", () => {
+        // p1 (index 0) is bid winner → team 1. Opponents are team 2.
+        const game = makeBlindGame({
+            bidWinnerId: "p1",
+            currentBlindCard: new Card(Suit.HEARTS, Value.ACE), // 1 pt
+            blindCards: [],
+        });
+        processBlindCard(game, "p1" as PlayerId, "discard");
+        const ph = game.handCycle as PlayingHand;
+        expect(ph.teamTwoHandPoints).toBe(1);
+        expect(ph.teamTwoCardsWon).toHaveLength(1);
+        expect(ph.teamOneHandPoints).toBe(0);
+    });
+
+    it("awards a discarded THREE (3 pts) to the opposing team", () => {
+        const game = makeBlindGame({
+            bidWinnerId: "p1",
+            currentBlindCard: new Card(Suit.HEARTS, Value.THREE),
+            blindCards: [],
+        });
+        processBlindCard(game, "p1" as PlayerId, "discard");
+        const ph = game.handCycle as PlayingHand;
+        expect(ph.teamTwoHandPoints).toBe(3);
+    });
+
+    it("does not award a non-point card that is discarded", () => {
+        const game = makeBlindGame({
+            bidWinnerId: "p1",
+            currentBlindCard: new Card(Suit.HEARTS, Value.KING), // 0 pts
+            blindCards: [],
+        });
+        processBlindCard(game, "p1" as PlayerId, "discard");
+        const ph = game.handCycle as PlayingHand;
+        expect(ph.teamOneHandPoints).toBe(0);
+        expect(ph.teamTwoHandPoints).toBe(0);
+    });
+
+    it("awards point cards left in the deck when partner presses done", () => {
+        // p1 (index 0) bid winner → team 1. Partner is p3 (index 2). Opponents are team 2.
+        const leftover = new Card(Suit.HEARTS, Value.TEN); // 1 pt
+        const game = makeBlindGame({
+            bidWinnerId: "p1",
+            currentRecipientId: "p3",
+            currentBlindCard: leftover,
+            blindCards: [],
+        });
+        processBlindCard(game, "p3" as PlayerId, "done");
+        const ph = game.handCycle as PlayingHand;
+        expect(ph.teamTwoHandPoints).toBe(1);
+        expect(ph.teamTwoCardsWon).toHaveLength(1);
+    });
+
+    it("awards to team 1 when bid winner is on team 2 (odd index)", () => {
+        // p2 (index 1) is bid winner → team 2. Opponents are team 1.
+        const game = makeBlindGame({
+            bidWinnerId: "p2",
+            currentBlindCard: new Card(Suit.HEARTS, Value.ACE),
+            blindCards: [],
+        });
+        processBlindCard(game, "p2" as PlayerId, "discard");
+        const ph = game.handCycle as PlayingHand;
+        expect(ph.teamOneHandPoints).toBe(1);
+        expect(ph.teamTwoHandPoints).toBe(0);
     });
 });
 

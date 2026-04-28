@@ -121,6 +121,7 @@ describe("startPlayingFromBlindCards", () => {
             trumpSuit: Suit.HEARTS,
             blindCards: [],
             currentBlindCard: null,
+            discardedCards: [],
         };
 
         const ph = startPlayingFromBlindCards(bch) as PlayingHand;

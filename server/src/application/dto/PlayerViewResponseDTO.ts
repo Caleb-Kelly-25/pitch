@@ -134,6 +134,7 @@ export class PlayerViewResponseDTO {
                     .setTeamOneCardsWon(hand.teamOneCardsWon.map(dtoFromCard))
                     .setTeamTwoCardsWon(hand.teamTwoCardsWon.map(dtoFromCard))
                     .setBidAmount(hand.bidAmount)
+                    .setBidWinnerId(hand.bidWinnerId)
                     .setLastCompletedTrick(lastCompletedTrickDto(hand.lastCompletedTrick));
                 break;
 
