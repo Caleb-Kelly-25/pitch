@@ -66,6 +66,18 @@ export async function createGame(gameCode: string, token: string): Promise<strin
   return "";
 }
 
+export async function addBot(gameCode: string, token: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/game/addBot`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ gameCode }),
+  })
+  if (!res.ok) throw new Error("Failed to add bot")
+}
+
 export async function joinGame(gameCode: string, token: string) {
   const res = await fetch(`${API_URL}/api/game/join`, {
     method: "POST",

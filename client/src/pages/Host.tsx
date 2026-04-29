@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { Copy, Check } from "lucide-react"
 import { useGame } from "../features/game/useGame"
 import { useAuth } from "../features/auth/useAuth"
-import { createGame } from "../features/game/gameService"
+import { createGame, addBot } from "../features/game/gameService"
 import TopBar from "../components/TopBar"
 
 function generateGameCode() {
@@ -21,6 +21,7 @@ export default function Host() {
   const [gameCode, setGameCode] = useState("")
   const [created, setCreated] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [addingBot, setAddingBot] = useState(false)
   const gameState = useGame()
   const auth = useAuth()
   const navigate = useNavigate()
@@ -30,6 +31,18 @@ export default function Host() {
       navigate("/gameplay")
     }
   }, [created, gameState.phase, navigate])
+
+  async function handleAddBot() {
+    if (addingBot) return
+    setAddingBot(true)
+    try {
+      await addBot(gameCode, auth.token ?? "")
+    } catch (e) {
+      console.error("Failed to add bot:", e)
+    } finally {
+      setAddingBot(false)
+    }
+  }
 
   async function handleCreate() {
     const code = generateGameCode()
@@ -133,8 +146,8 @@ export default function Host() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
                   <span style={{ color: "rgba(245,237,224,0.5)", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", textAlign: "center" }}>Team 1</span>
                   <span style={{ color: "rgba(245,237,224,0.5)", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", textAlign: "center" }}>Team 2</span>
-                  {[1, 3].map(seat => <PlayerSlot key={seat} seat={seat} players={players} />)}
-                  {[2, 4].map(seat => <PlayerSlot key={seat} seat={seat} players={players} />)}
+                  {[1, 3].map(seat => <PlayerSlot key={seat} seat={seat} players={players} onAddBot={handleAddBot} addingBot={addingBot} />)}
+                  {[2, 4].map(seat => <PlayerSlot key={seat} seat={seat} players={players} onAddBot={handleAddBot} addingBot={addingBot} />)}
                 </div>
               </div>
 
@@ -152,7 +165,12 @@ export default function Host() {
   )
 }
 
-function PlayerSlot({ seat, players }: { seat: number; players: { id: string; username: string; seat: number; isConnected: boolean }[] }) {
+function PlayerSlot({ seat, players, onAddBot, addingBot }: {
+  seat: number
+  players: { id: string; username: string; seat: number; isConnected: boolean }[]
+  onAddBot?: () => void
+  addingBot?: boolean
+}) {
   const player = players.find(p => p.seat === seat)
 
   return (
@@ -185,10 +203,21 @@ function PlayerSlot({ seat, players }: { seat: number; players: { id: string; us
           transition={{ duration: 0.2 }}
         >
           <div style={{ width: 36, height: 36, borderRadius: "50%", border: "1px dashed rgba(245,237,224,0.2)", flexShrink: 0 }} />
-          <div>
+          <div style={{ flex: 1 }}>
             <div style={{ color: "rgba(245,237,224,0.3)", fontSize: 15 }}>Open</div>
             <div style={{ color: "rgba(245,237,224,0.2)", fontSize: 12 }}>Seat {seat}</div>
           </div>
+          {onAddBot && (
+            <motion.button
+              onClick={onAddBot}
+              disabled={addingBot}
+              style={{ background: "rgba(139,26,26,0.5)", border: "1px solid rgba(245,237,224,0.2)", borderRadius: 6, color: "rgba(245,237,224,0.75)", fontSize: 12, padding: "4px 10px", cursor: addingBot ? "default" : "pointer", fontFamily: "'Georgia', serif", flexShrink: 0, opacity: addingBot ? 0.5 : 1 }}
+              whileHover={addingBot ? undefined : { scale: 1.05, filter: "brightness(1.2)" }}
+              whileTap={addingBot ? undefined : { scale: 0.95 }}
+            >
+              + Bot
+            </motion.button>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

@@ -35,6 +35,22 @@ export default class RoomController {
         }
     }
 
+    async addBot(req: Request, res: Response): Promise<unknown> {
+        const identity = this.authAdapter.verifyToken(req.headers.authorization || "");
+        if (!identity?.userId) {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+        try {
+            const { gameCode } = req.body;
+            await this.roomService.addBot(gameCode);
+            res.status(200).json({ message: "Bot added" });
+        } catch (error: any) {
+            console.log("Error adding bot:", error);
+            res.status(500).json({ error: error?.message ?? "Failed to add bot" });
+        }
+    }
+
     async joinRoom(req: Request, res: Response): Promise<unknown> {
         const identity = this.authAdapter.verifyToken(req.headers.authorization || "");
         const userId = identity?.userId;

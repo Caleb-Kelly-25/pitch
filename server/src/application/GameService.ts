@@ -16,6 +16,7 @@ import { pickSuit } from "./PickSuit";
 import { processBlindCard } from "./BlindCard";
 import { discardHandCard } from "./DiscardHandCard";
 import UserProfileService from "./UserProfileService";
+import { triggerBotIfNeeded } from "./BotTrigger";
 
 export class GameService {
     private gameStateRepository: IGameStateRepository;
@@ -42,6 +43,7 @@ export class GameService {
 
         await this.gameStateRepository.updateGameState(gameState);
         this.gamePub.publishGameStateToRoom(gameState.id, gameState);
+        triggerBotIfNeeded(gameState, this);
     }
 
     async playCard(dto: PlayCardDTO): Promise<void> {
@@ -59,6 +61,7 @@ export class GameService {
 
         await this.gameStateRepository.updateGameState(gameState);
         this.gamePub.publishGameStateToRoom(gameState.id, gameState);
+        triggerBotIfNeeded(gameState, this);
 
         if (this.profileService && prevHand) {
             this.recordStats(gameState, prevHand, prevTrickRound, playerId as PlayerId);
@@ -75,6 +78,7 @@ export class GameService {
 
         await this.gameStateRepository.updateGameState(gameState);
         this.gamePub.publishGameStateToRoom(gameState.id, gameState);
+        triggerBotIfNeeded(gameState, this);
     }
 
     async discardHandCard(dto: DiscardHandCardDTO): Promise<void> {
@@ -99,6 +103,7 @@ export class GameService {
 
         await this.gameStateRepository.updateGameState(gameState);
         this.gamePub.publishGameStateToRoom(gameState.id, gameState);
+        triggerBotIfNeeded(gameState, this);
     }
 
     // --- Stat tracking (fire-and-forget) ---
@@ -117,7 +122,8 @@ export class GameService {
             ? prevHand.lastCompletedTrick?.[playerId]
             : prevHand.trick.cardsPlayed[playerId];
 
-        if (cardInSlot !== null && cardInSlot !== undefined) {
+        const isBot = gameState.players.find(p => p.id === playerId)?.isBot ?? false;
+        if (!isBot && cardInSlot !== null && cardInSlot !== undefined) {
             this.fire(this.profileService!.recordCardPlayed(this.getUserId(gameState, playerId)));
         }
 
@@ -128,6 +134,7 @@ export class GameService {
         const trickCards = prevHand.lastCompletedTrick!;
 
         for (const player of gameState.players) {
+            if (player.isBot) continue;
             if (trickCards[player.id] === null || trickCards[player.id] === undefined) continue;
             this.fire(this.profileService!.recordTrick(player.userId, player.id === trickWinnerId));
         }
@@ -143,13 +150,16 @@ export class GameService {
             : prevHand.teamTwoHandPoints;
         const bidMet = biddingTeamPoints >= result.bidAmount;
         const bidWinner = gameState.players[bidWinnerIdx];
-        this.fire(this.profileService!.recordBid(bidWinner.userId, bidMet));
+        if (!bidWinner.isBot) {
+            this.fire(this.profileService!.recordBid(bidWinner.userId, bidMet));
+        }
 
         // Game completion: only fires when handCycle is 'complete' (game won)
         if (gameState.handCycle.phase !== 'complete') return;
 
         const winningTeamIsEven = bidWinnerIdx % 2 === 0;
         for (let i = 0; i < gameState.players.length; i++) {
+            if (gameState.players[i].isBot) continue;
             const won = winningTeamIsEven ? i % 2 === 0 : i % 2 !== 0;
             this.fire(this.profileService!.recordGameCompleted(gameState.players[i].userId, won));
         }

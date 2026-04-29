@@ -17,8 +17,9 @@ export default function createRouter(
         res.status(200).json({ status: "OK" });
     });
 
-    router.post('/game/create', async (req, res) => roomController.createRoom(req, res));
-    router.post('/game/join',   async (req, res) => roomController.joinRoom(req, res));
+    router.post('/game/create',  async (req, res) => roomController.createRoom(req, res));
+    router.post('/game/join',    async (req, res) => roomController.joinRoom(req, res));
+    router.post('/game/addBot',  async (req, res) => roomController.addBot(req, res));
 
     router.get('/profile/:userId', async (req, res) => profileController.getProfile(req, res));
     router.get('/leaderboard',    async (req, res) => profileController.getLeaderboard(req, res));
