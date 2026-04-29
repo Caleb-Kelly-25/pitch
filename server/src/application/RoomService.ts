@@ -36,6 +36,7 @@ export class RoomService {
             0,
         );
         await this.shortTermStorage.createGameState(newGame);
+        await this.publisher.publishGameStateToRoom(newGame.id, newGame);
     }
 
     async joinRoom(gameCode: string, userId: string): Promise<void> {

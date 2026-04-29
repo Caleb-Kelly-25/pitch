@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { motion, AnimatePresence } from "motion/react"
 import { useAuth } from "../features/auth/useAuth"
 import cardsLogo from "../assets/5_card_logo.png"
 import TopBar from "../components/TopBar"
@@ -51,7 +52,7 @@ const styles: Record<string, React.CSSProperties> = {
   cardsImage: {
     width: "clamp(280px, 40vw, 500px)",
     height: "auto",
-    objectFit: "contain",
+    objectFit: "contain" as const,
   },
   rightSection: {
     width: "clamp(320px, 50vw, 440px)",
@@ -87,8 +88,8 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "16px",
     fontFamily: "'Georgia', serif",
     outline: "none",
-    boxSizing: "border-box",
-    textAlign: "center",
+    boxSizing: "border-box" as const,
+    textAlign: "center" as const,
     letterSpacing: "0.3px",
   },
   inputError: {
@@ -105,7 +106,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
     letterSpacing: "0.5px",
     boxShadow: "inset 0 -3px 6px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.3)",
-    alignSelf: "center",
+    alignSelf: "center" as const,
     width: "200px",
   },
   divider: {
@@ -135,7 +136,7 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
     padding: "0 4px",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "column" as const,
     gap: "4px",
   },
   requirementItem: {
@@ -152,10 +153,10 @@ interface PasswordRequirement {
 }
 
 const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
-  { label: "8–20 characters",          met: pw => pw.length >= 8 && pw.length <= 20 },
-  { label: "One uppercase letter",      met: pw => /[A-Z]/.test(pw) },
-  { label: "One number",                met: pw => /[0-9]/.test(pw) },
-  { label: "One special character",     met: pw => /[^a-zA-Z0-9]/.test(pw) },
+  { label: "8–20 characters",      met: pw => pw.length >= 8 && pw.length <= 20 },
+  { label: "One uppercase letter",  met: pw => /[A-Z]/.test(pw) },
+  { label: "One number",            met: pw => /[0-9]/.test(pw) },
+  { label: "One special character", met: pw => /[^a-zA-Z0-9]/.test(pw) },
 ]
 
 function validateUsername(username: string): string | null {
@@ -167,6 +168,8 @@ function validateUsername(username: string): string | null {
 function validatePassword(password: string): boolean {
   return PASSWORD_REQUIREMENTS.every(r => r.met(password))
 }
+
+const ease = { duration: 0.45, ease: "easeOut" } as const
 
 export default function Signup() {
   const [username, setUsername] = useState("")
@@ -196,16 +199,13 @@ export default function Signup() {
 
   async function handleSubmit() {
     setSubmitError(null)
-
     const unErr = validateUsername(username)
     setUsernameError(unErr)
     if (unErr) return
-
     if (!validatePassword(password)) {
       setShowRequirements(true)
       return
     }
-
     try {
       await submitSignup(username, password)
       navigate("/")
@@ -218,25 +218,77 @@ export default function Signup() {
     <div style={styles.wrapper}>
       <TopBar variant="empty" />
       <div style={styles.main}>
-        <div style={styles.leftSection}>
-          <h1 style={styles.title}>Pitch</h1>
-          <img src={cardsLogo} alt="Playing cards" style={styles.cardsImage} />
-        </div>
-        <div style={styles.rightSection}>
-          <div style={styles.loginBox}>
-            <h2 style={styles.loginTitle}>Sign Up</h2>
 
-            <input
+        {/* Left — title + cards image */}
+        <motion.div
+          style={styles.leftSection}
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={ease}
+        >
+          <motion.h1
+            style={styles.title}
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ ...ease, delay: 0.08 }}
+          >
+            Pitch
+          </motion.h1>
+          <motion.img
+            src={cardsLogo}
+            alt="Playing cards"
+            style={styles.cardsImage}
+            initial={{ rotate: -6, opacity: 0, scale: 0.88 }}
+            animate={{ rotate: 0, opacity: 1, scale: 1 }}
+            transition={{ ...ease, delay: 0.16 }}
+          />
+        </motion.div>
+
+        {/* Right — signup form */}
+        <motion.div
+          style={styles.rightSection}
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ ...ease, delay: 0.08 }}
+        >
+          <div style={styles.loginBox}>
+            <motion.h2
+              style={styles.loginTitle}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.22 }}
+            >
+              Sign Up
+            </motion.h2>
+
+            <motion.input
               style={{ ...styles.input, ...(usernameError ? styles.inputError : {}) }}
               placeholder="Username"
               value={username}
               onChange={(e) => { setUsername(e.target.value); setUsernameError(null) }}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               maxLength={20}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28 }}
             />
-            {usernameError && <p style={styles.fieldError}>{usernameError}</p>}
 
-            <input
+            <AnimatePresence>
+              {usernameError && (
+                <motion.p
+                  key="un-err"
+                  style={styles.fieldError}
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {usernameError}
+                </motion.p>
+              )}
+            </AnimatePresence>
+
+            <motion.input
               type="password"
               style={styles.input}
               placeholder="Password"
@@ -245,38 +297,87 @@ export default function Signup() {
               onFocus={() => setShowRequirements(true)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               maxLength={20}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.34 }}
             />
 
-            {showRequirements && (
-              <ul style={styles.requirementsList}>
-                {PASSWORD_REQUIREMENTS.map(req => {
-                  const met = req.met(password)
-                  return (
-                    <li key={req.label} style={styles.requirementItem}>
-                      <span style={{ color: met ? "#7dcd7d" : "#ffaaaa", fontSize: "14px", lineHeight: 1 }}>
-                        {met ? "✓" : "✗"}
-                      </span>
-                      <span style={{ color: met ? "rgba(245,237,224,0.8)" : "#ffcccc" }}>
-                        {req.label}
-                      </span>
-                    </li>
-                  )
-                })}
-              </ul>
-            )}
+            <AnimatePresence>
+              {showRequirements && (
+                <motion.ul
+                  key="requirements"
+                  style={styles.requirementsList}
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {PASSWORD_REQUIREMENTS.map((req, i) => {
+                    const met = req.met(password)
+                    return (
+                      <motion.li
+                        key={req.label}
+                        style={styles.requirementItem}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                      >
+                        <span style={{ color: met ? "#7dcd7d" : "#ffaaaa", fontSize: "14px", lineHeight: 1 }}>
+                          {met ? "✓" : "✗"}
+                        </span>
+                        <span style={{ color: met ? "rgba(245,237,224,0.8)" : "#ffcccc" }}>
+                          {req.label}
+                        </span>
+                      </motion.li>
+                    )
+                  })}
+                </motion.ul>
+              )}
+            </AnimatePresence>
 
-            <button style={styles.enterBtn} onClick={handleSubmit}>
+            <motion.button
+              style={styles.enterBtn}
+              onClick={handleSubmit}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.05, filter: "brightness(1.12)" }}
+              whileTap={{ scale: 0.96 }}
+            >
               Create Account
-            </button>
+            </motion.button>
 
-            {submitError && <p style={styles.fieldError}>{submitError}</p>}
+            <AnimatePresence>
+              {submitError && (
+                <motion.p
+                  key="submit-err"
+                  style={styles.fieldError}
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {submitError}
+                </motion.p>
+              )}
+            </AnimatePresence>
 
             <hr style={styles.divider} />
-            <button style={styles.loginBtn} onClick={() => navigate("/login")}>
+
+            <motion.button
+              style={styles.loginBtn}
+              onClick={() => navigate("/login")}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.48 }}
+              whileHover={{ scale: 1.02, filter: "brightness(1.08)" }}
+              whileTap={{ scale: 0.97 }}
+            >
               Already have an account? Log in
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
+
       </div>
     </div>
   )

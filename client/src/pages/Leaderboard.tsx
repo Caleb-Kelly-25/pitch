@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { motion } from "motion/react"
 import TopBar from "../components/TopBar"
 import { useAuth } from "../features/auth/useAuth"
 import { fetchLeaderboard, type LeaderboardEntry, type LeaderboardPage } from "../features/profile/profileService"
@@ -115,16 +116,20 @@ const styles: Record<string, React.CSSProperties> = {
   },
 }
 
-function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number }) {
+function LeaderboardRow({ entry, rank, index }: { entry: LeaderboardEntry; rank: number; index: number }) {
   return (
-    <tr>
+    <motion.tr
+      initial={{ opacity: 0, x: -12 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.03 }}
+    >
       <td style={{ ...styles.td, ...styles.rank }}>{rank}</td>
       <td style={styles.td}>{entry.username}</td>
       <td style={styles.tdRight}>{entry.gamesWon}<span style={{ opacity: 0.45, fontWeight: 400 }}>/{entry.gamesCompleted}</span></td>
       <td style={styles.tdRight}>{pct(entry.gamesWon, entry.gamesCompleted)}</td>
       <td style={styles.tdRight}>{pct(entry.tricksWon, entry.tricksPlayed)}</td>
       <td style={styles.tdRight}>{pct(entry.bidsWon, entry.bidsPlayed)}</td>
-    </tr>
+    </motion.tr>
   )
 }
 
@@ -153,13 +158,26 @@ export default function Leaderboard() {
     <div style={styles.page}>
       <TopBar variant="withBackBtn" />
       <div style={styles.body}>
-        <div style={styles.title}>Leaderboard</div>
-        <div style={styles.subtitle}>Ranked by games won · all-time</div>
+
+        <motion.div
+          style={styles.title}
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          Leaderboard
+        </motion.div>
+        <motion.div
+          style={styles.subtitle}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.45 }}
+          transition={{ duration: 0.4, delay: 0.08 }}
+        >
+          Ranked by games won · all-time
+        </motion.div>
 
         {error && <div style={{ ...styles.empty, color: "#e07777" }}>{error}</div>}
-
         {!error && loading && <div style={styles.empty}>Loading…</div>}
-
         {!error && !loading && data && data.entries.length === 0 && (
           <div style={styles.empty}>No games played yet. Be the first!</div>
         )}
@@ -179,30 +197,39 @@ export default function Leaderboard() {
               </thead>
               <tbody>
                 {data.entries.map((entry, i) => (
-                  <LeaderboardRow key={entry.userId} entry={entry} rank={offset + i + 1} />
+                  <LeaderboardRow key={entry.userId} entry={entry} rank={offset + i + 1} index={i} />
                 ))}
               </tbody>
             </table>
 
-            <div style={styles.pagination}>
-              <button
+            <motion.div
+              style={styles.pagination}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <motion.button
                 style={page <= 1 ? styles.pageBtnDisabled : styles.pageBtn}
                 disabled={page <= 1}
                 onClick={() => setPage(p => p - 1)}
+                whileHover={page > 1 ? { scale: 1.05 } : {}}
+                whileTap={page > 1 ? { scale: 0.95 } : {}}
               >
                 ← Prev
-              </button>
+              </motion.button>
               <span style={{ opacity: 0.55, fontSize: "0.85rem" }}>
                 Page {page} of {totalPages}
               </span>
-              <button
+              <motion.button
                 style={page >= totalPages ? styles.pageBtnDisabled : styles.pageBtn}
                 disabled={page >= totalPages}
                 onClick={() => setPage(p => p + 1)}
+                whileHover={page < totalPages ? { scale: 1.05 } : {}}
+                whileTap={page < totalPages ? { scale: 0.95 } : {}}
               >
                 Next →
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           </>
         )}
       </div>

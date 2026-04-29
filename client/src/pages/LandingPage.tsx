@@ -1,9 +1,11 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router"
+import { motion } from "motion/react"
 import { useAuth } from "../features/auth/useAuth"
 import { connectSocket } from "../lib/socket"
 import cardsLogo from "../assets/5_card_logo.png"
 import TopBar from "../components/TopBar"
+import AmbientMusic from "../components/AmbientMusic"
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
@@ -44,7 +46,7 @@ const styles: Record<string, React.CSSProperties> = {
   cardsImage: {
     width: "clamp(280px, 40vw, 500px)",
     height: "auto",
-    objectFit: "contain",
+    objectFit: "contain" as const,
   },
   leftSection: {
     flex: 1,
@@ -85,6 +87,8 @@ const styles: Record<string, React.CSSProperties> = {
   },
 }
 
+const ease = { duration: 0.48, ease: "easeOut" } as const
+
 export default function LandingPage() {
   const { token } = useAuth()
   const navigate = useNavigate()
@@ -96,26 +100,77 @@ export default function LandingPage() {
 
   return (
     <div style={styles.wrapper}>
+      <AmbientMusic />
       <TopBar variant="withoutBackBtn" />
       <div style={styles.main}>
-        <div style={styles.leftSection}>
-          <h1 style={styles.title}>Pitch</h1>
-          <img src={cardsLogo} alt="Playing cards" style={styles.cardsImage} />
-        </div>
-        <div style={styles.rightSection}>
-          <div style={styles.optionBlock}>
+
+        {/* Left — title + cards image */}
+        <motion.div
+          style={styles.leftSection}
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={ease}
+        >
+          <motion.h1
+            style={styles.title}
+            initial={{ y: -24, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ ...ease, delay: 0.08 }}
+          >
+            Pitch
+          </motion.h1>
+          <motion.img
+            src={cardsLogo}
+            alt="Playing cards"
+            style={styles.cardsImage}
+            initial={{ rotate: -6, opacity: 0, scale: 0.88 }}
+            animate={{ rotate: 0, opacity: 1, scale: 1 }}
+            transition={{ ...ease, delay: 0.16 }}
+          />
+        </motion.div>
+
+        {/* Right — Host / Join buttons */}
+        <motion.div
+          style={styles.rightSection}
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ ...ease, delay: 0.1 }}
+        >
+          <motion.div
+            style={styles.optionBlock}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...ease, delay: 0.22 }}
+          >
             <h1 style={styles.optionTitle}>Host</h1>
-            <button style={styles.button} onClick={() => navigate("/host")}>
+            <motion.button
+              style={styles.button}
+              onClick={() => navigate("/host")}
+              whileHover={{ scale: 1.05, filter: "brightness(1.12)" }}
+              whileTap={{ scale: 0.96 }}
+            >
               Create Game
-            </button>
-          </div>
-          <div style={styles.optionBlock}>
+            </motion.button>
+          </motion.div>
+
+          <motion.div
+            style={styles.optionBlock}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...ease, delay: 0.32 }}
+          >
             <h1 style={styles.optionTitle}>Join</h1>
-            <button style={styles.button} onClick={() => navigate("/join")}>
+            <motion.button
+              style={styles.button}
+              onClick={() => navigate("/join")}
+              whileHover={{ scale: 1.05, filter: "brightness(1.12)" }}
+              whileTap={{ scale: 0.96 }}
+            >
               Find Game
-            </button>
-          </div>
-        </div>
+            </motion.button>
+          </motion.div>
+        </motion.div>
+
       </div>
     </div>
   )

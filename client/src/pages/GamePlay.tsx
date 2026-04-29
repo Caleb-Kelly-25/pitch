@@ -1,4 +1,6 @@
+import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
+import { LayoutGroup, AnimatePresence, motion } from "motion/react"
 import TopBar from "../components/TopBar"
 import Table from "../components/Table"
 import HandOfCards from "../components/HandOfCards"
@@ -9,6 +11,60 @@ import { useAuth } from "../features/auth/useAuth"
 import { placeBid, playCard } from "../features/game/gameService"
 import type { CardProps } from "../components/Card"
 import type { CardModel } from "../features/game/gameTypes"
+import {EmberParticles, FloatingSuits } from "../components/Particles"
+import { useSounds } from "../hooks/useSounds"
+import AmbientMusic from "../components/AmbientMusic"
+
+// ── Sound engine ─────────────────────────────────────────────────────────────
+function SoundEngine() {
+  const game = useGame()
+  const { playCard, playTrickWin, playShuffle } = useSounds()
+
+  const prevPlayedCount = useRef(0)
+  const prevPhase = useRef(game.phase)
+  const prevTrickResult = useRef(game.trickResult)
+
+  // Card played: played-card count increases (ignore resets to 0)
+  useEffect(() => {
+    const n = game.trick.playedCards.length
+    if (n > 0 && n > prevPlayedCount.current) playCard()
+    prevPlayedCount.current = n
+  }, [game.trick.playedCards.length, playCard])
+
+  // Trick won: trickResult just became non-null
+  useEffect(() => {
+    if (game.trickResult && !prevTrickResult.current) playTrickWin()
+    prevTrickResult.current = game.trickResult
+  }, [game.trickResult, playTrickWin])
+
+  // New hand dealt: phase transitions into BIDDING
+  useEffect(() => {
+    if (game.phase === "BIDDING" && prevPhase.current !== "BIDDING") playShuffle()
+    prevPhase.current = game.phase
+  }, [game.phase, playShuffle])
+
+  return null
+}
+
+// ── Count-up animation hook ──────────────────────────────────────────────────
+function useCountUp(target: number, duration = 900) {
+  const [value, setValue] = useState(0)
+  useEffect(() => {
+    setValue(0)
+    if (target === 0) return
+    const start = performance.now()
+    let raf: number
+    function tick(now: number) {
+      const progress = Math.min((now - start) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setValue(Math.round(eased * target))
+      if (progress < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [target, duration])
+  return value
+}
 
 // ── Jick lookup ────────────────────────────────────────────────────────��─────
 const JICK_MAP: Record<string, { suit: string; value: number }> = {
@@ -35,7 +91,10 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
     padding: 0,
     fontFamily: "'Georgia', serif",
-    backgroundColor: "#7d2a2a",
+    background:
+  "linear-gradient(135deg, #5a1515 0%, #7d2a2a 35%, #3b0d0d 100%)",
+      backgroundSize: "300% 300%",
+      animation: "gradientShift 16s ease infinite",
     position: "fixed",
     top: 0,
     left: 0,
@@ -92,10 +151,10 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "rgba(0,0,0,0.55)",
     color: "#f5ede0",
-    fontSize: "0.85rem",
-    padding: "4px 16px",
+    fontSize: "1rem",
+    padding: "8px 20px",
     flexShrink: 0,
     gap: "16px",
     flexWrap: "wrap",
@@ -143,11 +202,22 @@ function ScoreStrip() {
   return (
     <div style={styles.scoreStrip}>
       <div style={styles.scoreTeam}>
-        <span style={{ fontWeight: "bold" }}>Us · {ourScore}</span>
+        <span style={{ fontWeight: "bold" }}>
+          Us ·{" "}
+          <motion.span
+            key={ourScore}
+            initial={{ scale: 1.5, color: "#f5c06a" }}
+            animate={{ scale: 1, color: "#f5ede0" }}
+            transition={{ type: "spring", stiffness: 340, damping: 22 }}
+            style={{ display: "inline-block" }}
+          >
+            {ourScore}
+          </motion.span>
+        </span>
         <span>{teamA.map(p => p.username).join(" & ")}</span>
       </div>
 
-      <div style={{ display: "flex", gap: "16px", fontSize: "0.8rem", opacity: 0.85 }}>
+      <div style={{ display: "flex", gap: "16px", fontSize: "0.9rem", opacity: 0.95 }}>
         {(game.phase === "PLAYING" || game.phase === "BLIND_CARDS") && (
           <span>Trick {game.trickNumber + 1}</span>
         )}
@@ -157,7 +227,18 @@ function ScoreStrip() {
       </div>
 
       <div style={styles.scoreTeam}>
-        <span style={{ fontWeight: "bold" }}>Them · {theirScore}</span>
+        <span style={{ fontWeight: "bold" }}>
+          Them ·{" "}
+          <motion.span
+            key={theirScore}
+            initial={{ scale: 1.5, color: "#f5c06a" }}
+            animate={{ scale: 1, color: "#f5ede0" }}
+            transition={{ type: "spring", stiffness: 340, damping: 22 }}
+            style={{ display: "inline-block" }}
+          >
+            {theirScore}
+          </motion.span>
+        </span>
         <span>{teamB.map(p => p.username).join(" & ")}</span>
       </div>
     </div>
@@ -182,7 +263,7 @@ function CardChip({ suit, value }: { suit: string; value: number }) {
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 1,
       backgroundColor: "rgba(0,0,0,0.3)", borderRadius: 5,
-      padding: "1px 5px", fontSize: 12, fontWeight: 700,
+      padding: "2px 6px", fontSize: 14, fontWeight: 700,
       color: SUIT_COLORS[suit] ?? "#f5ede0",
     }}>
       {SUIT_SYMBOLS[suit]}{cardLabel(value)}
@@ -202,11 +283,11 @@ function TakenCardsStrip() {
   return (
     <div style={{
       display: "flex", alignItems: "center", justifyContent: "space-between",
-      backgroundColor: "rgba(0,0,0,0.3)", color: "#f5ede0",
-      fontSize: "0.8rem", padding: "3px 16px", flexShrink: 0, gap: 8,
+      backgroundColor: "rgba(0,0,0,0.45)", color: "#f5ede0",
+      fontSize: "0.9rem", padding: "6px 20px", flexShrink: 0, gap: 8,
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, flexWrap: "wrap" }}>
-        <span style={{ opacity: 0.55, marginRight: 2 }}>Us</span>
+        <span style={{ opacity: 0.8, marginRight: 2 }}>Us</span>
         {ourCards.length === 0
           ? <span style={{ opacity: 0.3 }}>—</span>
           : ourCards.map((c, i) => <CardChip key={i} suit={c.suit} value={c.value} />)
@@ -218,7 +299,7 @@ function TakenCardsStrip() {
           ? <span style={{ opacity: 0.3 }}>—</span>
           : theirCards.map((c, i) => <CardChip key={i} suit={c.suit} value={c.value} />)
         }
-        <span style={{ opacity: 0.55, marginLeft: 2 }}>Them</span>
+        <span style={{ opacity: 0.8, marginLeft: 2 }}>Them</span>
       </div>
     </div>
   )
@@ -231,7 +312,12 @@ function GameTable() {
   const ourIndex = game.players.findIndex(p => p.id === auth.user?.id)
   const myId = auth.user?.id
   const isMyTurn = game.trick.playerTurn === myId
-  const trumpSuit = game.leadSuit // leadSuit holds trump during PLAYING
+  const trumpSuit = game.leadSuit
+  const activeTrump = (game.phase === "PLAYING" || game.phase === "BLIND_CARDS")
+    ? (game.leadSuit ?? game.trumpSuit)
+    : null
+
+  const playerAt = (offset: number) => game.players[(ourIndex + offset) % 4]
 
   const handCards: CardProps[] = game.hand.map(card => {
     const playable = game.phase === "PLAYING" && isMyTurn &&
@@ -246,6 +332,23 @@ function GameTable() {
     } as CardProps
   })
 
+  const turn = game.phase === "PLAYING" ? game.trick.playerTurn : null
+  const isActive = (idx: number) => turn === game.players[(ourIndex + idx) % 4]?.id
+
+  const nameLabel: React.CSSProperties = {
+    position: "absolute",
+    zIndex: 15,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    color: "rgba(245,237,224,0.75)",
+    fontSize: 11,
+    padding: "2px 8px",
+    borderRadius: 4,
+    fontFamily: "'Georgia', serif",
+    letterSpacing: 0.3,
+    pointerEvents: "none",
+    whiteSpace: "nowrap",
+  }
+
   return (
     <Table
       bottom={game.trick.playedCards.find(p => p.playerId === game.players[(0 + ourIndex) % 4]?.id)?.card}
@@ -253,67 +356,146 @@ function GameTable() {
       top={game.trick.playedCards.find(p => p.playerId === game.players[(2 + ourIndex) % 4]?.id)?.card}
       right={game.trick.playedCards.find(p => p.playerId === game.players[(3 + ourIndex) % 4]?.id)?.card}
     >
-      <PlayerSeat position="top">
-        <HandOfCards count={game.players[(ourIndex + 2) % 4]?.cardCount ?? 0} />
+      {/* Player name labels — non-rotated, positioned at each seat edge */}
+      <div style={{ ...nameLabel, bottom: "3%", left: "50%", transform: "translateX(-50%)", color: "#f5c06a" }}>You</div>
+      {playerAt(2)?.username && <div style={{ ...nameLabel, top: "3%", left: "50%", transform: "translateX(-50%)" }}>{playerAt(2)!.username}</div>}
+      {playerAt(1)?.username && <div style={{ ...nameLabel, left: "2%", top: "50%", transform: "translateY(-50%)" }}>{playerAt(1)!.username}</div>}
+      {playerAt(3)?.username && <div style={{ ...nameLabel, right: "2%", top: "50%", transform: "translateY(-50%)" }}>{playerAt(3)!.username}</div>}
+
+      {/* Trump suit badge — appears in the center gap of the 4-card grid */}
+      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 20, pointerEvents: "none" }}>
+        <AnimatePresence>
+          {activeTrump && (
+            <motion.span
+              key={activeTrump}
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 0.82 }}
+              exit={{ scale: 0.6, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 340, damping: 24 }}
+              style={{
+                display: "block",
+                fontSize: 48,
+                lineHeight: 1,
+                color: "#c49a2e",
+                textShadow:
+                  "0 -1px 1px rgba(0,0,0,0.45), 0 1px 0 rgba(220,185,80,0.3), 0 0 12px rgba(160,120,20,0.25)",
+              }}
+            >
+              {SUIT_SYMBOLS[activeTrump]}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <PlayerSeat position="top" isActive={isActive(2)}>
+        <HandOfCards count={playerAt(2)?.cardCount ?? 0} />
       </PlayerSeat>
-      <PlayerSeat position="left">
-        <HandOfCards count={game.players[(ourIndex + 1) % 4]?.cardCount ?? 0} />
+      <PlayerSeat position="left" isActive={isActive(1)}>
+        <HandOfCards count={playerAt(1)?.cardCount ?? 0} />
       </PlayerSeat>
-      <PlayerSeat position="right">
-        <HandOfCards count={game.players[(ourIndex + 3) % 4]?.cardCount ?? 0} />
+      <PlayerSeat position="right" isActive={isActive(3)}>
+        <HandOfCards count={playerAt(3)?.cardCount ?? 0} />
       </PlayerSeat>
-      <PlayerSeat position="bottom">
+      <PlayerSeat position="bottom" isActive={isActive(0)}>
         <HandOfCards
           count={game.hand.length}
           cards={handCards}
+          active={isActive(0)}
         />
       </PlayerSeat>
     </Table>
   )
 }
 
+// Sweep direction toward the winner's seat (relative to viewer's bottom position)
+const SWEEP_VECTORS = [
+  { x: 0,    y: 500  },  // 0 = us (bottom)
+  { x: -600, y: 0    },  // 1 = left
+  { x: 0,    y: -500 },  // 2 = top
+  { x: 600,  y: 0    },  // 3 = right
+]
+
 // ── Trick result overlay ─────────────────────────────────────────────────────
 function TrickResultOverlay() {
   const game = useGame()
   const auth = useAuth()
   const { trickResult } = game
-  if (!trickResult) return null
+  const [dismissing, setDismissing] = useState(false)
 
-  const winner = game.players.find(p => p.id === trickResult.winnerId)
   const myId = auth.user?.id
+  const myIndex = game.players.findIndex(p => p.id === myId)
+  const winnerIndex = game.players.findIndex(p => p.id === trickResult?.winnerId)
+  const relPos = myIndex >= 0 && winnerIndex >= 0 ? (winnerIndex - myIndex + 4) % 4 : 0
+  const sweepVec = SWEEP_VECTORS[relPos]
+
+  // Auto-dismiss after 2s
+  useEffect(() => {
+    if (!trickResult || dismissing) return
+    const t = setTimeout(() => setDismissing(true), 2000)
+    return () => clearTimeout(t)
+  }, [trickResult, dismissing])
+
+  // After sweep animation completes, confirm
+  useEffect(() => {
+    if (!dismissing) return
+    const t = setTimeout(() => { game.confirmOverlay(); setDismissing(false) }, 450)
+    return () => clearTimeout(t)
+  }, [dismissing])
+
+  const winner = game.players.find(p => p.id === trickResult?.winnerId)
 
   return (
-    <div style={styles.trickOverlay}>
-      <div style={{ color: "gold", fontSize: "1.3rem", fontWeight: "bold", marginBottom: 12 }}>
-        {winner ? `${winner.id === myId ? "You win" : `${winner.username} wins`} the trick!` : "Trick complete"}
-      </div>
+    <AnimatePresence>
+      {trickResult && (
+        <motion.div
+          key="trick-overlay"
+          style={styles.trickOverlay}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: dismissing ? 0 : 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div style={{ color: "gold", fontSize: "1.3rem", fontWeight: "bold", marginBottom: 12 }}>
+            {winner ? `${winner.id === myId ? "You win" : `${winner.username} wins`} the trick!` : "Trick complete"}
+          </div>
 
-      {/* All four played cards */}
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", marginBottom: 12 }}>
-        {trickResult.playedCards.map(entry => {
-          const player = game.players.find(p => p.id === entry.playerId)
-          const isWinner = entry.playerId === trickResult.winnerId
-          return (
-            <div key={entry.playerId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-              <div style={{ transform: isWinner ? "scale(1.12)" : "scale(1)", filter: isWinner ? "drop-shadow(0 0 10px gold)" : "none", opacity: entry.card ? 1 : 0.35 }}>
-                {entry.card
-                  ? <Card suit={entry.card.suit} value={entry.card.value} />
-                  : <div style={{ width: 60, height: 84, borderRadius: 8, border: "2px dashed rgba(255,255,255,0.3)" }} />
-                }
-              </div>
-              <span style={{ color: isWinner ? "gold" : "rgba(255,255,255,0.7)", fontSize: 12 }}>
-                {player?.id === myId ? "You" : (player?.username ?? "?")}
-                {entry.card === null ? " (passed)" : ""}
-              </span>
-            </div>
-          )
-        })}
-      </div>
+          <motion.div
+            animate={dismissing
+              ? { x: sweepVec.x, y: sweepVec.y, opacity: 0 }
+              : { x: 0, y: 0, opacity: 1 }
+            }
+            transition={{ type: "spring", stiffness: 180, damping: 22 }}
+            style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", marginBottom: 12 }}
+          >
+            {trickResult.playedCards.map(entry => {
+              const player = game.players.find(p => p.id === entry.playerId)
+              const isWinner = entry.playerId === trickResult.winnerId
+              return (
+                <div key={entry.playerId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <motion.div
+                    animate={{ scale: isWinner ? 1.12 : 1 }}
+                    style={{ filter: isWinner ? "drop-shadow(0 0 10px gold)" : "none", opacity: entry.card ? 1 : 0.35 }}
+                  >
+                    {entry.card
+                      ? <Card suit={entry.card.suit} value={entry.card.value} />
+                      : <div style={{ width: 60, height: 84, borderRadius: 8, border: "2px dashed rgba(255,255,255,0.3)" }} />
+                    }
+                  </motion.div>
+                  <span style={{ color: isWinner ? "gold" : "rgba(255,255,255,0.7)", fontSize: 12 }}>
+                    {player?.id === myId ? "You" : (player?.username ?? "?")}
+                    {entry.card === null ? " (passed)" : ""}
+                  </span>
+                </div>
+              )
+            })}
+          </motion.div>
 
-      <button style={{ ...styles.button, fontSize: "1.1rem", padding: "10px 32px" }} onClick={game.confirmOverlay}>
-        OK
-      </button>
-    </div>
+          <button style={{ ...styles.button, fontSize: "1.1rem", padding: "10px 32px" }} onClick={() => setDismissing(true)}>
+            OK
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
 
@@ -327,19 +509,22 @@ function HandResultOverlay() {
   const game = useGame()
   const auth = useAuth()
   const { handResult } = game
-  if (!handResult) return null
 
   const myId = auth.user?.id
   const myIndex = game.players.findIndex(p => p.id === myId)
-  const ourCardsWon  = myIndex % 2 === 0 ? handResult.teamOneCardsWon : handResult.teamTwoCardsWon
-  const theirCardsWon = myIndex % 2 === 0 ? handResult.teamTwoCardsWon : handResult.teamOneCardsWon
-  const ourPts   = sumPoints(ourCardsWon)
-  const theirPts = sumPoints(theirCardsWon)
+  const ourCardsWon   = handResult ? (myIndex % 2 === 0 ? handResult.teamOneCardsWon : handResult.teamTwoCardsWon) : []
+  const theirCardsWon = handResult ? (myIndex % 2 === 0 ? handResult.teamTwoCardsWon : handResult.teamOneCardsWon) : []
+  const ourPtsTarget   = sumPoints(ourCardsWon)
+  const theirPtsTarget = sumPoints(theirCardsWon)
+  const ourPts   = useCountUp(ourPtsTarget)
+  const theirPts = useCountUp(theirPtsTarget)
+
+  if (!handResult) return null
 
   const bidWinnerIndex = game.players.findIndex(p => p.id === handResult.bidWinnerId)
   const bidderOnOurTeam = myIndex >= 0 && bidWinnerIndex >= 0 && myIndex % 2 === bidWinnerIndex % 2
-  const bidderPts = bidderOnOurTeam ? ourPts : theirPts
-  const bidMade = bidderPts >= handResult.bidAmount
+  const bidderPtsTarget = bidderOnOurTeam ? ourPtsTarget : theirPtsTarget
+  const bidMade = bidderPtsTarget >= handResult.bidAmount
 
   const teamLabel = (pts: number, isUs: boolean) => {
     const teamPlayers = game.players.filter((_, i) => isUs ? i % 2 === myIndex % 2 : i % 2 !== myIndex % 2)
@@ -662,14 +847,65 @@ function PhaseDisplay() {
 
 // ── Root component ────────────────────────────────────────────────────────────
 export default function GamePlay() {
+
   return (
-    <div style={styles.wrapper}>
-      <TopBar variant="gameplay" />
-      <ScoreStrip />
-      <TakenCardsStrip />
-      <PhaseDisplay />
-      <TrickResultOverlay />
-      <HandResultOverlay />
-    </div>
+    <>
+    <style>{`
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes floatSuit {
+      0% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.12;
+      }
+      90% {
+        opacity: 0.12;
+      }
+      100% {
+        transform: translateY(-120vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes emberFloat {
+      0% {
+        transform: translateY(0px);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translateY(-120vh);
+        opacity: 0;
+      }
+    }
+
+    
+  `}</style>
+    <LayoutGroup id="game-cards">
+      <div style={styles.wrapper}>
+        <SoundEngine />
+        <AmbientMusic />
+        <FloatingSuits />
+        <EmberParticles />
+        <TopBar variant="gameplay" />
+        <ScoreStrip />
+        <TakenCardsStrip />
+        
+        <PhaseDisplay />
+
+        <TrickResultOverlay />
+        <HandResultOverlay />
+      </div>
+    </LayoutGroup>
+    </>
   )
 }

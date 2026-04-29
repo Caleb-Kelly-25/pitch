@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { motion } from "motion/react"
 import { fetchProfile, type UserProfileData } from "./profileService"
 
 const overlay: React.CSSProperties = {
@@ -87,9 +88,30 @@ export default function ProfileModal({ userId, token, onClose }: Props) {
   }, [userId, token])
 
   return (
-    <div style={overlay} onClick={onClose}>
-      <div style={card} onClick={e => e.stopPropagation()}>
-        <button style={closeBtn} onClick={onClose}>✕</button>
+    <motion.div
+      style={overlay}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      onClick={onClose}
+    >
+      <motion.div
+        style={card}
+        initial={{ scale: 0.88, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.88, opacity: 0, y: 20 }}
+        transition={{ type: "spring", stiffness: 320, damping: 26 }}
+        onClick={e => e.stopPropagation()}
+      >
+        <motion.button
+          style={closeBtn}
+          onClick={onClose}
+          whileHover={{ scale: 1.2, color: "rgba(245,237,224,0.9)" }}
+          whileTap={{ scale: 0.9 }}
+        >
+          ✕
+        </motion.button>
 
         {error && (
           <div style={{ color: "#e07777", textAlign: "center" }}>{error}</div>
@@ -101,50 +123,81 @@ export default function ProfileModal({ userId, token, onClose }: Props) {
 
         {profile && (
           <>
-            <div style={{ textAlign: "center" }}>
+            <motion.div
+              style={{ textAlign: "center" }}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+            >
               <div style={{ fontSize: "1.4rem", fontWeight: "bold" }}>{profile.username}</div>
               <div style={{ fontSize: "0.8rem", opacity: 0.4, marginTop: 2 }}>Player Profile</div>
-            </div>
+            </motion.div>
 
-            <div>
-              <div style={{ fontSize: "0.7rem", opacity: 0.4, letterSpacing: 1, marginBottom: 8 }}>GAMES</div>
-              <StatLine label="Games Played"  value={profile.gamesCompleted} />
-              <StatLine label="Games Won"     value={profile.gamesWon} />
-              <StatLine label="Win Rate"      value={pct(profile.gamesWon, profile.gamesCompleted)} />
-            </div>
+            {[
+              {
+                label: "GAMES",
+                delay: 0.1,
+                rows: [
+                  { label: "Games Played", value: profile.gamesCompleted },
+                  { label: "Games Won",    value: profile.gamesWon },
+                  { label: "Win Rate",     value: pct(profile.gamesWon, profile.gamesCompleted) },
+                ],
+              },
+              {
+                label: "TRICKS",
+                delay: 0.16,
+                rows: [
+                  { label: "Tricks Played", value: profile.tricksPlayed },
+                  { label: "Tricks Won",    value: profile.tricksWon },
+                  { label: "Win Rate",      value: pct(profile.tricksWon, profile.tricksPlayed) },
+                ],
+              },
+              {
+                label: "BIDDING",
+                delay: 0.22,
+                rows: [
+                  { label: "Bids Made", value: profile.bidsPlayed },
+                  { label: "Bids Won",  value: profile.bidsWon },
+                  { label: "Win Rate",  value: pct(profile.bidsWon, profile.bidsPlayed) },
+                ],
+              },
+              {
+                label: "CARDS",
+                delay: 0.28,
+                rows: [
+                  { label: "Cards Played", value: profile.cardsPlayed },
+                ],
+              },
+            ].map(section => (
+              <motion.div
+                key={section.label}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: section.delay }}
+              >
+                <div style={{ fontSize: "0.7rem", opacity: 0.4, letterSpacing: 1, marginBottom: 8 }}>{section.label}</div>
+                {section.rows.map(r => <StatLine key={r.label} label={r.label} value={r.value} />)}
+              </motion.div>
+            ))}
 
-            <div>
-              <div style={{ fontSize: "0.7rem", opacity: 0.4, letterSpacing: 1, marginBottom: 8 }}>TRICKS</div>
-              <StatLine label="Tricks Played" value={profile.tricksPlayed} />
-              <StatLine label="Tricks Won"    value={profile.tricksWon} />
-              <StatLine label="Win Rate"      value={pct(profile.tricksWon, profile.tricksPlayed)} />
-            </div>
-
-            <div>
-              <div style={{ fontSize: "0.7rem", opacity: 0.4, letterSpacing: 1, marginBottom: 8 }}>BIDDING</div>
-              <StatLine label="Bids Made"     value={profile.bidsPlayed} />
-              <StatLine label="Bids Won"      value={profile.bidsWon} />
-              <StatLine label="Win Rate"      value={pct(profile.bidsWon, profile.bidsPlayed)} />
-            </div>
-
-            <div>
-              <div style={{ fontSize: "0.7rem", opacity: 0.4, letterSpacing: 1, marginBottom: 8 }}>CARDS</div>
-              <StatLine label="Cards Played"  value={profile.cardsPlayed} />
-            </div>
-
-            <button
+            <motion.button
               style={{
                 background: "none", border: "1px solid rgba(245,237,224,0.2)",
                 borderRadius: 6, color: "#f5ede0", cursor: "pointer",
                 padding: "7px 0", fontSize: "0.85rem", opacity: 0.7,
               }}
               onClick={() => { onClose(); navigate("/leaderboard") }}
+              whileHover={{ scale: 1.02, opacity: 1 }}
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.7 }}
+              transition={{ delay: 0.34 }}
             >
               View Leaderboard →
-            </button>
+            </motion.button>
           </>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

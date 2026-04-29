@@ -27,7 +27,7 @@ function awardPointCardsToOpponents(
 
     for (const card of cards) {
         const pts = BLIND_CARD_POINTS[card.value] ?? 0;
-        if (pts === 0) continue;
+        if (pts === 0 || !Card.isSuited(card, hand.trumpSuit)) continue;
         if (opponentTeamIsOne) {
             playingHand.teamOneHandPoints += pts;
             playingHand.teamOneCardsWon.push(card);

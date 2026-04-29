@@ -29,10 +29,10 @@ import createRouter                     from "../../adapters/rest/CreateRouter";
 
 const GAME_CODE = "E2ETEST";
 const USERS = [
-    { username: "alice", password: "pw1" },
-    { username: "bob",   password: "pw2" },
-    { username: "carol", password: "pw3" },
-    { username: "dave",  password: "pw4" },
+    { username: "alice123", password: "Password1!" },
+    { username: "bob12345", password: "Password2@" },
+    { username: "carol123", password: "Password3#" },
+    { username: "dave1234", password: "Password4$" },
 ];
 
 // ── server builder ────────────────────────────────────────────────────────────

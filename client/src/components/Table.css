@@ -3,7 +3,7 @@
   width: 100%;
   flex: 1;
   min-height: 0;
-  background: #7a342c;
+  background: "transparent";
   overflow: hidden;
 }
 

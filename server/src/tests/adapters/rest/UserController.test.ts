@@ -100,24 +100,31 @@ describe("UserController.signup", () => {
         expect(res.status).toHaveBeenCalledWith(400);
     });
 
+    it("returns 400 when credentials fail validation rules", async () => {
+        const ctrl = new UserController(makeUserService() as any, makeAuthAdapter() as any);
+        const res = makeRes();
+        await ctrl.signup(makeReq({ username: "usr", password: "pw" }), res);
+        expect(res.status).toHaveBeenCalledWith(400);
+    });
+
     it("returns 500 when createUser returns null", async () => {
         const ctrl = new UserController(
             makeUserService({ createUser: jest.fn().mockResolvedValue(null) }) as any,
             makeAuthAdapter() as any,
         );
         const res = makeRes();
-        await ctrl.signup(makeReq({ username: "newuser", password: "pw" }), res);
+        await ctrl.signup(makeReq({ username: "newuser1", password: "Password1!" }), res);
         expect(res.status).toHaveBeenCalledWith(500);
     });
 
     it("returns 201 with a token on successful signup", async () => {
-        const newUser = new User("u2", "newuser", "newuser", "hash", null, null);
+        const newUser = new User("u2", "newuser1", "newuser1", "hash", null, null);
         const ctrl = new UserController(
             makeUserService({ createUser: jest.fn().mockResolvedValue(newUser) }) as any,
             makeAuthAdapter() as any,
         );
         const res = makeRes();
-        await ctrl.signup(makeReq({ username: "newuser", password: "pw" }), res);
+        await ctrl.signup(makeReq({ username: "newuser1", password: "Password1!" }), res);
         expect(res.status).toHaveBeenCalledWith(201);
         expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ token: "signed-token" }));
     });
