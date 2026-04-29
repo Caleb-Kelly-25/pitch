@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { motion } from "motion/react"
 import TopBar from "../components/TopBar"
 import { useAuth } from "../features/auth/useAuth"
@@ -135,7 +134,6 @@ function LeaderboardRow({ entry, rank, index }: { entry: LeaderboardEntry; rank:
 
 export default function Leaderboard() {
   const { token } = useAuth()
-  const navigate = useNavigate()
   const [data, setData] = useState<LeaderboardPage | null>(null)
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
