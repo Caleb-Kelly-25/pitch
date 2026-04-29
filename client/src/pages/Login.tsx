@@ -132,7 +132,6 @@ const styles: Record<string, React.CSSProperties> = {
 }
 
 const ease = { duration: 0.45, ease: "easeOut" } as const
-const spring = { type: "spring", stiffness: 380, damping: 24 } as const
 
 export default function Login() {
   const [username, setUsername] = useState("")
