@@ -1,8 +1,10 @@
 {
   "permissions": {
     "allow": [
+      "Bash(npx jest *)",
       "Bash(npx tsc *)",
-      "Bash(npx jest *)"
+      "Bash(xargs grep *)",
+      "Bash(grep -E \"^[^/]*/\\(app|index|server|main\\)\\\\.ts$\")"
     ]
   }
 }

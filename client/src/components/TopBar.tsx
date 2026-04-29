@@ -1,4 +1,7 @@
+import { useState } from "react"
 import { X, Info, ChartNoAxesColumnIncreasing } from "lucide-react"
+import { useAuth } from "../features/auth/useAuth"
+import ProfileModal from "../features/profile/ProfileModal"
 
 const styles: Record<string, React.CSSProperties> = {
   topBar: {
@@ -22,6 +25,25 @@ function infoBar() {
 
 type TopBarVariant = "empty" | "withBackBtn" | "withoutBackBtn" | "gameplay"
 
+function StatsIcon({ pushRight = false }: { pushRight?: boolean }) {
+  const [open, setOpen] = useState(false)
+  const { user, token } = useAuth()
+
+  return (
+    <>
+      <ChartNoAxesColumnIncreasing
+        size={45}
+        color="#3d2b24"
+        style={{ cursor: "pointer", ...(pushRight ? { marginLeft: "auto" } : {}) }}
+        onClick={() => setOpen(true)}
+      />
+      {open && user && token && (
+        <ProfileModal userId={user.id} token={token} onClose={() => setOpen(false)} />
+      )}
+    </>
+  )
+}
+
 export default function TopBar({ variant }: { variant: TopBarVariant }) {
   if (variant === "empty") {
     return (
@@ -40,11 +62,7 @@ export default function TopBar({ variant }: { variant: TopBarVariant }) {
           style={{ cursor: "pointer" }}
           onClick={() => window.history.back()}
         />
-        <ChartNoAxesColumnIncreasing
-          size={45}
-          color="#3d2b24"
-          style={{ cursor: "pointer", marginLeft: "auto" }}
-        />
+        <StatsIcon pushRight />
         <Info
           size={45}
           color="#3d2b24"
@@ -64,11 +82,7 @@ export default function TopBar({ variant }: { variant: TopBarVariant }) {
           style={{ cursor: "pointer" }}
           onClick={wantToLeave}
         />
-        <ChartNoAxesColumnIncreasing
-          size={45}
-          color="#3d2b24"
-          style={{ cursor: "pointer", marginLeft: "auto" }}
-        />
+        <StatsIcon pushRight />
         <Info
           size={45}
           color="#3d2b24"
@@ -82,11 +96,7 @@ export default function TopBar({ variant }: { variant: TopBarVariant }) {
   // withoutBackBtn (default)
   return (
     <div style={styles.topBar}>
-      <ChartNoAxesColumnIncreasing
-        size={45}
-        color="#3d2b24"
-        style={{ cursor: "pointer", marginLeft: "auto" }}
-      />
+      <StatsIcon pushRight />
       <Info
         size={45}
         color="#3d2b24"

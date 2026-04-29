@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { motion, AnimatePresence } from "motion/react"
 import cardsLogo from "../assets/5_card_logo.png"
 import { useAuth } from "../features/auth/useAuth"
 import TopBar from "../components/TopBar"
@@ -51,7 +52,7 @@ const styles: Record<string, React.CSSProperties> = {
   cardsImage: {
     width: "clamp(280px, 40vw, 500px)",
     height: "auto",
-    objectFit: "contain",
+    objectFit: "contain" as const,
   },
   rightSection: {
     width: "clamp(320px, 50vw, 440px)",
@@ -87,8 +88,8 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "16px",
     fontFamily: "'Georgia', serif",
     outline: "none",
-    boxSizing: "border-box",
-    textAlign: "center",
+    boxSizing: "border-box" as const,
+    textAlign: "center" as const,
     letterSpacing: "0.3px",
   },
   enterBtn: {
@@ -102,7 +103,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
     letterSpacing: "0.5px",
     boxShadow: "inset 0 -3px 6px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.3)",
-    alignSelf: "center",
+    alignSelf: "center" as const,
     width: "160px",
   },
   divider: {
@@ -125,10 +126,13 @@ const styles: Record<string, React.CSSProperties> = {
   error: {
     color: "#ffcccc",
     fontSize: "14px",
-    textAlign: "center",
+    textAlign: "center" as const,
     margin: 0,
   },
 }
+
+const ease = { duration: 0.45, ease: "easeOut" } as const
+const spring = { type: "spring", stiffness: 380, damping: 24 } as const
 
 export default function Login() {
   const [username, setUsername] = useState("")
@@ -168,38 +172,114 @@ export default function Login() {
     <div style={styles.wrapper}>
       <TopBar variant="empty" />
       <div style={styles.main}>
-        <div style={styles.leftSection}>
-          <h1 style={styles.title}>Pitch</h1>
-          <img src={cardsLogo} alt="Playing cards" style={styles.cardsImage} />
-        </div>
-        <div style={styles.rightSection}>
+
+        {/* Left — title + cards image */}
+        <motion.div
+          style={styles.leftSection}
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={ease}
+        >
+          <motion.h1
+            style={styles.title}
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ ...ease, delay: 0.08 }}
+          >
+            Pitch
+          </motion.h1>
+          <motion.img
+            src={cardsLogo}
+            alt="Playing cards"
+            style={styles.cardsImage}
+            initial={{ rotate: -6, opacity: 0, scale: 0.88 }}
+            animate={{ rotate: 0, opacity: 1, scale: 1 }}
+            transition={{ ...ease, delay: 0.16 }}
+          />
+        </motion.div>
+
+        {/* Right — login form */}
+        <motion.div
+          style={styles.rightSection}
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ ...ease, delay: 0.08 }}
+        >
           <div style={styles.loginBox}>
-            <h2 style={styles.loginTitle}>Log In</h2>
-            <input
+            <motion.h2
+              style={styles.loginTitle}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.22 }}
+            >
+              Log In
+            </motion.h2>
+
+            <motion.input
               style={styles.input}
               placeholder="Username/Email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28 }}
             />
-            <input
+            <motion.input
               type="password"
               style={styles.input}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.34 }}
             />
-            <button style={styles.enterBtn} onClick={handleSubmit}>
+
+            <motion.button
+              style={styles.enterBtn}
+              onClick={handleSubmit}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.05, filter: "brightness(1.12)" }}
+              whileTap={{ scale: 0.96 }}
+            >
               Enter
-            </button>
-            {error && <p style={styles.error}>{error}</p>}
+            </motion.button>
+
+            <AnimatePresence>
+              {error && (
+                <motion.p
+                  key="error"
+                  style={styles.error}
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {error}
+                </motion.p>
+              )}
+            </AnimatePresence>
+
             <hr style={styles.divider} />
-            <button style={styles.signupBtn} onClick={() => navigate("/signup")}>
+
+            <motion.button
+              style={styles.signupBtn}
+              onClick={() => navigate("/signup")}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.48 }}
+              whileHover={{ scale: 1.02, filter: "brightness(1.08)" }}
+              whileTap={{ scale: 0.97 }}
+            >
               New User? Sign up
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
+
       </div>
     </div>
   )

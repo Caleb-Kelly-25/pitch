@@ -53,4 +53,8 @@ export class Card {
 
         return filtered;
     }
+
+    static isSuited(card: Card, suit: Suit): boolean {
+        return (card.suit === suit) || (card.equals(Card.jick(suit)) || (card.value === Value.JOKER));
+    }
 }

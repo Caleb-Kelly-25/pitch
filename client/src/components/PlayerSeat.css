@@ -34,3 +34,27 @@
   top: 50%;
   transform: translateY(-50%) translateX(35%) rotate(-90deg);
 }
+
+/* Turn indicator — pulsing ring around the active player's hand */
+.player-seat.active::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 16px;
+  border: 2px solid rgba(245, 192, 106, 0.85);
+  box-shadow: 0 0 16px 4px rgba(245, 192, 106, 0.45);
+  pointer-events: none;
+  animation: seat-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes seat-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 16px 4px rgba(245, 192, 106, 0.45); }
+  50%       { opacity: 0.55; box-shadow: 0 0 28px 8px rgba(245, 192, 106, 0.25); }
+}
+
+/* Shorten the glow ring vertically so it doesn't encroach on the playing area */
+.player-seat.top.active::after,
+.player-seat.bottom.active::after {
+  top: -3px;
+  bottom: -3px;
+}

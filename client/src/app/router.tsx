@@ -5,6 +5,7 @@ import LandingPage from "../pages/LandingPage"
 import Host from "../pages/Host"
 import JoinGame from "../pages/JoinGame"
 import GamePlay from "../pages/GamePlay"
+import Leaderboard from "../pages/Leaderboard"
 import ProtectedRoute from "../components/ProtectedRoute"
 
 export default function Router() {
@@ -42,6 +43,14 @@ export default function Router() {
           element={
             <ProtectedRoute>
               <GamePlay />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leaderboard"
+          element={
+            <ProtectedRoute>
+              <Leaderboard />
             </ProtectedRoute>
           }
         />

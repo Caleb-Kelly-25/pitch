@@ -38,6 +38,7 @@ export interface BlindCardsHand {
     trumpSuit: Suit;
     blindCards: Card[];
     currentBlindCard: Card | null;
+    discardedCards: Card[];
 }
 
 export interface PlayingHand {
@@ -140,6 +141,7 @@ export function startBlindCards(hand: TrumpSelectHand, trumpSuit: Suit, players:
         trumpSuit,
         blindCards: blindDeck,
         currentBlindCard,
+        discardedCards: [],
     };
 }
 
@@ -207,6 +209,7 @@ export function handCycleFromJSON(data: any): HandCycle {
                 currentBlindCard: data.currentBlindCard
                     ? new Card(data.currentBlindCard.suit, data.currentBlindCard.value)
                     : null,
+                discardedCards: (data.discardedCards ?? []).map((c: any) => new Card(c.suit, c.value)),
             };
 
         case 'playing':
