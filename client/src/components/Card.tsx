@@ -3,6 +3,34 @@ import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { Heart, Diamond, Club, Spade } from "lucide-react";
 import JokerImage from "../assets/Bob_Headshot.jpg";
 import BackOfCard from "../assets/BackOfCard.png";
+import _KH  from "../assets/KH.png";
+import _QH  from "../assets/QH.png";
+import _KD  from "../assets/KD.png";
+import _QD  from "../assets/QD.png";
+import _AD  from "../assets/AD.png";
+import _BJo from "../assets/BJo.png";
+import _RJo from "../assets/RJo.png";
+
+// Map "value-SUIT" → image URL for cards that have a custom asset.
+// Jokers keyed as "joker-black" / "joker-red".
+const CARD_IMAGE_MAP: Record<string, string> = {
+  "14-HEARTS":   _KH,
+  "13-HEARTS":   _QH,
+  "14-DIAMONDS": _KD,
+  "13-DIAMONDS": _QD,
+  "1-DIAMONDS":  _AD,
+  "joker-black": _BJo,
+  "joker-red":   _RJo,
+};
+
+function getCardImage(value: number, suit?: Suit): string | null {
+  if (value === 11) {
+    // Use suit colour to choose joker image
+    const isRed = suit === "HEARTS" || suit === "DIAMONDS";
+    return isRed ? CARD_IMAGE_MAP["joker-red"] : CARD_IMAGE_MAP["joker-black"];
+  }
+  return CARD_IMAGE_MAP[`${value}-${suit}`] ?? null;
+}
 
 type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
 
@@ -120,6 +148,19 @@ export default function Card({
   }
 
   if (value === undefined) return null;
+
+  const customImg = getCardImage(value, suit);
+  if (customImg) {
+    return (
+      <motion.button {...sharedProps} style={{ ...sharedProps.style, padding: 0, overflow: "hidden" }}>
+        <img
+          src={customImg}
+          alt={suit ? `${value} of ${suit}` : "Joker"}
+          style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px" }}
+        />
+      </motion.button>
+    );
+  }
   const { display, isJoker } = resolveCard(value);
 
   if (isJoker) {
