@@ -1,0 +1,18 @@
+@keyframes gradientShift {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+@keyframes floatSuit {
+  0%   { transform: translateY(0px) rotate(0deg);   opacity: 0;    }
+  10%  { opacity: 0.12; }
+  90%  { opacity: 0.12; }
+  100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes emberFloat {
+  0%   { transform: translateY(0px);    opacity: 0;   }
+  15%  { opacity: 0.4; }
+  100% { transform: translateY(-120vh); opacity: 0;   }
+}
