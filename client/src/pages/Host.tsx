@@ -37,8 +37,8 @@ export default function Host() {
     setAddingBot(true)
     try {
       await addBot(gameCode, auth.token ?? "")
-    } catch (e) {
-      console.error("Failed to add bot:", e)
+    } catch {
+      // error surfaced via UI state
     } finally {
       setAddingBot(false)
     }
