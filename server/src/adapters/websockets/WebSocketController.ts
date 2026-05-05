@@ -23,7 +23,6 @@ export default class WebSocketController {
         this.wss.use((socket, next) => this.socketAuth(socket, next));
 
         this.wss.on("connection", (socket: Socket) => {
-            console.log("Socket connected!");
             this.registerSocketHandlers(socket);
         });
     }
@@ -41,7 +40,7 @@ export default class WebSocketController {
     }
 
     registerSocketHandlers(socket: Socket) {
-        socket.on("disconnect", () => console.log("Socket disconnected!"));
+        socket.on("disconnect", () => {});
         socket.on("PlaceBidEvent", (data) => this.onPlaceBidEvent(socket.user, data));
         socket.on("PlayCardEvent", (data) => this.onPlayCardEvent(socket.user, data));
         socket.on("PickSuitEvent", (data) => this.onPickSuitEvent(socket.user, data));

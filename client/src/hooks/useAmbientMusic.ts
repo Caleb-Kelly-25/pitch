@@ -1,68 +1,68 @@
 import { useRef, useCallback, useState } from "react"
 
-// ── Three-section jazz form ──────────────────────────────────────────────────
+// ── Three-section parlour form in C major ────────────────────────────────────
 //
-//  A  ii-V-I-vi  (the standard turnaround)
-//  B  iii-VI7alt-IVmaj9-bVII13  (modal colour, borrowed chords)
-//  BR bII7-Imaj9-V7/ii-ii9  (chromatic bridge back to top)
+//  A  I-V-vi-IV   (the bright classic turnaround)
+//  B  IV-I-ii-V9  (warm walk with an open dominant)
+//  BR iii-IV-I-V7sus4  (sunny stroll home, suspension before bar 1)
 //
-// Voicings: root + 3/5/7 + one extension, lower register.
+// Voicings: root + 3/5/7 in the mid register — no ominous bass rumble.
 // Frequencies in Hz, sorted ascending per chord.
 
 const CHORDS: number[][] = [
   // ── A SECTION ──────────────────────────────────────────────────────────────
-  // 1. Dm9   D2 F2 A2 C3 E3   (root 3 5 b7 9)
-  [73.42, 87.31, 110.00, 130.81, 164.81],
-  // 2. G13   G2 B2 E3 F3 A3   (root 3 13 b7 9 — B/F tritone = dominant tension)
-  [98.00, 123.47, 164.81, 174.61, 220.00],
-  // 3. Cmaj9 C2 G2 B2 D3 E3   (root 5 maj7 9 3)
+  // 1. Cmaj9   C2 G2 B2 D3 E3   (home — open, bright)
   [65.41, 98.00, 123.47, 146.83, 164.81],
-  // 4. Am11  A1 E2 G2 C3 D3   (root 5 b7 b3 11)
-  [55.00, 82.41, 98.00, 130.81, 146.83],
+  // 2. G7      G2 B2 D3 F3      (dominant — classic bright tension)
+  [98.00, 123.47, 146.83, 174.61],
+  // 3. Am7     A2 C3 E3 G3      (relative minor — gentle, not dark)
+  [110.00, 130.81, 164.81, 196.00],
+  // 4. Fmaj7   F2 A2 C3 E3      (subdominant — warm lift)
+  [87.31, 110.00, 130.81, 164.81],
 
   // ── B SECTION ──────────────────────────────────────────────────────────────
-  // 5. Em7   E2 G2 B2 D3       (iii7 — brighter tonic colour)
-  [82.41, 98.00, 123.47, 146.83],
-  // 6. A7b9  A2 C#3 E3 G3 Bb3  (VI7alt — altered dominant, maximum colour)
-  [110.00, 138.59, 164.81, 196.00, 233.08],
-  // 7. Fmaj9 F2 A2 C3 E3 G3   (IVmaj9 — warm, gospel-adjacent)
+  // 5. Fmaj9   F2 A2 C3 E3 G3   (subdominant with colour, brighter)
   [87.31, 110.00, 130.81, 164.81, 196.00],
-  // 8. Bb13  Bb1 D2 F2 Ab2 G3  (bVII13 — Mixolydian blue note)
-  [58.27, 73.42, 87.31, 103.83, 196.00],
+  // 6. Cmaj7   C2 E2 G2 B2      (lower tonic voicing — settled warmth)
+  [65.41, 82.41, 98.00, 123.47],
+  // 7. Dm7     D2 F2 A2 C3      (supertonic — light, not dark)
+  [73.42, 87.31, 110.00, 130.81],
+  // 8. G9      G2 B2 D3 A3      (dominant 9 — more open than plain G7)
+  [98.00, 123.47, 146.83, 220.00],
 
   // ── BRIDGE ─────────────────────────────────────────────────────────────────
-  // 9.  Db7   Db2 F2 Ab2 B2    (bII7 tritone-sub of G7 — peak tension)
-  [69.30, 87.31, 103.83, 123.47],
-  // 10. Cmaj9 C2 G2 B2 D3 E3   (resolution — same as bar 3, newly earned)
+  // 9.  Em7     E2 G2 B2 D3     (mediant — a brighter colour before IV)
+  [82.41, 98.00, 123.47, 146.83],
+  // 10. Fmaj7   F2 A2 C3 E3     (subdominant lift before home)
+  [87.31, 110.00, 130.81, 164.81],
+  // 11. Cmaj9   C2 G2 B2 D3 E3  (home again, earned)
   [65.41, 98.00, 123.47, 146.83, 164.81],
-  // 11. A7    A1 C#2 E2 G2     (V7/ii — secondary dominant, sets up the turn)
-  [55.00, 69.30, 82.41, 98.00],
-  // 12. Dm9   D2 F2 A2 C3 E3   (back to ii — seamlessly leads into bar 1)
-  [73.42, 87.31, 110.00, 130.81, 164.81],
+  // 12. G7sus4  G2 C3 D3 F3     (suspended dominant — breathe before bar 1)
+  [98.00, 130.81, 146.83, 174.61],
 ]
 
 // Melody note per chord (Hz) or null for a rest.
-// Plays as a quiet sine, an octave above the pad, 0.25s after chord onset.
+// Plays as a quiet sine 0.2s after chord onset — bright, singable, major key.
 const MELODY: (number | null)[] = [
-  329.63,  //  1. Dm9:   E4 — 9th, floats above
-  293.66,  //  2. G13:   D4 — suspension over the dominant
-  261.63,  //  3. Cmaj9: C4 — root lands, satisfied
-  null,    //  4. Am11:  rest — breathe
-  246.94,  //  5. Em7:   B3 — 5th, quiet and bright
-  220.00,  //  6. A7b9:  A3 — root, anchored over the tension
-  220.00,  //  7. Fmaj9: A3 — maj3rd of F, warm
-  null,    //  8. Bb13:  rest — chord is lush enough
-  null,    //  9. Db7:   rest — let the tritone sub speak
-  329.63,  // 10. Cmaj9: E4 — warmth of resolution, up an octave
-  277.18,  // 11. A7:    C#4 — major 3rd, bittersweet leading tone
-  293.66,  // 12. Dm9:   D4 — root, cycle closes
+  329.63,  //  1. Cmaj9:   E4 — bright 3rd, home
+  293.66,  //  2. G7:      D4 — 5th of G, step down
+  261.63,  //  3. Am7:     C4 — settle, smooth step
+  440.00,  //  4. Fmaj7:   A4 — sunny leap to 3rd of F
+  392.00,  //  5. Fmaj9:   G4 — 9th, floaty step down
+  329.63,  //  6. Cmaj7:   E4 — home again, step down
+  null,    //  7. Dm7:     rest — breathe
+  392.00,  //  8. G9:      G4 — root of G, restart after rest
+  329.63,  //  9. Em7:     E4 — root of Em (=3rd of C), gentle step
+  440.00,  // 10. Fmaj7:   A4 — sunny 3rd of F, leap up again
+  329.63,  // 11. Cmaj9:   E4 — resolve home
+  261.63,  // 12. G7sus4:  C4 — the sus4 note itself, sweet step down
 ]
 
 const CHORD_DUR  = 2.5   // seconds per chord (user-set)
-const ATTACK     = 0.25  // pad attack — quick, pianistic
-const RELEASE    = 1.0   // pad release length (starts at CHORD_DUR - RELEASE)
-const CROSSFADE  = 1.3   // next chord starts this many seconds before current ends
-const STRUM      = 0.06  // seconds between each note in the strum
+const ATTACK     = 0.18  // snappier attack — more lively than the old 0.25
+const RELEASE    = 0.85  // shorter sustain — airier feel
+const CROSSFADE  = 1.2   // next chord starts this many seconds before current ends
+const STRUM      = 0.055 // slightly tighter strum
 const MASTER_VOL = 0.42
 
 export function useAmbientMusic() {

@@ -119,49 +119,46 @@ export class MongoLongTermAdapter implements ILongTermStoragePort {
     async findLeaderboard(page: number, limit: number): Promise<LeaderboardPage> {
         const skip = (page - 1) * limit;
 
-        const [result] = await UserProfileModel.aggregate([
+        // 1. Get the total count separately
+        const total = await UserProfileModel.countDocuments();
+
+        // 2. Get the paginated data without using $facet
+        const entriesRaw = await UserProfileModel.aggregate([
+            { $sort: { gamesWon: -1 } },
+            { $skip: skip },
+            { $limit: limit },
             {
-                $facet: {
-                    entries: [
-                        { $sort: { gamesWon: -1 } },
-                        { $skip: skip },
-                        { $limit: limit },
-                        {
-                            $lookup: {
-                                from: "users",
-                                localField: "_id",
-                                foreignField: "_id",
-                                as: "userInfo",
-                            },
-                        },
-                        {
-                            $project: {
-                                userId: "$_id",
-                                username: { $ifNull: [{ $arrayElemAt: ["$userInfo.username", 0] }, "Unknown"] },
-                                gamesCompleted: 1,
-                                gamesWon: 1,
-                                tricksPlayed: 1,
-                                tricksWon: 1,
-                                bidsPlayed: 1,
-                                bidsWon: 1,
-                            },
-                        },
-                    ],
-                    totalCount: [{ $count: "n" }],
+                $lookup: {
+                    from: "users", // Ensure this matches your actual collection name in MongoDB
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "userInfo",
+                },
+            },
+            {
+                $project: {
+                    userId: "$_id",
+                    username: { $ifNull: [{ $arrayElemAt: ["$userInfo.username", 0] }, "Unknown"] },
+                    gamesCompleted: 1,
+                    gamesWon: 1,
+                    tricksPlayed: 1,
+                    tricksWon: 1,
+                    bidsPlayed: 1,
+                    bidsWon: 1,
                 },
             },
         ]);
 
-        const total: number = result?.totalCount?.[0]?.n ?? 0;
-        const entries = (result?.entries ?? []).map((e: any) => ({
-            userId:        e.userId,
-            username:      e.username,
+        // 3. Map the results to the domain format
+        const entries = entriesRaw.map((e: any) => ({
+            userId:         e.userId,
+            username:       e.username,
             gamesCompleted: e.gamesCompleted,
-            gamesWon:      e.gamesWon,
-            tricksPlayed:  e.tricksPlayed,
-            tricksWon:     e.tricksWon,
-            bidsPlayed:    e.bidsPlayed,
-            bidsWon:       e.bidsWon,
+            gamesWon:       e.gamesWon,
+            tricksPlayed:   e.tricksPlayed,
+            tricksWon:      e.tricksWon,
+            bidsPlayed:     e.bidsPlayed,
+            bidsWon:        e.bidsWon,
         }));
 
         return { entries, total, page, limit };

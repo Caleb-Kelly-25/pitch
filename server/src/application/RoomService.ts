@@ -7,6 +7,7 @@ import IUserRepository from "../domain/repositories/IUserRepository";
 import IGamePublisherPort from "../ports/IGamePublisherPort";
 import IShortTermStoragePort from "../ports/IShortTermStoragePort";
 import { GameId, PlayerId, UserId } from "../types/id-declarations";
+import crypto from "crypto";
 
 const CARDS_PER_PLAYER = 9;
 
@@ -14,11 +15,13 @@ export class RoomService {
     private shortTermStorage: IShortTermStoragePort;
     private userRepository: IUserRepository;
     private publisher: IGamePublisherPort;
+    private botTrigger?: (gs: GameState) => void;
 
-    constructor(shortTermStorage: IShortTermStoragePort, userRepository: IUserRepository, publisher: IGamePublisherPort) {
+    constructor(shortTermStorage: IShortTermStoragePort, userRepository: IUserRepository, publisher: IGamePublisherPort, botTrigger?: (gs: GameState) => void) {
         this.shortTermStorage = shortTermStorage;
         this.userRepository = userRepository;
         this.publisher = publisher;
+        this.botTrigger = botTrigger;
     }
 
     async createRoom(gameCode: string, userId: string): Promise<void> {
@@ -63,6 +66,29 @@ export class RoomService {
 
         await this.shortTermStorage.updateGameState(game);
         this.publisher.publishGameStateToRoom(game.id, game);
+    }
+
+    async addBot(gameCode: string): Promise<void> {
+        const game = await this.shortTermStorage.getGameStateById(gameCode as GameId);
+        if (!game) throw new Error('Room not found');
+        if (game.players.length >= 4) throw new Error('Room is full');
+
+        const botId = ('bot-' + crypto.randomUUID()) as PlayerId;
+        const botNumber = game.players.filter(p => p.isBot).length + 1;
+        const seatNumber = game.players.length + 1;
+        const bot = new Player(botId, `Bot ${botNumber}`, botId as unknown as UserId, new Hand([]), false, true, false, 0, seatNumber, true);
+        game.players.push(bot);
+
+        if (game.players.length === 4) {
+            this.startGame(game);
+        }
+
+        await this.shortTermStorage.updateGameState(game);
+        this.publisher.publishGameStateToRoom(game.id, game);
+
+        if (game.players.length === 4 && this.botTrigger) {
+            this.botTrigger(game);
+        }
     }
 
     private startGame(game: GameState): void {

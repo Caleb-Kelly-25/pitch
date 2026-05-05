@@ -29,6 +29,7 @@ import {GameService} from "./application/GameService"
 import RoomController from "./adapters/rest/RoomController";
 import ProfileController from "./adapters/rest/ProfileController";
 import { RoomService } from "./application/RoomService";
+import { triggerBotIfNeeded } from "./application/BotTrigger";
 
 
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
@@ -69,9 +70,11 @@ async function startServer() {
 
   const userService = new UserService(longStorage);
   const profileService = new UserProfileService(longStorage);
-  new WebSocketController(wss, authAdapter, new GameService(shortStorage, wsPublisher, profileService));
+  const gameService = new GameService(shortStorage, wsPublisher, profileService);
+  new WebSocketController(wss, authAdapter, gameService);
   const userController = new UserController(userService, authAdapter);
-  const roomController = new RoomController(new RoomService(shortStorage, longStorage, wsPublisher), authAdapter);
+  const roomService = new RoomService(shortStorage, longStorage, wsPublisher, (gs) => triggerBotIfNeeded(gs, gameService));
+  const roomController = new RoomController(roomService, authAdapter);
   const profileController = new ProfileController(profileService, userService, authAdapter);
   expressApp.use("/api", createRouter(userController, roomController, profileController));
 

@@ -1,0 +1,83 @@
+.overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: white;
+  text-align: center;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.bidButtons {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: white;
+  text-align: center;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.button {
+  font-size: 1rem;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #8b1a1a;
+  color: #f5ede0;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.buttonDisabled {
+  background-color: rgba(80, 60, 60, 0.35);
+  color: rgba(245, 237, 224, 0.3);
+  cursor: not-allowed;
+}
+
+.scoreStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.55);
+  color: #f5ede0;
+  font-size: 1rem;
+  padding: 8px 20px;
+  flex-shrink: 0;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.scoreTeam {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.trickOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  gap: 20px;
+}

@@ -83,9 +83,7 @@ export const gameSlice = createSlice({
   initialState,
   reducers: {
     setGameState(_state, action: PayloadAction<any>) {
-      const dto = action.payload;
-      console.log(dto);
-      return dtoToGameState(dto);
+      return dtoToGameState(action.payload);
     },
     setTrickResult(state, action: PayloadAction<TrickResult>) {
       state.trickResult = action.payload;

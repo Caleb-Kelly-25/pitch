@@ -3,50 +3,28 @@ import { socket, connectSocket } from "../../lib/socket"
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000"
 
 export function playCard(suit: string, value: number, gameId: string) {
-  if (!socket) {
-    console.log("Socket not connected, can't play card.")
-    return
-  }
+  if (!socket) return
   socket.emit("PlayCardEvent", JSON.stringify({ gameId, playerId: "", suit, value }))
 }
 
 export function placeBid(bidAmount: number, gameId: string) {
-  if (!socket) {
-    console.log("Socket not connected, can't place bid.")
-    return
-  }
+  if (!socket) return
   socket.emit("PlaceBidEvent", JSON.stringify({ gameId, bidAmount }))
 }
 
 export function pickSuit(suit: string, gameId: string) {
-  if (!socket) {
-    console.log("Socket not connected, can't pick suit.")
-    return
-  }
+  if (!socket) return
   socket.emit("PickSuitEvent", JSON.stringify({ gameId, suit }))
 }
 
 export function blindCard(action: 'keep' | 'discard' | 'swap' | 'done', gameId: string, swapSuit?: string, swapValue?: number) {
-  if (!socket) {
-    console.log("Socket not connected, can't submit blind card decision.")
-    return
-  }
+  if (!socket) return
   socket.emit("BlindCardEvent", JSON.stringify({ gameId, action, swapSuit, swapValue }))
 }
 
 export function discardHandCard(suit: string, value: number, gameId: string) {
-  if (!socket) {
-    console.log("Socket not connected, can't discard hand card.")
-    return
-  }
+  if (!socket) return
   socket.emit("DiscardHandCardEvent", JSON.stringify({ gameId, suit, value }))
-}
-
-export function requestUpdate() {
-  if (!socket) {
-    throw new Error("Socket not connected, can't request update.")
-  }
-  socket.emit("requestUpdate")
 }
 
 export async function createGame(gameCode: string, token: string): Promise<string> {
@@ -64,6 +42,18 @@ export async function createGame(gameCode: string, token: string): Promise<strin
     return (await res.json()).gameId;
   }
   return "";
+}
+
+export async function addBot(gameCode: string, token: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/game/addBot`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ gameCode }),
+  })
+  if (!res.ok) throw new Error("Failed to add bot")
 }
 
 export async function joinGame(gameCode: string, token: string) {
