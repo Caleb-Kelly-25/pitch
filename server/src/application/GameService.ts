@@ -2,7 +2,6 @@ import { Card } from "../domain/entities/Card";
 import GameState from "../domain/entities/GameState";
 import { PlayingHand } from "../domain/entities/HandCycle";
 import IGameStateRepository from "../domain/repositories/IGameStateRepository";
-import { GameNotFoundError } from "../domain/errors/GameErrors";
 import IGamePublisherPort from "../ports/IGamePublisherPort";
 import { PlayerId } from "../types/id-declarations";
 import { BidDTO } from "./dto/BidDTO";
@@ -17,6 +16,7 @@ import { processBlindCard } from "./BlindCard";
 import { discardHandCard } from "./DiscardHandCard";
 import UserProfileService from "./UserProfileService";
 import { triggerBotIfNeeded } from "./BotTrigger";
+import { withGameState } from "./CasTransaction";
 
 export class GameService {
     private gameStateRepository: IGameStateRepository;
@@ -36,12 +36,10 @@ export class GameService {
     async placeBid(bidDTO: BidDTO): Promise<void> {
         const { gameId, playerId, bidAmount } = bidDTO;
 
-        const gameState = await this.gameStateRepository.getGameStateById(gameId);
-        if (!gameState) throw new GameNotFoundError(gameId);
+        const gameState = await withGameState(this.gameStateRepository, gameId, (gs) => {
+            placeBid(gs, playerId as PlayerId, bidAmount);
+        });
 
-        placeBid(gameState, playerId as PlayerId, bidAmount);
-
-        await this.gameStateRepository.updateGameState(gameState);
         this.gamePub.publishGameStateToRoom(gameState.id, gameState);
         triggerBotIfNeeded(gameState, this);
     }
@@ -49,34 +47,32 @@ export class GameService {
     async playCard(dto: PlayCardDTO): Promise<void> {
         const { gameId, playerId, cardSuit, cardValue } = dto;
 
-        const gameState = await this.gameStateRepository.getGameStateById(gameId);
-        if (!gameState) throw new GameNotFoundError(gameId);
+        const gameState = await withGameState(this.gameStateRepository, gameId, (gs) => {
+            // Snapshot before mutation so we can detect what changed
+            const isPlaying = gs.handCycle.phase === 'playing';
+            const prevHand = isPlaying ? (gs.handCycle as PlayingHand) : null;
+            const prevTrickRound = prevHand?.trick.roundNumber ?? -1;
 
-        // Snapshot before mutation so we can detect what changed
-        const isPlaying = gameState.handCycle.phase === 'playing';
-        const prevHand = isPlaying ? (gameState.handCycle as PlayingHand) : null;
-        const prevTrickRound = prevHand?.trick.roundNumber ?? -1;
+            playCard(gs, playerId as PlayerId, new Card(cardSuit, cardValue));
 
-        playCard(gameState, playerId as PlayerId, new Card(cardSuit, cardValue));
+            // Deferred: an attempt that loses the CAS never happened, so its
+            // tricks and bids must not reach the player's lifetime stats.
+            if (this.profileService && prevHand) {
+                return () => this.recordStats(gs, prevHand, prevTrickRound, playerId as PlayerId);
+            }
+        });
 
-        await this.gameStateRepository.updateGameState(gameState);
         this.gamePub.publishGameStateToRoom(gameState.id, gameState);
         triggerBotIfNeeded(gameState, this);
-
-        if (this.profileService && prevHand) {
-            this.recordStats(gameState, prevHand, prevTrickRound, playerId as PlayerId);
-        }
     }
 
     async pickSuit(dto: PickSuitDTO): Promise<void> {
         const { gameId, playerId, suit } = dto;
 
-        const gameState = await this.gameStateRepository.getGameStateById(gameId);
-        if (!gameState) throw new GameNotFoundError(gameId);
+        const gameState = await withGameState(this.gameStateRepository, gameId, (gs) => {
+            pickSuit(gs, playerId as PlayerId, suit);
+        });
 
-        pickSuit(gameState, playerId as PlayerId, suit);
-
-        await this.gameStateRepository.updateGameState(gameState);
         this.gamePub.publishGameStateToRoom(gameState.id, gameState);
         triggerBotIfNeeded(gameState, this);
     }
@@ -84,24 +80,20 @@ export class GameService {
     async discardHandCard(dto: DiscardHandCardDTO): Promise<void> {
         const { gameId, playerId, cardSuit, cardValue } = dto;
 
-        const gameState = await this.gameStateRepository.getGameStateById(gameId);
-        if (!gameState) throw new GameNotFoundError(gameId);
+        const gameState = await withGameState(this.gameStateRepository, gameId, (gs) => {
+            discardHandCard(gs, playerId as PlayerId, cardSuit, cardValue);
+        });
 
-        discardHandCard(gameState, playerId as PlayerId, cardSuit, cardValue);
-
-        await this.gameStateRepository.updateGameState(gameState);
         this.gamePub.publishGameStateToRoom(gameState.id, gameState);
     }
 
     async blindCard(dto: BlindCardDTO): Promise<void> {
         const { gameId, playerId, action, swapSuit, swapValue } = dto;
 
-        const gameState = await this.gameStateRepository.getGameStateById(gameId);
-        if (!gameState) throw new GameNotFoundError(gameId);
+        const gameState = await withGameState(this.gameStateRepository, gameId, (gs) => {
+            processBlindCard(gs, playerId as PlayerId, action, swapSuit, swapValue);
+        });
 
-        processBlindCard(gameState, playerId as PlayerId, action, swapSuit, swapValue);
-
-        await this.gameStateRepository.updateGameState(gameState);
         this.gamePub.publishGameStateToRoom(gameState.id, gameState);
         triggerBotIfNeeded(gameState, this);
     }

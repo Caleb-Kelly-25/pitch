@@ -9,6 +9,7 @@ import { DiscardHandCardDTO } from "../../application/dto/DiscardHandCardDTO";
 import { Suit } from "../../domain/enums/Suit";
 import { Value } from "../../domain/enums/Value";
 import { IdentityPayload } from "../auth/IdentityPayload";
+import { ConcurrencyConflictError } from "../../domain/errors/GameErrors";
 
 export default class WebSocketController {
     private wss: Server;
@@ -24,6 +25,22 @@ export default class WebSocketController {
 
         this.wss.on("connection", (socket: Socket) => {
             this.registerSocketHandlers(socket);
+        });
+    }
+
+    /**
+     * Tell the acting player their action did not land. Without this a rejected
+     * action is invisible to them: no state update arrives, and the UI just
+     * appears to have ignored the click.
+     */
+    private rejectAction(user: IdentityPayload, event: string, err: unknown) {
+        const reason = err instanceof Error ? err.message : String(err);
+        console.error(`${event} error:`, reason);
+        this.wss.to(`player:${user.userId}`).emit("ActionRejectedEvent", {
+            event,
+            reason,
+            // A conflict means the action never applied — safe to resubmit
+            retryable: err instanceof ConcurrencyConflictError,
         });
     }
 
@@ -66,7 +83,7 @@ export default class WebSocketController {
         try {
             await this.gameService.placeBid(new BidDTO(parsedData.gameId, user.userId, parsedData.bidAmount));
         } catch (err) {
-            console.error("PlaceBidEvent error:", err instanceof Error ? err.message : err);
+            this.rejectAction(user, "PlaceBidEvent", err);
         }
     }
 
@@ -87,7 +104,7 @@ export default class WebSocketController {
         try {
             await this.gameService.playCard(new PlayCardDTO(parsedData.gameId, user.userId, parsedData.suit, parsedData.value));
         } catch (err) {
-            console.error("PlayCardEvent error:", err instanceof Error ? err.message : err);
+            this.rejectAction(user, "PlayCardEvent", err);
         }
     }
 
@@ -113,7 +130,7 @@ export default class WebSocketController {
         try {
             await this.gameService.pickSuit(new PickSuitDTO(parsedData.gameId, user.userId, parsedData.suit as Suit));
         } catch (err) {
-            console.error("PickSuitEvent error:", err instanceof Error ? err.message : err);
+            this.rejectAction(user, "PickSuitEvent", err);
         }
     }
 
@@ -139,7 +156,7 @@ export default class WebSocketController {
         try {
             await this.gameService.discardHandCard(new DiscardHandCardDTO(parsedData.gameId, user.userId, parsedData.suit as Suit, parsedData.value as Value));
         } catch (err) {
-            console.error("DiscardHandCardEvent error:", err instanceof Error ? err.message : err);
+            this.rejectAction(user, "DiscardHandCardEvent", err);
         }
     }
 
@@ -167,7 +184,7 @@ export default class WebSocketController {
                 parsedData.swapValue,
             ));
         } catch (err) {
-            console.error("BlindCardEvent error:", err instanceof Error ? err.message : err);
+            this.rejectAction(user, "BlindCardEvent", err);
         }
     }
 }

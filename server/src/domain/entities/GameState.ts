@@ -18,20 +18,24 @@ export default class GameState {
     teamOneScore: number;
     teamTwoScore: number;
     lastHandResult: LastHandResult | null = null;
+    // Incremented exactly once per committed state transition. Used as the
+    // compare-and-swap token by the short-term storage adapters.
+    version: number;
 
-    constructor(id: GameId, players: Player[], gameCode: string, handCycle: HandCycle, teamOneScore: number, teamTwoScore: number) {
+    constructor(id: GameId, players: Player[], gameCode: string, handCycle: HandCycle, teamOneScore: number, teamTwoScore: number, version: number = 0) {
         this.id = id;
         this.players = players;
         this.gameCode = gameCode;
         this.handCycle = handCycle;
         this.teamOneScore = teamOneScore;
         this.teamTwoScore = teamTwoScore;
+        this.version = version;
     }
 
     static fromJSONObject(json: any): GameState {
         const players = json.players.map((p: any) => Player.fromJSONObject(p));
         const handCycle = handCycleFromJSON(json.handCycle);
-        const gs = new GameState(json.id, players, json.gameCode, handCycle, json.teamOneScore, json.teamTwoScore);
+        const gs = new GameState(json.id, players, json.gameCode, handCycle, json.teamOneScore, json.teamTwoScore, json.version ?? 0);
         if (json.lastHandResult) {
             gs.lastHandResult = {
                 teamOneCardsWon: json.lastHandResult.teamOneCardsWon.map((c: any) => new Card(c.suit, c.value)),

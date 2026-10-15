@@ -13,7 +13,7 @@ function makePlayer(id: string, seat: number): Player {
 describe("RoomService.createRoom", () => {
     it("creates a new game state and stores it with the game code as id", async () => {
         const userRepo = { findById: jest.fn().mockResolvedValue({ username: "alice" }) };
-        const storage = { createGameState: jest.fn(), getGameStateById: jest.fn(), updateGameState: jest.fn() };
+        const storage = { createGameState: jest.fn(), getGameStateById: jest.fn(), updateGameState: jest.fn().mockResolvedValue(true) };
         const publisher = { publishGameStateToRoom: jest.fn() };
 
         const service = new RoomService(storage as any, userRepo as any, publisher as any);
@@ -41,18 +41,20 @@ describe("RoomService.joinRoom", () => {
     it("adds a new player to an existing room and publishes updated state", async () => {
         const room = {
             id: "G1",
+            version: 0,
             players: [makePlayer("u1", 1)],
             handCycle: createWaitingHand("u1" as PlayerId),
         };
         const userRepo = { findById: jest.fn().mockResolvedValue({ username: "bob" }) };
-        const storage = { getGameStateById: jest.fn().mockResolvedValue(room), updateGameState: jest.fn() };
+        const storage = { getGameStateById: jest.fn().mockResolvedValue(room), updateGameState: jest.fn().mockResolvedValue(true) };
         const publisher = { publishGameStateToRoom: jest.fn() };
 
         const service = new RoomService(storage as any, userRepo as any, publisher as any);
         await service.joinRoom("G1", "u2");
 
         expect(room.players).toHaveLength(2);
-        expect(storage.updateGameState).toHaveBeenCalledWith(room);
+        expect(storage.updateGameState).toHaveBeenCalledWith("G1", 0, room);
+        expect(room.version).toBe(1); // transition incremented the version exactly once
         expect(publisher.publishGameStateToRoom).toHaveBeenCalledWith("G1", room);
     });
 
@@ -67,6 +69,7 @@ describe("RoomService.joinRoom", () => {
 
     it("throws when the room is already full", async () => {
         const fullRoom = {
+            version: 0,
             players: ["u1", "u2", "u3", "u4"].map((id, i) => makePlayer(id, i + 1)),
         };
         const service = new RoomService(
@@ -80,10 +83,11 @@ describe("RoomService.joinRoom", () => {
     it("re-broadcasts state for a reconnecting player without adding a duplicate", async () => {
         const room = {
             id: "G1",
+            version: 0,
             players: [makePlayer("u1", 1)],
             handCycle: createWaitingHand("u1" as PlayerId),
         };
-        const storage = { getGameStateById: jest.fn().mockResolvedValue(room), updateGameState: jest.fn() };
+        const storage = { getGameStateById: jest.fn().mockResolvedValue(room), updateGameState: jest.fn().mockResolvedValue(true) };
         const publisher = { publishGameStateToRoom: jest.fn() };
 
         const service = new RoomService(storage as any, {} as any, publisher as any);
@@ -97,11 +101,12 @@ describe("RoomService.joinRoom", () => {
         const players = ["u1", "u2", "u3"].map((id, i) => makePlayer(id, i + 1));
         const room: any = {
             id: "G1",
+            version: 0,
             players,
             handCycle: createWaitingHand("u1" as PlayerId),
         };
         const userRepo = { findById: jest.fn().mockResolvedValue({ username: "u4" }) };
-        const storage = { getGameStateById: jest.fn().mockResolvedValue(room), updateGameState: jest.fn() };
+        const storage = { getGameStateById: jest.fn().mockResolvedValue(room), updateGameState: jest.fn().mockResolvedValue(true) };
         const publisher = { publishGameStateToRoom: jest.fn() };
 
         const service = new RoomService(storage as any, userRepo as any, publisher as any);
