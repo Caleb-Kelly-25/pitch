@@ -16,8 +16,18 @@ jobs:
     defaults:
       run:
         working-directory: server
+    env:
+      # Use the distro redis-server instead of letting redis-memory-server
+      # compile Redis from source during npm ci
+      REDISMS_DISABLE_POSTINSTALL: "true"
+      REDISMS_SYSTEM_BINARY: /usr/bin/redis-server
     steps:
       - uses: actions/checkout@v4
+      - name: Install redis-server
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq redis-server
+          sudo systemctl stop redis-server || true
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -25,8 +35,8 @@ jobs:
           cache-dependency-path: server/package-lock.json
       - run: npm ci
       - run: npx tsc --noEmit
-      # Integration tests start real Redis and MongoDB in-process
-      # (redis-memory-server / mongodb-memory-server), so no service containers needed
+      # Integration tests start their own Redis and MongoDB processes
+      # (redis-memory-server / mongodb-memory-server) on random ports
       - run: npx jest --ci
 
   client:

@@ -154,7 +154,7 @@ cd server
 npm test
 ```
 
-The integration tests start Redis and MongoDB in-process (`redis-memory-server`, `mongodb-memory-server`), so they need no Docker or external services. CI runs the type check and the full suite on every push and pull request.
+The integration tests start their own throwaway Redis and MongoDB servers (`redis-memory-server`, `mongodb-memory-server`), so they need no Docker or running services. CI runs the type check and the full suite on every push and pull request.
 
 ---
 
