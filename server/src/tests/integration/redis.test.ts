@@ -21,7 +21,7 @@ beforeAll(async () => {
   await client.connect();
 
   adapter = new RedisShortTermAdapter(client);
-});
+}, 300_000); // First run downloads and compiles redis-server
 
 afterAll(async () => {
   await client.quit();

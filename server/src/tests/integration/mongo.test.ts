@@ -14,7 +14,7 @@ beforeAll(async () => {
   await mongoose.connect(uri);
 
   adapter = new MongoLongTermAdapter();
-});
+}, 120_000); // First run downloads the mongod binary
 
 afterAll(async () => {
   await mongoose.disconnect();
