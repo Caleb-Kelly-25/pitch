@@ -32,3 +32,13 @@ export class InvalidPlayError extends GameError {
         this.name = 'InvalidPlayError';
     }
 }
+
+// Thrown when a state transition lost the compare-and-swap race too many times
+// in a row. Retryable from the client's point of view — the action was never
+// applied, so resubmitting it is safe.
+export class ConcurrencyConflictError extends GameError {
+    constructor(gameId: string, attempts: number) {
+        super(`Could not commit action on game ${gameId} after ${attempts} attempts`);
+        this.name = 'ConcurrencyConflictError';
+    }
+}

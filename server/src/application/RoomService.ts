@@ -7,6 +7,7 @@ import IUserRepository from "../domain/repositories/IUserRepository";
 import IGamePublisherPort from "../ports/IGamePublisherPort";
 import IShortTermStoragePort from "../ports/IShortTermStoragePort";
 import { GameId, PlayerId, UserId } from "../types/id-declarations";
+import { withGameState } from "./CasTransaction";
 import crypto from "crypto";
 
 const CARDS_PER_PLAYER = 9;
@@ -43,47 +44,60 @@ export class RoomService {
     }
 
     async joinRoom(gameCode: string, userId: string): Promise<void> {
-        const game = await this.shortTermStorage.getGameStateById(gameCode as GameId);
-        if (!game) throw new Error('Room not found');
+        const existing = await this.shortTermStorage.getGameStateById(gameCode as GameId);
+        if (!existing) throw new Error('Room not found');
 
-        // Reconnecting player — just re-broadcast state
-        if (game.players.some(p => p.id === userId)) {
-            this.publisher.publishGameStateToRoom(game.id, game);
+        // Reconnecting player — just re-broadcast state. Nothing changes, so
+        // this skips the write path rather than burning a version on a no-op.
+        if (existing.players.some(p => p.id === userId)) {
+            this.publisher.publishGameStateToRoom(existing.id, existing);
             return;
         }
 
-        if (game.players.length >= 4) throw new Error('Room is full');
+        if (existing.players.length >= 4) throw new Error('Room is full');
 
+        // Looked up once, outside the loop — it does not depend on game state.
         const user = await this.userRepository.findById(userId as UserId);
         if (!user) throw new Error('User not found');
 
-        const seatNumber = game.players.length + 1;
-        game.players.push(new Player(userId as PlayerId, user.username, userId as UserId, new Hand([]), false, true, false, 0, seatNumber));
+        const game = await withGameState(this.shortTermStorage, gameCode, (gs) => {
+            // The checks above raced. Re-run them against the state this
+            // attempt actually read: a concurrent join may have taken the last
+            // seat, or seated this same user (double-clicked join button).
+            if (gs.players.some(p => p.id === userId)) return;
+            if (gs.players.length >= 4) throw new Error('Room is full');
 
-        if (game.players.length === 4) {
-            this.startGame(game);
-        }
+            const seatNumber = gs.players.length + 1;
+            gs.players.push(new Player(userId as PlayerId, user.username, userId as UserId, new Hand([]), false, true, false, 0, seatNumber));
 
-        await this.shortTermStorage.updateGameState(game);
+            if (gs.players.length === 4) {
+                this.startGame(gs);
+            }
+        });
+
         this.publisher.publishGameStateToRoom(game.id, game);
     }
 
     async addBot(gameCode: string): Promise<void> {
-        const game = await this.shortTermStorage.getGameStateById(gameCode as GameId);
-        if (!game) throw new Error('Room not found');
-        if (game.players.length >= 4) throw new Error('Room is full');
+        const existing = await this.shortTermStorage.getGameStateById(gameCode as GameId);
+        if (!existing) throw new Error('Room not found');
+        if (existing.players.length >= 4) throw new Error('Room is full');
 
-        const botId = ('bot-' + crypto.randomUUID()) as PlayerId;
-        const botNumber = game.players.filter(p => p.isBot).length + 1;
-        const seatNumber = game.players.length + 1;
-        const bot = new Player(botId, `Bot ${botNumber}`, botId as unknown as UserId, new Hand([]), false, true, false, 0, seatNumber, true);
-        game.players.push(bot);
+        const game = await withGameState(this.shortTermStorage, gameCode, (gs) => {
+            // Authoritative seat check — the pre-check above may be stale
+            if (gs.players.length >= 4) throw new Error('Room is full');
 
-        if (game.players.length === 4) {
-            this.startGame(game);
-        }
+            const botId = ('bot-' + crypto.randomUUID()) as PlayerId;
+            const botNumber = gs.players.filter(p => p.isBot).length + 1;
+            const seatNumber = gs.players.length + 1;
+            const bot = new Player(botId, `Bot ${botNumber}`, botId as unknown as UserId, new Hand([]), false, true, false, 0, seatNumber, true);
+            gs.players.push(bot);
 
-        await this.shortTermStorage.updateGameState(game);
+            if (gs.players.length === 4) {
+                this.startGame(gs);
+            }
+        });
+
         this.publisher.publishGameStateToRoom(game.id, game);
 
         if (game.players.length === 4 && this.botTrigger) {

@@ -278,9 +278,12 @@ describe("E2E: full 4-player game from registration to COMPLETE", () => {
                 result = await emit(turn, "PickSuitEvent", { suit: "HEARTS" });
 
             } else if (phase === "BLIND_CARDS") {
-                const turn = views[userIds[0]].bidWinnerId as string;
-                if (!turn) { console.error("E2E: no bidWinnerId (blind)"); break; }
-                result = await emit(turn, "BlindCardEvent", { action: "keep" });
+                // Blind cards go to the bid winner, then to their partner
+                const turn = views[userIds[0]].blindCardRecipientId as string;
+                if (!turn) { console.error("E2E: no blindCardRecipientId"); break; }
+                const handSize = (views[turn]?.hand ?? []).length;
+                const action = handSize < 6 ? "keep" : "discard";
+                result = await emit(turn, "BlindCardEvent", { action });
 
             } else if (phase === "PLAYING") {
                 const turn = views[userIds[0]].trick?.playerTurn as string;
