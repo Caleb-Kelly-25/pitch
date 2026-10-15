@@ -237,9 +237,9 @@ pitch/
 
 Built by team JACC'd:
 
-- **Caleb Kelly**: backend and infrastructure
-- **Jordan**
-- **Amber**
-- **Charlie**
+- **Caleb Kelly**: backend architecture, the game engine and real-time layer, concurrency control, AWS infrastructure (Terraform), CI/CD, and the test suite; also wrote most of the current frontend
+- **Jordan Aschoff**: gameplay UI, including the game table, bidding controls, top bar, scoreboard, and host/join pages
+- **Amber Shefl**: early game logic, including the bidding cycle, bid placement, hand phases, and user persistence
+- **Charlie Bernhardt**: login and signup pages, card components, and card artwork
 
 This started as a course project; [docs/course-requirements.md](docs/course-requirements.md) records how the delivered scope compares with the original requirements.
