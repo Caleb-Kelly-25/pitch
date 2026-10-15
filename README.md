@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Caleb-Kelly-25/pitch/actions/workflows/ci.yml/badge.svg)](https://github.com/Caleb-Kelly-25/pitch/actions/workflows/ci.yml)
 
-A real-time multiplayer version of the card game Pitch. The server owns the game state and enforces the rules, the backend scales horizontally on AWS, and every action is applied safely when several arrive at once. Built by team JACC'd (Jordan, Amber, Caleb, Charlie).
+A real-time multiplayer version of the card game Pitch. The server owns the game state and enforces the rules, the backend scales horizontally on AWS, and every action is applied safely when several arrive at once. Built by team JACC'd; see [Team](#team).
 
 ## Highlights
 
@@ -230,5 +230,16 @@ pitch/
 ├── docker-compose.yml       Local backend, Redis, and MongoDB
 └── .github/workflows/       CI and deploy pipelines
 ```
+
+---
+
+## Team
+
+Built by team JACC'd:
+
+- **Caleb Kelly**: backend and infrastructure
+- **Jordan**
+- **Amber**
+- **Charlie**
 
 This started as a course project; [docs/course-requirements.md](docs/course-requirements.md) records how the delivered scope compares with the original requirements.
